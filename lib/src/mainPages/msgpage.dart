@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pin_demo/main.dart';
 import '../components.dart';
 import '../strings/lang.dart';
+import 'package:provider/provider.dart';
 
 class msgPage extends StatefulWidget {
   const msgPage({super.key});
@@ -13,10 +14,9 @@ class msgPage extends StatefulWidget {
 class _msgPageState extends State<msgPage> {
   @override
   Widget build(BuildContext context) {
-    langStrings langString =
-        langStrings(LanguageProvider.of(context)!.languageCode);
+    var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
-      appBar: AppBar(title: Text("消息")),
+      appBar: AppBar(title: Text(languageProvider.get("my"))),
       body: Column(
         children: [
           DisappearingCard(
@@ -31,12 +31,12 @@ class _msgPageState extends State<msgPage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   TextButton(
-                    child: Text(langString.get("ok")),
+                    child: Text(languageProvider.get("ok")),
                     onPressed: () => print("ok"),
                   ),
                   const SizedBox(width: 8),
                   TextButton(
-                    child: Text(langString.get("cancel")),
+                    child: Text(languageProvider.get("cancel")),
                     onPressed: () => print("cancel"),
                   ),
                 ],
@@ -56,37 +56,38 @@ class _msgPageState extends State<msgPage> {
           SizedBox(
             height: 30.0,
           ),
-          Expanded(
-            child: ListView.separated(
-              itemCount: 3, // 总用户数量
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: CircleAvatar(
-                      backgroundImage: NetworkImage(
-                    "https://picsum.photos/250?image=${index}",
-                  )),
-                  title: Text(
-                      langString.get("user${index}")), // 多语言支持 *experimental
-                  subtitle: Text(langString.get("user${index}_sub")),
-                  onTap: () {
-                    print("yuh~"); // TODO: 我的页面二级跳转
-                    final snackBar = SnackBar(content: Text('yuh'));
-                    // 从组件树种找到ScaffoldMessager，并用它去show一个snackBar
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  },
-                );
-              },
-              separatorBuilder: (context, index) {
-                return Divider(
-                  height: 0.0,
-                  color: Colors.grey,
-                  thickness: 0.5,
-                  indent: 20.0,
-                  endIndent: 20.0,
-                );
-              },
-            ),
-          )
+          // Expanded(
+          //   child: ListView.separated(
+          //     itemCount: 3, // 总用户数量
+          //     itemBuilder: (context, index) {
+          //       return ListTile(
+          //         leading: CircleAvatar(
+          //             backgroundImage: NetworkImage(
+          //           "https://picsum.photos/250?image=${index}",
+          //         )),
+          //         title: Text(languageProvider
+          //             .get("user${index}")), // 多语言支持 *experimental
+          //         subtitle: Text(languageProvider.get("user${index}_sub")),
+          //         onTap: () {
+          //           print("yuh~"); // TODO: 我的页面二级跳转
+          //           final snackBar = SnackBar(content: Text('yuh'));
+          //           // 从组件树种找到ScaffoldMessager，并用它去show一个snackBar
+          //           ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          //         },
+          //       );
+          //     },
+          //     separatorBuilder: (context, index) {
+          //       return Divider(
+          //         height: 0.0,
+          //         color: Colors.grey,
+          //         thickness: 0.5,
+          //         indent: 20.0,
+          //         endIndent: 20.0,
+          //       );
+          //     },
+          //   ),
+          // )
+          itemListWidget(type: "user", itemCount: 3),
         ],
       ),
       drawer: Drawer(),

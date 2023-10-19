@@ -11,6 +11,7 @@ import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:flutter_bmflocation/flutter_bmflocation.dart';
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart'
     show BMFMapSDK, BMF_COORD_TYPE;
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); //不加这个强制横/竖屏会报错
@@ -19,7 +20,7 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
   ]);
-  runApp(LanguageProvider(initialLanguageCode: lang, child: MyApp()));
+  runApp(const MyApp());
 
   LocationFlutterPlugin myLocPlugin = LocationFlutterPlugin();
 
@@ -40,56 +41,28 @@ Future<void> main() async {
   }
 }
 
-class LanguageProvider extends InheritedNotifier<ValueNotifier<String>> {
-  final ValueNotifier<String> _languageNotifier;
-
-  String get languageCode => _languageNotifier.value;
-  List languageLists = ["zh-CN", "en-US"];
-
-  LanguageProvider({
-    Key? key,
-    required Widget child,
-    required String initialLanguageCode,
-  })  : _languageNotifier = ValueNotifier(initialLanguageCode),
-        super(
-            key: key,
-            notifier: ValueNotifier(initialLanguageCode),
-            child: child) {
-    _languageNotifier.value = initialLanguageCode;
-  }
-
-  static LanguageProvider? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<LanguageProvider>()!;
-  }
-
-  void switchLanguage() {
-    if (_languageNotifier.value == "zh-CN") {
-      _languageNotifier.value = "en-US";
-    } else {
-      _languageNotifier.value = "zh-CN";
-    }
-  }
-}
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '一起拼',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
-        useMaterial3: true,
+    return ChangeNotifierProvider<LanguageProvider>(
+      create: (context) => LanguageProvider(),
+      child: MaterialApp(
+        title: '一起拼',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
+          useMaterial3: true,
+        ),
+        home: const MyHomePage(),
+        debugShowCheckedModeBanner: false,
+        // routes: {
+        //   '/home':(context) => MyHomePage(),
+        //   '/msg':(context) => msgPage(),
+        //   '/my':(context) => myPage(),
+        // }
       ),
-      home: const MyHomePage(),
-      debugShowCheckedModeBanner: false,
-      // routes: {
-      //   '/home':(context) => MyHomePage(),
-      //   '/msg':(context) => msgPage(),
-      //   '/my':(context) => myPage(),
-      // }
     );
   }
 }
@@ -108,50 +81,47 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
       //appBar: AppBar(title: Text("首页")),
       body: IndexedStack(index: _currentIndex, children: bodyList),
       drawer: Drawer(),
-      bottomNavigationBar: _NavigationBar(),
-    );
-  }
-
-  NavigationBar _NavigationBar() {
-    return NavigationBar(
-      destinations: const [
-        NavigationDestination(
-          icon: Icon(Icons.home_outlined),
-          selectedIcon: Icon(Icons.home),
-          label: '首页',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.messenger_outline_outlined),
-          selectedIcon: Icon(Icons.messenger),
-          label: '消息',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.person_outlined),
-          selectedIcon: Icon(Icons.person),
-          label: '我的',
-        ),
-      ],
-      selectedIndex: _currentIndex,
-      onDestinationSelected: (int index) {
-        setState(() {
-          _currentIndex = index;
-        });
-        // switch(_currentIndex){
-        //   case 0:
-        //     // Navigator.of(context).pushNamed('/home',arguments: _currentIndex);
-        //     break;
-        //   case 1:
-        //     Navigator.of(context).pushNamed('/msg',arguments: _currentIndex);
-        //     break;
-        //   case 2:
-        //     Navigator.of(context).pushNamed('/my',arguments: _currentIndex);
-        //     break;
-        // }
-      },
+      bottomNavigationBar: NavigationBar(
+        destinations: [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: languageProvider.get("home"),
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.messenger_outline_outlined),
+            selectedIcon: Icon(Icons.messenger),
+            label: languageProvider.get("msg"),
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outlined),
+            selectedIcon: Icon(Icons.person),
+            label: languageProvider.get("my"),
+          ),
+        ],
+        selectedIndex: _currentIndex,
+        onDestinationSelected: (int index) {
+          setState(() {
+            _currentIndex = index;
+          });
+          // switch(_currentIndex){
+          //   case 0:
+          //     // Navigator.of(context).pushNamed('/home',arguments: _currentIndex);
+          //     break;
+          //   case 1:
+          //     Navigator.of(context).pushNamed('/msg',arguments: _currentIndex);
+          //     break;
+          //   case 2:
+          //     Navigator.of(context).pushNamed('/my',arguments: _currentIndex);
+          //     break;
+          // }
+        },
+      ),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pin_demo/main.dart';
 import '../strings/lang.dart';
 import '../components.dart';
+import 'package:provider/provider.dart';
 
 class myPage extends StatefulWidget {
   static var body;
@@ -15,10 +16,9 @@ class myPage extends StatefulWidget {
 class _myPageState extends State<myPage> {
   @override
   Widget build(BuildContext context) {
-    langStrings langString =
-        langStrings(LanguageProvider.of(context)!.languageCode);
+    var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
-      appBar: AppBar(title: Text("我的")),
+      appBar: AppBar(title: Text(languageProvider.get("my"))),
       body: Column(
         children: [
           Card(
@@ -69,32 +69,36 @@ class _myPageState extends State<myPage> {
               children: <Widget>[
                 ListTile(
                   leading: Icon(Icons.privacy_tip),
-                  title: Text(langString.get("privacy")), // 多语言支持 *experimental
+                  title: Text(
+                      languageProvider.get("privacy")), // 多语言支持 *experimental
                   onTap: () {
                     print("yuh~"); // TODO: 我的页面二级跳转
                   },
                 ),
                 ListTile(
                   leading: Icon(Icons.headphones),
-                  title: Text(langString.get("help")), // 多语言支持 *experimental
+                  title:
+                      Text(languageProvider.get("help")), // 多语言支持 *experimental
                   onTap: () {
                     print("yuh yuh~"); // TODO: 我的页面二级跳转
                   },
                 ),
                 ListTile(
                   leading: Icon(Icons.settings),
-                  title: Text(langString.get("setting")), // 多语言支持 *experimental
+                  title: Text(
+                      languageProvider.get("setting")), // 多语言支持 *experimental
                   onTap: () {
                     print("yuh yuh yuh~"); // TODO: 我的页面二级跳转
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.settings),
-                  title: Text(langString.get("lang")), // 多语言支持 *experimental
+                  leading: Icon(Icons.language),
+                  title:
+                      Text(languageProvider.get("lang")), // 多语言支持 *experimental
                   onTap: () {
                     setState(() {
-                      LanguageProvider.of(context)!.switchLanguage();
-                      print(LanguageProvider.of(context)!.languageCode);
+                      languageProvider.switchLanguage("en-US");
+                      print(languageProvider.currentLanguage);
                     });
                   },
                 ),

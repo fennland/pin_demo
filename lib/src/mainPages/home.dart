@@ -10,6 +10,7 @@ import 'package:pin_demo/main.dart';
 import 'package:pin_demo/src/map/map.dart';
 import '../strings/lang.dart';
 import '../components.dart';
+import 'package:provider/provider.dart';
 
 class homePage extends StatefulWidget {
   const homePage({super.key});
@@ -22,12 +23,11 @@ class _homePageState extends State<homePage> {
   BMFMapController? myMapController;
   @override
   Widget build(BuildContext context) {
-    langStrings langString =
-        langStrings(LanguageProvider.of(context)!.languageCode);
-
+    var languageProvider = Provider.of<LanguageProvider>(context);
+    itemListWidget itemList = itemListWidget(type: "order", itemCount: 5);
     return Scaffold(
       appBar: AppBar(
-        title: Text(langString.get("home")),
+        title: Text(languageProvider.get("home")),
         actions: [
           IconButton(
             icon: Icon(Icons.search),
@@ -50,7 +50,7 @@ class _homePageState extends State<homePage> {
           SizedBox(
             height: 30.0,
           ),
-          getItemList(type: "order", itemCount: 5),
+          itemList,
         ],
       ),
     );
