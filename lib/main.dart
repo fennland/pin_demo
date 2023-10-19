@@ -2,12 +2,35 @@ import 'package:flutter/material.dart';
 import 'src/mainPages/msgpage.dart';
 import 'src/mainPages/mypage.dart';
 import 'src/mainPages/home.dart';
-
+import 'dart:io' show Platform;
+import 'package:flutter/material.dart';
+import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
+import 'package:flutter_bmflocation/flutter_bmflocation.dart';
+import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart'
+    show BMFMapSDK, BMF_COORD_TYPE;
 
 String lang = "zh-CN";
 
-void main() {
+Future<void> main() async {
   runApp(const MyApp());
+
+  LocationFlutterPlugin myLocPlugin = LocationFlutterPlugin();
+
+  BMFMapSDK.setAgreePrivacy(true);
+  myLocPlugin.setAgreePrivacy(true);
+
+  // 百度地图sdk初始化鉴权
+  if (Platform.isIOS) {
+    myLocPlugin.authAK('bet57swQG0pxa7esLl9a12Vkmc7GtcAi');
+    BMFMapSDK.setApiKeyAndCoordType(
+        'bet57swQG0pxa7esLl9a12Vkmc7GtcAi', BMF_COORD_TYPE.BD09LL);
+  } else if (Platform.isAndroid) {
+    /// 初始化获取Android 系统版本号，如果低于10使用TextureMapView 等于大于10使用Mapview
+    await BMFAndroidVersion.initAndroidVersion();
+    // Android 目前不支持接口设置Apikey,
+    // 请在主工程的Manifest文件里设置，详细配置方法请参考官网(https://lbsyun.baidu.com/)demo
+    BMFMapSDK.setCoordType(BMF_COORD_TYPE.BD09LL);
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -43,7 +66,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
 
-  final bodyList = [homePage(), msgPage(), myPage()];
+  final bodyList = [MapWidget(), msgPage(), myPage()];
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +78,9 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-NavigationBar _NavigationBar() {
+  NavigationBar _NavigationBar() {
     return NavigationBar(
-      destinations: const[
+      destinations: const [
         NavigationDestination(
           icon: Icon(Icons.home_outlined),
           selectedIcon: Icon(Icons.home),
@@ -94,4 +117,3 @@ NavigationBar _NavigationBar() {
     );
   }
 }
-

@@ -45,5 +45,19 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+		<key>NSLocationUsageDescription</key>
+	<string></string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string></string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+        <string>请求定位权限，获取当前位置</string>
+        <key>NSLocationAlwaysUsageDescription</key>
+        <string>请求定位权限，获取当前位置</string>
+        <key>NSLocationWhenInUseUsageDescription</key>
+        <string>请求定位权限，获取当前位置</string>
+		<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 </dict>
 </plist>

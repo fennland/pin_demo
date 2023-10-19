@@ -64,4 +64,9 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    implementation 'com.baidu.lbsyun:BaiduMapSDK_Map:7.5.5'
+implementation 'com.baidu.lbsyun:BaiduMapSDK_Search:7.5.5'
+implementation 'com.baidu.lbsyun:BaiduMapSDK_Util:7.5.5'
+implementation 'com.baidu.lbsyun:BaiduMapSDK_Location_All:9.4.0'
+}
