@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pin_demo/src/strings/lang.dart';
+
 class DisappearingCard extends StatefulWidget {
   final Widget cardContext;
 
@@ -35,4 +37,38 @@ class _DisappearingCardState extends State<DisappearingCard> {
             ))
         : SizedBox(); // 当 isVisible 为 false 时返回一个空的 SizedBox
   }
+}
+
+Expanded getItemList({String type = "user", int itemCount = 1}) {
+  langStrings langString = langStrings(lang);
+  return Expanded(
+    child: ListView.separated(
+      itemCount: itemCount, // 总用户数量
+      itemBuilder: (context, index) {
+        return ListTile(
+          leading: CircleAvatar(
+              backgroundImage: NetworkImage(
+            "https://picsum.photos/250?image=${index}",
+          )),
+          title: Text(langString.get("${type}${index}")), // 多语言支持 *experimental
+          subtitle: Text(langString.get("${type}${index}_sub")),
+          onTap: () {
+            print("yuh~"); // TODO: 我的页面二级跳转
+            final snackBar = SnackBar(content: Text('yuh'));
+            // 从组件树种找到ScaffoldMessager，并用它去show一个snackBar
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          },
+        );
+      },
+      separatorBuilder: (context, index) {
+        return Divider(
+          height: 0.0,
+          color: Colors.grey,
+          thickness: 0.5,
+          indent: 20.0,
+          endIndent: 20.0,
+        );
+      },
+    ),
+  );
 }

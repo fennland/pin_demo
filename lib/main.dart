@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import 'package:pin_demo/src/strings/lang.dart';
 import 'src/mainPages/msgpage.dart';
 import 'src/mainPages/mypage.dart';
 import 'src/mainPages/home.dart';
@@ -9,10 +12,14 @@ import 'package:flutter_bmflocation/flutter_bmflocation.dart';
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart'
     show BMFMapSDK, BMF_COORD_TYPE;
 
-String lang = "zh-CN";
-
 Future<void> main() async {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized(); //不加这个强制横/竖屏会报错
+  SystemChrome.setPreferredOrientations([
+    // 强制竖屏
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown
+  ]);
+  runApp(LanguageProvider(initialLanguageCode: lang, child: MyApp()));
 
   LocationFlutterPlugin myLocPlugin = LocationFlutterPlugin();
 
@@ -30,6 +37,37 @@ Future<void> main() async {
     // Android 目前不支持接口设置Apikey,
     // 请在主工程的Manifest文件里设置，详细配置方法请参考官网(https://lbsyun.baidu.com/)demo
     BMFMapSDK.setCoordType(BMF_COORD_TYPE.BD09LL);
+  }
+}
+
+class LanguageProvider extends InheritedNotifier<ValueNotifier<String>> {
+  final ValueNotifier<String> _languageNotifier;
+
+  String get languageCode => _languageNotifier.value;
+  List languageLists = ["zh-CN", "en-US"];
+
+  LanguageProvider({
+    Key? key,
+    required Widget child,
+    required String initialLanguageCode,
+  })  : _languageNotifier = ValueNotifier(initialLanguageCode),
+        super(
+            key: key,
+            notifier: ValueNotifier(initialLanguageCode),
+            child: child) {
+    _languageNotifier.value = initialLanguageCode;
+  }
+
+  static LanguageProvider? of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<LanguageProvider>()!;
+  }
+
+  void switchLanguage() {
+    if (_languageNotifier.value == "zh-CN") {
+      _languageNotifier.value = "en-US";
+    } else {
+      _languageNotifier.value = "zh-CN";
+    }
   }
 }
 
@@ -66,7 +104,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
 
-  final bodyList = [MapWidget(), msgPage(), myPage()];
+  final bodyList = [homePage(), msgPage(), myPage()];
 
   @override
   Widget build(BuildContext context) {

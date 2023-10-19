@@ -1,9 +1,15 @@
+// import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bmflocation/flutter_bmflocation.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:flutter_baidu_mapapi_utils/flutter_baidu_mapapi_utils.dart';
 import 'package:flutter_baidu_mapapi_search/flutter_baidu_mapapi_search.dart';
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart';
+import 'package:pin_demo/main.dart';
+import 'package:pin_demo/src/map/map.dart';
+import '../strings/lang.dart';
+import '../components.dart';
 
 class homePage extends StatefulWidget {
   const homePage({super.key});
@@ -13,12 +19,15 @@ class homePage extends StatefulWidget {
 }
 
 class _homePageState extends State<homePage> {
+  BMFMapController? myMapController;
   @override
   Widget build(BuildContext context) {
-    // int lastIndex = ModalRoute.of(context)!.settings.arguments as int;
+    langStrings langString =
+        langStrings(LanguageProvider.of(context)!.languageCode);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("首页"),
+        title: Text(langString.get("home")),
         actions: [
           IconButton(
             icon: Icon(Icons.search),
@@ -35,7 +44,15 @@ class _homePageState extends State<homePage> {
           ),
         ],
       ),
-      body: Center(child: Text("首页")),
+      body: Column(
+        children: [
+          generateMap(myMapController, 200, 350, 24.612261, 118.088745, 15),
+          SizedBox(
+            height: 30.0,
+          ),
+          getItemList(type: "order", itemCount: 5),
+        ],
+      ),
     );
   }
 }
