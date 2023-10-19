@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../strings/zh-CN.dart';
+import '../../main.dart' show lang;
+import '../strings/strings.dart';
 import '../components.dart';
 
 class myPage extends StatefulWidget {
@@ -12,6 +13,7 @@ class myPage extends StatefulWidget {
 }
 
 class _myPageState extends State<myPage> {
+  strings langString = new strings(lang);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,21 +68,21 @@ class _myPageState extends State<myPage> {
               children: <Widget>[
                 ListTile(
                   leading: Icon(Icons.privacy_tip),
-                  title: Text(zhCNStrings().privacy), // 多语言支持 *experimental
+                  title: Text(langString.get("privacy")), // 多语言支持 *experimental
                   onTap: () {
                     print("yuh~"); // TODO: 我的页面二级跳转
                   },
                 ),
                 ListTile(
                   leading: Icon(Icons.headphones),
-                  title: Text(zhCNStrings().help), // 多语言支持 *experimental
+                  title: Text(langString.get("help")), // 多语言支持 *experimental
                   onTap: () {
                     print("yuh yuh~"); // TODO: 我的页面二级跳转
                   },
                 ),
                 ListTile(
                   leading: Icon(Icons.settings),
-                  title: Text(zhCNStrings().setting), // 多语言支持 *experimental
+                  title: Text(langString.get("setting")), // 多语言支持 *experimental
                   onTap: () {
                     print("yuh yuh yuh~"); // TODO: 我的页面二级跳转
                   },

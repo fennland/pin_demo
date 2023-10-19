@@ -3,6 +3,9 @@ import 'src/mainPages/msgpage.dart';
 import 'src/mainPages/mypage.dart';
 import 'src/mainPages/home.dart';
 
+
+String lang = "zh-CN";
+
 void main() {
   runApp(const MyApp());
 }
