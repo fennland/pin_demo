@@ -3,6 +3,7 @@ import 'package:pin_demo/main.dart';
 import '../strings/lang.dart';
 import '../components.dart';
 import 'package:provider/provider.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 class myPage extends StatefulWidget {
   static var body;
@@ -18,13 +19,18 @@ class _myPageState extends State<myPage> {
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
-      appBar: AppBar(title: Text(languageProvider.get("my"))),
+      appBar: AppBar(
+        title: Text(
+          languageProvider.get("my"),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+        ),
+      ),
       body: Column(
         children: [
           Card(
               clipBehavior: Clip.hardEdge,
-              // shape: RoundedRectangleBorder(
-              // borderRadius: BorderRadius.all(Radius.circular(20))),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
               child: InkWell(
                   splashColor: Colors.blue.withAlpha(30),
                   onTap: () {
@@ -32,7 +38,7 @@ class _myPageState extends State<myPage> {
                   },
                   child:
                       Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                    const ListTile(
+                    ListTile(
                       leading: SizedBox(
                         child: CircleAvatar(
                           backgroundImage: NetworkImage(
@@ -43,23 +49,38 @@ class _myPageState extends State<myPage> {
                         width: 50,
                         height: 50,
                       ),
-                      title: Text("陈鹏"),
-                      subtitle: Text("Lv.1 大几把会员"),
+                      title: Text(languageProvider.get("curUser")),
+                      subtitle: Container(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 8.0),
+                            LinearPercentIndicator(
+                              alignment: MainAxisAlignment.start,
+                              padding: EdgeInsets.all(0.0),
+                              width: 100.0,
+                              lineHeight: 14.0,
+                              percent: 0.15,
+                              center: Text(
+                                languageProvider.get("curUserInfo"),
+                                style: new TextStyle(
+                                    fontSize: 10.0, color: Colors.white),
+                              ),
+                              barRadius: Radius.circular(20.0),
+                              backgroundColor: Theme.of(context).disabledColor,
+                              progressColor: Colors.blueAccent,
+                            ),
+                          ],
+                        ),
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(Icons.chevron_right),
+                        onPressed: () {
+                          final snackBar = SnackBar(content: Text('yuh'));
+                          // 从组件树种找到ScaffoldMessager，并用它去show一个snackBar
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        },
+                      ),
                     ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.end,
-                    //   children: <Widget>[
-                    //     TextButton(
-                    //       child: const Text("蒽"),
-                    //       onPressed: () => print("蒽"),
-                    //     ),
-                    //     const SizedBox(width: 8),
-                    //     TextButton(
-                    //       child: const Text("大妈你没事吧"),
-                    //       onPressed: () => print("蒽"),
-                    //     ),
-                    //   ],
-                    // )
                   ]))),
           SizedBox(
             height: 30.0,
@@ -108,10 +129,10 @@ class _myPageState extends State<myPage> {
           DisappearingCard(
             cardContext:
                 Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-              const ListTile(
+              ListTile(
                 leading: Icon(Icons.handyman),
-                title: Text("这只是一个测试 #3"),
-                subtitle: Text("开通大几把会员让几把马上变大"),
+                title: Text(languageProvider.get("service2")),
+                subtitle: Text(languageProvider.get("service2_sub")),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

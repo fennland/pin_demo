@@ -90,8 +90,16 @@ class BaiduMapLocation {
   // }
 }
 
-Container generateMap(BMFMapController? con, double height, double width,
-    double lat, double lon, int zoomLevel) {
+Container generateMap(
+    // TODO: onTap
+    BMFMapController? con,
+    double height,
+    double width,
+    double lat,
+    double lon,
+    {int zoomLevel = 12,
+    bool isChinese = true,
+    bool zoomEnabled = true}) {
   myMapController = con;
   return Container(
     height: height,
@@ -103,16 +111,22 @@ Container generateMap(BMFMapController? con, double height, double width,
       borderRadius: BorderRadius.all(Radius.circular(15.0)),
       child: BMFMapWidget(
         onBMFMapCreated: onBMFMapCreated,
-        mapOptions: initMapOptions(lat, lon, zoomLevel),
+        mapOptions: initMapOptions(lat, lon, zoomLevel, isChinese, zoomEnabled),
       ),
     ),
   );
 }
 
-BMFMapOptions initMapOptions(double lat, double lon, int zoomLevel) {
+BMFMapOptions initMapOptions(
+    double lat, double lon, int zoomLevel, bool isChinese, bool zoomEnabled) {
   BMFMapOptions mapOptions = BMFMapOptions(
     center: BMFCoordinate(lat, lon),
     zoomLevel: zoomLevel,
+    // TODO: backgroundColor 地图暗黑模式适配
+    languageType:
+        (isChinese) ? BMFMapLanguageType.Chinese : BMFMapLanguageType.English,
+    zoomEnabled: zoomEnabled,
+    gesturesEnabled: zoomEnabled,
   );
   return mapOptions;
 }

@@ -27,13 +27,15 @@ class _homePageState extends State<homePage> {
     itemListWidget itemList = itemListWidget(type: "order", itemCount: 5);
     return Scaffold(
       appBar: AppBar(
-        title: Text(languageProvider.get("home")),
+        title: Text(languageProvider.get("home"),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
         actions: [
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () {
+              debugPrint("TODO: Search");
               final snackbar = SnackBar(
-                content: Text("fuck you!"),
+                content: Text("TODO: Search"),
                 action: SnackBarAction(
                   label: "OK",
                   onPressed: () => debugPrint("OK"),
@@ -46,7 +48,10 @@ class _homePageState extends State<homePage> {
       ),
       body: Column(
         children: [
-          generateMap(myMapController, 200, 350, 24.612261, 118.088745, 15),
+          generateMap(myMapController, 200, 350, 24.612261, 118.088745,
+              zoomLevel: 15,
+              isChinese: (languageProvider.currentLanguage == "zh-CN"),
+              zoomEnabled: false),
           SizedBox(
             height: 30.0,
           ),

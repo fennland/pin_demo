@@ -5,6 +5,7 @@ import 'package:pin_demo/src/strings/lang.dart';
 import 'src/mainPages/msgpage.dart';
 import 'src/mainPages/mypage.dart';
 import 'src/mainPages/home.dart';
+import 'src/login/login.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
@@ -55,13 +56,11 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
           useMaterial3: true,
         ),
+        darkTheme: ThemeData.dark(
+          useMaterial3: true,
+        ),
         home: const MyHomePage(),
         debugShowCheckedModeBanner: false,
-        // routes: {
-        //   '/home':(context) => MyHomePage(),
-        //   '/msg':(context) => msgPage(),
-        //   '/my':(context) => myPage(),
-        // }
       ),
     );
   }
@@ -77,7 +76,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
 
-  final bodyList = [homePage(), msgPage(), myPage()];
+  final bodyList = [loginPage(), msgPage(), myPage()];
 
   @override
   Widget build(BuildContext context) {
