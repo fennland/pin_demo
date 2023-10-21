@@ -51,17 +51,24 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider<LanguageProvider>(
       create: (context) => LanguageProvider(),
       child: MaterialApp(
-        title: '一起拼',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
-          useMaterial3: true,
-        ),
-        darkTheme: ThemeData.dark(
-          useMaterial3: true,
-        ),
-        home: const MyHomePage(),
-        debugShowCheckedModeBanner: false,
-      ),
+          title: '一起拼',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData.dark(
+            useMaterial3: true,
+          ),
+          // home: const MyHomePage(),
+          debugShowCheckedModeBanner: false,
+          routes: {
+            /**
+         * 命名导航路由，启动程序默认打开的是以'/'对应的界面LoginScreen()
+         * 凡是后面使用Navigator.of(context).pushNamed('/Home')，都会跳转到Home()，
+         */
+            '/': (BuildContext context) => new loginPage(),
+            '/Home': (BuildContext context) => new MyHomePage(),
+          }),
     );
   }
 }
@@ -76,13 +83,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
 
-  final bodyList = [loginPage(), msgPage(), myPage()];
+  final bodyList = [homePage(), msgPage(), myPage()];
 
   @override
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<LanguageProvider>(context);
+    // var currentPage = ["home", "msg", "my"];
     return Scaffold(
-      //appBar: AppBar(title: Text("首页")),
+      // appBar: AppBar(title: Text(languageProvider.get(currentPage[_currentIndex]))),
       body: IndexedStack(index: _currentIndex, children: bodyList),
       drawer: Drawer(),
       bottomNavigationBar: NavigationBar(

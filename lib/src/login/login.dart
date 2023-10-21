@@ -59,5 +59,8 @@ class _loginPageState extends State<loginPage> {
     );
   }
 
-  void onSubmitPressed() {}
+  void onSubmitPressed() {
+    debugPrint("TODO: login submit pressed");
+    Navigator.pushNamed(context, "/Home");
+  }
 }

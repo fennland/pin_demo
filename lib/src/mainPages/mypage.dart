@@ -20,6 +20,7 @@ class _myPageState extends State<myPage> {
     var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           languageProvider.get("my"),
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),

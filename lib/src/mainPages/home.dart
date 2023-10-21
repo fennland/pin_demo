@@ -29,6 +29,7 @@ class _homePageState extends State<homePage> {
       appBar: AppBar(
         title: Text(languageProvider.get("home"),
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: Icon(Icons.search),

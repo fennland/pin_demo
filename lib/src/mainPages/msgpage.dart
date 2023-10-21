@@ -17,6 +17,7 @@ class _msgPageState extends State<msgPage> {
     var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
       appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: Text(languageProvider.get("msg"),
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0))),
       body: Column(
