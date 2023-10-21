@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:flutter_bmflocation/flutter_bmflocation.dart';
@@ -90,59 +91,89 @@ class BaiduMapLocation {
   // }
 }
 
-Container generateMap(
-    // TODO: onTap
-    BMFMapController? con,
-    double height,
-    double width,
-    double lat,
-    double lon,
-    {int zoomLevel = 12,
-    bool isChinese = true,
-    bool zoomEnabled = true}) {
-  myMapController = con;
-  return Container(
-    height: height,
-    width: width,
-    decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(15)),
-        color: Colors.grey),
-    child: ClipRRect(
-      borderRadius: BorderRadius.all(Radius.circular(15.0)),
-      child: BMFMapWidget(
-        onBMFMapCreated: onBMFMapCreated,
-        mapOptions: initMapOptions(lat, lon, zoomLevel, isChinese, zoomEnabled),
+class MapWidget {
+  final void Function() onTap;
+
+  static const double _defaultWidth = 350.0;
+  static const double _defaultHeight = 200.0;
+  static const double _defaultLat = 24.612261;
+  static const double _defaultLon = 118.088745;
+
+  final double? width;
+  final double? height;
+  final double? lat;
+  final double? lon;
+  MapWidget(
+      {required this.onTap,
+      this.width = _defaultWidth,
+      @deprecated this.height = _defaultHeight,
+      this.lat = _defaultLat,
+      this.lon = _defaultLon});
+  Expanded generateMap(
+      // TODO: onTap
+      {BMFMapController? con,
+      double? width = _defaultWidth,
+      @deprecated double? height = _defaultHeight,
+      double borderRadius = 15.0,
+      double lat = _defaultLat,
+      double lon = _defaultLon,
+      int zoomLevel = 12,
+      bool isChinese = true,
+      bool zoomEnabled = true}) {
+    myMapController = con;
+    return Expanded(
+      flex: 2,
+      child: Center(
+        child: SizedBox(
+          // height: height,
+          width: width,
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+            child: InkWell(
+              onTap: this.onTap,
+              child: BMFMapWidget(
+                onBMFMapCreated: onBMFMapCreated,
+                hitTestBehavior: (zoomEnabled)
+                    ? PlatformViewHitTestBehavior.opaque
+                    : PlatformViewHitTestBehavior.transparent,
+                mapOptions:
+                    initMapOptions(lat, lon, zoomLevel, isChinese, zoomEnabled),
+              ),
+            ),
+          ),
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-BMFMapOptions initMapOptions(
-    double lat, double lon, int zoomLevel, bool isChinese, bool zoomEnabled) {
-  BMFMapOptions mapOptions = BMFMapOptions(
-    center: BMFCoordinate(lat, lon),
-    zoomLevel: zoomLevel,
-    // TODO: backgroundColor 地图暗黑模式适配
-    languageType:
-        (isChinese) ? BMFMapLanguageType.Chinese : BMFMapLanguageType.English,
-    zoomEnabled: zoomEnabled,
-    gesturesEnabled: zoomEnabled,
-  );
-  return mapOptions;
-}
+  BMFMapOptions initMapOptions(
+      double lat, double lon, int zoomLevel, bool isChinese, bool zoomEnabled) {
+    BMFMapOptions mapOptions = BMFMapOptions(
+      center: BMFCoordinate(lat, lon),
+      zoomLevel: zoomLevel,
+      // TODO: backgroundColor 地图暗黑模式适配
+      languageType:
+          (isChinese) ? BMFMapLanguageType.Chinese : BMFMapLanguageType.English,
+      zoomEnabled: zoomEnabled,
+      gesturesEnabled: zoomEnabled,
+    );
+    debugPrint(zoomEnabled.toString());
+    return mapOptions;
+  }
 
-void onBMFMapCreated(BMFMapController controller) async {
-  //myMapController = controller;
+  void onBMFMapCreated(BMFMapController controller) async {
+    //myMapController = controller;
 
-  // Map? map1 = await myMapController.getNativeMapCopyright();
-  // print('获取原生地图版权信息：$map1');
-  // Map? map2 = await myMapController.getNativeMapApprovalNumber();
-  // print('获取原生地图审图号：$map2');
-  // Map? map3 = await myMapController.getNativeMapQualification();
-  // print('获取原生地图测绘资质：$map3');
+    // Map? map1 = await myMapController.getNativeMapCopyright();
+    // print('获取原生地图版权信息：$map1');
+    // Map? map2 = await myMapController.getNativeMapApprovalNumber();
+    // print('获取原生地图审图号：$map2');
+    // Map? map3 = await myMapController.getNativeMapQualification();
+    // print('获取原生地图测绘资质：$map3');
 
-  /// 地图加载回调
-  controller.setMapDidLoadCallback(callback: () {
-    print('mapDidLoad-地图加载完成');
-  });
+    /// 地图加载回调
+    controller.setMapDidLoadCallback(callback: () {
+      print('mapDidLoad-地图加载完成');
+    });
+  }
 }

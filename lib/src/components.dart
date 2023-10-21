@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_demo/src/strings/lang.dart';
 import 'package:provider/provider.dart';
@@ -58,20 +59,24 @@ class _itemListWidget extends State<itemListWidget> {
   Widget build(BuildContext context) {
     var langProvider = Provider.of<LanguageProvider>(context);
     return Expanded(
+      flex: 5,
       child: ListView.separated(
         itemCount: widget.itemCount, // 总用户数量
         itemBuilder: (context, index) {
           return ListTile(
             leading: CircleAvatar(
-              backgroundImage: NetworkImage(
-                "https://picsum.photos/250?image=${index}",
+              child: ClipOval(
+                child: CachedNetworkImage(
+                  imageUrl: "https://picsum.photos/250?image=${index}",
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorListener: (value) {
+                    debugPrint("ERROR in CachedNetworkImage!");
+                    ErrorHint("ERROR in myPage's CachedNetworkImage!");
+                  },
+                  errorWidget: (context, url, error) =>
+                      Icon(Icons.error_outline_rounded),
+                ),
               ),
-              onBackgroundImageError: (exception, stackTrace) {
-                final snackBar =
-                    SnackBar(content: Text('bad connection for avatars'));
-                // 从组件树种找到ScaffoldMessager，并用它去show一个snackBar
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              },
             ),
             title: Text(langProvider
                 .get("${widget.type}${index}")), // 多语言支持 *experimental

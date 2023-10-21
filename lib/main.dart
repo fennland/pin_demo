@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:pin_demo/src/orderPages/newOrder.dart';
 import 'package:pin_demo/src/strings/lang.dart';
 import 'src/mainPages/msgpage.dart';
 import 'src/mainPages/mypage.dart';
 import 'src/mainPages/home.dart';
 import 'src/login/login.dart';
 import 'dart:io' show Platform;
-import 'package:flutter/material.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:flutter_bmflocation/flutter_bmflocation.dart';
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart'
@@ -61,13 +61,19 @@ class MyApp extends StatelessWidget {
           ),
           // home: const MyHomePage(),
           debugShowCheckedModeBanner: false,
+          // supportedLocales: const [
+          //   // TODO: Localization 类替换多语言方案
+          //   Locale('zh'),
+          //   Locale('en'),
+          // ],
           routes: {
             /**
          * 命名导航路由，启动程序默认打开的是以'/'对应的界面LoginScreen()
          * 凡是后面使用Navigator.of(context).pushNamed('/Home')，都会跳转到Home()，
          */
             '/': (BuildContext context) => new loginPage(),
-            '/Home': (BuildContext context) => new MyHomePage(),
+            '/home': (BuildContext context) => new MyHomePage(),
+            '/order/new': (BuildContext context) => new newOrderPage(),
           }),
     );
   }
@@ -88,46 +94,38 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<LanguageProvider>(context);
-    // var currentPage = ["home", "msg", "my"];
-    return Scaffold(
-      // appBar: AppBar(title: Text(languageProvider.get(currentPage[_currentIndex]))),
-      body: IndexedStack(index: _currentIndex, children: bodyList),
-      drawer: Drawer(),
-      bottomNavigationBar: NavigationBar(
-        destinations: [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: languageProvider.get("home"),
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.messenger_outline_outlined),
-            selectedIcon: Icon(Icons.messenger),
-            label: languageProvider.get("msg"),
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outlined),
-            selectedIcon: Icon(Icons.person),
-            label: languageProvider.get("my"),
-          ),
-        ],
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (int index) {
-          setState(() {
-            _currentIndex = index;
-          });
-          // switch(_currentIndex){
-          //   case 0:
-          //     // Navigator.of(context).pushNamed('/home',arguments: _currentIndex);
-          //     break;
-          //   case 1:
-          //     Navigator.of(context).pushNamed('/msg',arguments: _currentIndex);
-          //     break;
-          //   case 2:
-          //     Navigator.of(context).pushNamed('/my',arguments: _currentIndex);
-          //     break;
-          // }
-        },
+    return WillPopScope(
+      onWillPop: () async {
+        return false; // 禁止侧滑返回
+      },
+      child: Scaffold(
+        // appBar: AppBar(title: Text(languageProvider.get(currentPage[_currentIndex]))),
+        body: IndexedStack(index: _currentIndex, children: bodyList),
+        bottomNavigationBar: NavigationBar(
+          destinations: [
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home),
+              label: languageProvider.get("home"),
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.messenger_outline_outlined),
+              selectedIcon: Icon(Icons.messenger),
+              label: languageProvider.get("msg"),
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.person_outlined),
+              selectedIcon: Icon(Icons.person),
+              label: languageProvider.get("my"),
+            ),
+          ],
+          selectedIndex: _currentIndex,
+          onDestinationSelected: (int index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+        ),
       ),
     );
   }

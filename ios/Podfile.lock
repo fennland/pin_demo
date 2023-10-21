@@ -33,8 +33,17 @@ PODS:
   - flutter_bmflocation (3.5.0):
     - BMKLocationKit (~> 2.0.9)
     - Flutter
+  - FMDB (2.7.5):
+    - FMDB/standard (= 2.7.5)
+  - FMDB/standard (2.7.5)
   - geolocator_apple (1.2.0):
     - Flutter
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - sqflite (0.0.3):
+    - Flutter
+    - FMDB (>= 2.7.5)
 
 DEPENDENCIES:
   - BaiduMapKit (= 6.5.5)
@@ -47,11 +56,14 @@ DEPENDENCIES:
   - flutter_baidu_mapapi_utils (from `.symlinks/plugins/flutter_baidu_mapapi_utils/ios`)
   - flutter_bmflocation (from `.symlinks/plugins/flutter_bmflocation/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - sqflite (from `.symlinks/plugins/sqflite/ios`)
 
 SPEC REPOS:
   trunk:
     - BaiduMapKit
     - BMKLocationKit
+    - FMDB
 
 EXTERNAL SOURCES:
   device_info_plus:
@@ -70,6 +82,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_bmflocation/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  sqflite:
+    :path: ".symlinks/plugins/sqflite/ios"
 
 SPEC CHECKSUMS:
   BaiduMapKit: 3b79c1d77521fddfebfd62a5ab4663740bee5784
@@ -81,7 +97,10 @@ SPEC CHECKSUMS:
   flutter_baidu_mapapi_search: 2f693a0f8e9f44f2aeda26236977694c736642c3
   flutter_baidu_mapapi_utils: 3eb2fa8aa291930df880f1503ac4f4a628c228d3
   flutter_bmflocation: 7ab7efb92d79715fd3c3217075ad97ad18a748b1
+  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
+  path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
+  sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a
 
 PODFILE CHECKSUM: 254b5d2880d189d48ba01942680e9d5376171e05
 

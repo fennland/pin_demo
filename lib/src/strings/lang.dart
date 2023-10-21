@@ -1,18 +1,17 @@
 import 'package:flutter/foundation.dart';
 
-String lang = "zh-CN";
-
 class LanguageProvider with ChangeNotifier {
-  String _currentLanguage = 'zh-CN';
+  String _currentLanguage = 'zh';
 
   Map<String, dynamic> _languages = {
-    'zh-CN': {
+    'zh': {
       "login": "登录",
       "curUser": "陈鹏",
       "curUserInfo": "Lv.1 PIN 会员",
       "home": "首页",
       "msg": "消息",
       "my": "我的",
+      "newOrder": "发起新需求",
       "privacy": "隐私政策",
       "help": "帮助中心",
       "setting": "设置",
@@ -42,7 +41,7 @@ class LanguageProvider with ChangeNotifier {
       "ok": "好",
       "cancel": "取消",
     },
-    'en-US': {
+    'en': {
       "login": "Log in",
       "curUser": "Fenn Xiao",
       "curUserInfo": "Lv.1 PinVIP",
@@ -90,10 +89,10 @@ class LanguageProvider with ChangeNotifier {
 
   // 切换语言
   void switchLanguage(String languageCode) {
-    if (_currentLanguage == "zh-CN")
-      _currentLanguage = "en-US";
+    if (_currentLanguage == "zh")
+      _currentLanguage = "en";
     else
-      _currentLanguage = "zh-CN";
+      _currentLanguage = "zh";
     notifyListeners();
   }
 }
