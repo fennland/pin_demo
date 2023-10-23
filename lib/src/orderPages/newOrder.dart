@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'package:flutter/material.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:pin_demo/src/map/map.dart';
@@ -36,7 +38,7 @@ class _newOrderPageState extends State<newOrderPage> {
               borderRadius: screenSize.width / 20,
               zoomLevel: 15,
               isChinese: (languageProvider.currentLanguage == "zh-CN")),
-          SizedBox(
+          const SizedBox(
             height: 30.0,
           ),
           Expanded(
@@ -50,7 +52,7 @@ class _newOrderPageState extends State<newOrderPage> {
                     children: [
                       Text(
                         languageProvider.get("newOrder"),
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 22.0),
                       )
                     ],

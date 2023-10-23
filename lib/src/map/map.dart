@@ -1,10 +1,14 @@
+// ignore_for_file: unused_import
+
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:flutter_bmflocation/flutter_bmflocation.dart';
+import 'package:pin_demo/src/strings/lang.dart';
 // import 'package:flutter_bmflocation/bdmap_location_flutter_plugin.dart';
 
 BMFMapController? myMapController;
@@ -103,12 +107,14 @@ class MapWidget {
   final double? height;
   final double? lat;
   final double? lon;
+  final bool? isWeb;
   MapWidget(
       {required this.onTap,
       this.width = _defaultWidth,
       @deprecated this.height = _defaultHeight,
       this.lat = _defaultLat,
-      this.lon = _defaultLon});
+      this.lon = _defaultLon,
+      this.isWeb = false});
   Expanded generateMap(
       // TODO: onTap
       {BMFMapController? con,
@@ -121,29 +127,37 @@ class MapWidget {
       bool isChinese = true,
       bool zoomEnabled = true}) {
     myMapController = con;
-    return Expanded(
-      flex: 2,
-      child: Center(
-        child: SizedBox(
-          // height: height,
-          width: width,
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-            child: InkWell(
-              onTap: this.onTap,
-              child: BMFMapWidget(
-                onBMFMapCreated: onBMFMapCreated,
-                hitTestBehavior: (zoomEnabled)
-                    ? PlatformViewHitTestBehavior.opaque
-                    : PlatformViewHitTestBehavior.transparent,
-                mapOptions:
-                    initMapOptions(lat, lon, zoomLevel, isChinese, zoomEnabled),
+    if (isWeb == false) {
+      return Expanded(
+        flex: 2,
+        child: Center(
+          child: SizedBox(
+            // height: height,
+            width: width,
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+              child: InkWell(
+                onTap: onTap,
+                child: !kIsWeb
+                    ? BMFMapWidget(
+                        onBMFMapCreated: onBMFMapCreated,
+                        hitTestBehavior: (zoomEnabled)
+                            ? PlatformViewHitTestBehavior.opaque
+                            : PlatformViewHitTestBehavior.transparent,
+                        mapOptions: initMapOptions(
+                            lat, lon, zoomLevel, isChinese, zoomEnabled),
+                      )
+                    : const Card(
+                        child: Icon(Icons.error),
+                      ),
               ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    } else {
+      return const Expanded(child: Icon(Icons.error));
+    }
   }
 
   BMFMapOptions initMapOptions(
@@ -173,7 +187,7 @@ class MapWidget {
 
     /// 地图加载回调
     controller.setMapDidLoadCallback(callback: () {
-      print('mapDidLoad-地图加载完成');
+      debugPrint('mapDidLoad-地图加载完成');
     });
   }
 }

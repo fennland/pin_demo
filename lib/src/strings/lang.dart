@@ -3,9 +3,10 @@ import 'package:flutter/foundation.dart';
 class LanguageProvider with ChangeNotifier {
   String _currentLanguage = 'zh';
 
-  Map<String, dynamic> _languages = {
+  final Map<String, dynamic> _languages = {
     'zh': {
       "login": "登录",
+      "webconfirm": "您正在使用网页版，部分功能将会受限！",
       "curUser": "陈鹏",
       "curUserInfo": "Lv.1 PIN 会员",
       "home": "首页",
@@ -40,9 +41,14 @@ class LanguageProvider with ChangeNotifier {
       "service2_sub": "我们正在更新服务条款与隐私政策。\n请点击访问更多信息",
       "ok": "好",
       "cancel": "取消",
+      "remCache": "清除缓存",
+      "removingCache": "清除中",
+      "remFailed": "清除失败：请检查存储权限后再试"
     },
     'en': {
-      "login": "Log in",
+      "login": "Sign in",
+      "webconfirm":
+          "You are currently using WebApp, some functions will be restricted.",
       "curUser": "Fenn Xiao",
       "curUserInfo": "Lv.1 PinVIP",
       "home": "Home",
@@ -77,6 +83,9 @@ class LanguageProvider with ChangeNotifier {
           "We are updating our service conditions.\nPlease click for more infomation",
       "ok": "OK ",
       "cancel": "Cancel",
+      "remCache": "Clean",
+      "removingCache": "Cleaning...",
+      "remFailed": "Failed: Please check permission."
     },
   };
 
@@ -89,10 +98,11 @@ class LanguageProvider with ChangeNotifier {
 
   // 切换语言
   void switchLanguage(String languageCode) {
-    if (_currentLanguage == "zh")
+    if (_currentLanguage == "zh") {
       _currentLanguage = "en";
-    else
+    } else {
       _currentLanguage = "zh";
+    }
     notifyListeners();
   }
 }

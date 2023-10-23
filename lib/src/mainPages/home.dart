@@ -1,6 +1,7 @@
 // import 'dart:html';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:pin_demo/src/map/map.dart';
 import '../strings/lang.dart';
@@ -15,6 +16,10 @@ class homePage extends StatefulWidget {
 }
 
 class _homePageState extends State<homePage> {
+  void initState() {
+    super.initState();
+  }
+
   BMFMapController? myMapController;
   @override
   Widget build(BuildContext context) {
@@ -22,21 +27,22 @@ class _homePageState extends State<homePage> {
     var mapWidget = MapWidget(
       onTap: () => Navigator.pushNamed(context, "/order/new"),
     );
-    itemListWidget itemList = itemListWidget(type: "order", itemCount: 5);
+    itemListWidget itemList = const itemListWidget(type: "order", itemCount: 5);
     var screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(languageProvider.get("home"),
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
+            style:
+                const TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
         automaticallyImplyLeading: false, // 登录后，不自动生成返回
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
             onPressed: () {
               debugPrint("TODO: Search");
               final snackbar = SnackBar(
-                content: Text("TODO: Search"),
+                content: const Text("TODO: Search"),
                 action: SnackBarAction(
                   label: "OK",
                   onPressed: () => debugPrint("OK"),
@@ -49,13 +55,24 @@ class _homePageState extends State<homePage> {
       ),
       body: Column(
         children: [
-          mapWidget.generateMap(
-              con: myMapController,
-              width: screenSize.width * 0.95,
-              zoomLevel: 15,
-              isChinese: (languageProvider.currentLanguage == "zh-CN"),
-              zoomEnabled: false),
-          SizedBox(
+          !(kIsWeb)
+              ? mapWidget.generateMap(
+                  con: myMapController,
+                  width: screenSize.width * 0.95,
+                  zoomLevel: 15,
+                  isChinese: (languageProvider.currentLanguage == "zh-CN"),
+                  zoomEnabled: false)
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error),
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                    Text(languageProvider.get("webconfirm"))
+                  ],
+                ),
+          const SizedBox(
             height: 30.0,
           ),
           itemList,

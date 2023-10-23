@@ -1,13 +1,40 @@
+// ignore_for_file: unused_import, camel_case_types
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_demo/src/strings/lang.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
+class isCardVisibleNotifier extends ChangeNotifier {
+  //这里也可以使用with来进行实现
+  bool _isVisible = true;
+
+  bool get isVisible => _isVisible;
+
+  setVisibility() {
+    _isVisible = !_isVisible;
+    notifyListeners();
+  }
+}
+
 class DisappearingCard extends StatefulWidget {
   final Widget cardContext;
-
-  const DisappearingCard({required this.cardContext});
+  final Widget? buttonRight;
+  final Function()? btnRightBehaviour;
+  final Widget? buttonLeft;
+  final Function()? btnLeftBehaviour;
+  final bool? automaticallyDisappear;
+  final bool? defaultBtns;
+  const DisappearingCard(
+      {super.key,
+      required this.cardContext,
+      this.buttonRight,
+      this.btnRightBehaviour,
+      this.buttonLeft,
+      this.btnLeftBehaviour,
+      this.automaticallyDisappear = true,
+      this.defaultBtns = true});
 
   @override
   _DisappearingCardState createState() => _DisappearingCardState();
@@ -24,6 +51,7 @@ class _DisappearingCardState extends State<DisappearingCard> {
 
   @override
   Widget build(BuildContext context) {
+    var languageProvider = Provider.of<LanguageProvider>(context);
     return _isVisible
         ? GestureDetector(
             onTap: _hideCard,
@@ -32,20 +60,60 @@ class _DisappearingCardState extends State<DisappearingCard> {
               child: InkWell(
                 splashColor: Colors.blue.withAlpha(30),
                 onTap: () {
-                  debugPrint('Card #2 tapped.');
                   _hideCard();
                 },
-                child: widget.cardContext,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    widget.cardContext,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        (widget.buttonLeft == null)
+                            ? ((widget.defaultBtns == true)
+                                ? TextButton(
+                                    child: Text(languageProvider.get("cancel")),
+                                    onPressed: () {
+                                      (widget.btnLeftBehaviour != null)
+                                          ? widget.btnLeftBehaviour!()
+                                          : () {};
+                                      (widget.automaticallyDisappear == true)
+                                          ? _hideCard()
+                                          : () {};
+                                    },
+                                  )
+                                : Container())
+                            : widget.buttonLeft!,
+                        (widget.buttonRight == null)
+                            ? ((widget.defaultBtns == true)
+                                ? TextButton(
+                                    child: Text(languageProvider.get("ok")),
+                                    onPressed: () {
+                                      (widget.btnRightBehaviour != null)
+                                          ? widget.btnRightBehaviour!()
+                                          : () {};
+                                      (widget.automaticallyDisappear == true)
+                                          ? _hideCard()
+                                          : () {};
+                                    },
+                                  )
+                                : Container())
+                            : widget.buttonRight!,
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ))
-        : SizedBox(); // 当 isVisible 为 false 时返回一个空的 SizedBox
+        : const SizedBox(); // 当 isVisible 为 false 时返回一个空的 SizedBox
   }
 }
 
 class itemListWidget extends StatefulWidget {
   final String type;
   final int itemCount;
-  const itemListWidget({Key? key, required this.type, required this.itemCount});
+  const itemListWidget(
+      {super.key, required this.type, required this.itemCount});
   @override
   _itemListWidget createState() => _itemListWidget();
 }
@@ -68,13 +136,14 @@ class _itemListWidget extends State<itemListWidget> {
               child: ClipOval(
                 child: CachedNetworkImage(
                   imageUrl: "https://picsum.photos/250?image=${index}",
-                  placeholder: (context, url) => CircularProgressIndicator(),
+                  placeholder: (context, url) =>
+                      const CircularProgressIndicator(),
                   errorListener: (value) {
                     debugPrint("ERROR in CachedNetworkImage!");
                     ErrorHint("ERROR in myPage's CachedNetworkImage!");
                   },
                   errorWidget: (context, url, error) =>
-                      Icon(Icons.error_outline_rounded),
+                      const Icon(Icons.error_outline_rounded),
                 ),
               ),
             ),
@@ -82,10 +151,7 @@ class _itemListWidget extends State<itemListWidget> {
                 .get("${widget.type}${index}")), // 多语言支持 *experimental
             subtitle: Text(langProvider.get("${widget.type}${index}_sub")),
             onTap: () {
-              print("yuh~"); // TODO: 我的页面二级跳转
-              final snackBar = SnackBar(content: Text('yuh'));
-              // 从组件树种找到ScaffoldMessager，并用它去show一个snackBar
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              Navigator.pushNamed(context, "/msg/conversations");
             },
           );
         },
@@ -99,55 +165,6 @@ class _itemListWidget extends State<itemListWidget> {
           );
         },
       ),
-    );
-  }
-}
-
-class serviceCard extends StatefulWidget {
-  final Widget? leading;
-  final Widget? title;
-  final Widget? subtitle;
-  // final Widget? trailing;
-  final List<Widget>? textbutton;
-  const serviceCard(
-      {Key? key,
-      required this.leading,
-      required this.title,
-      required this.subtitle,
-      this.textbutton});
-  @override
-  _serviceCard createState() => _serviceCard();
-}
-
-class _serviceCard extends State<serviceCard> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Widget build(BuildContext context) {
-    if (widget.textbutton != null) {
-      return DisappearingCard(
-        cardContext: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          ListTile(
-            leading: widget.leading,
-            title: widget.title,
-            subtitle: widget.subtitle,
-          ),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: widget.textbutton!)
-        ]),
-      );
-    }
-    return DisappearingCard(
-      cardContext: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-        ListTile(
-          leading: widget.leading,
-          title: widget.title,
-          subtitle: widget.subtitle,
-        ),
-      ]),
     );
   }
 }

@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.example.pin_demo"
+    namespace "me.fennland.pinDemo"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -42,11 +42,11 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.pin_demo"
+        applicationId "me.fennland.pinDemo"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
+        minSdkVersion 24  // baiduMapSDK 要求更高版本
+        targetSdkVersion 31  // baiduMapSDK 要求更高版本
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

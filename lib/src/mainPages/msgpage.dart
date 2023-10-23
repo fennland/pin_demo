@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'package:flutter/material.dart';
 import 'package:pin_demo/main.dart';
 import '../components.dart';
@@ -15,37 +17,45 @@ class _msgPageState extends State<msgPage> {
   @override
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<LanguageProvider>(context);
+
+    // serviceCard
+    var serviceCard1 = DisappearingCard(
+      automaticallyDisappear: true,
+      defaultBtns: true,
+      cardContext: ListTile(
+        leading: const Icon(Icons.handyman),
+        title: Text(languageProvider.get("service0")),
+        subtitle: Text(languageProvider.get("service0_sub")),
+      ),
+    );
+    var serviceCard2 = DisappearingCard(
+      automaticallyDisappear: true,
+      defaultBtns: false,
+      cardContext: ListTile(
+        leading: const Icon(Icons.handyman),
+        title: Text(languageProvider.get("service1")),
+        subtitle: Text(languageProvider.get("service1_sub")),
+      ),
+      buttonLeft: TextButton(
+        child: const Text("testOK"),
+        onPressed: () => debugPrint("it's a test"),
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Text(languageProvider.get("msg"),
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0))),
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 18.0))),
       body: Column(
         children: [
-          serviceCard(
-              leading: Icon(Icons.handyman),
-              title: Text(languageProvider.get("service0")),
-              subtitle: Text(languageProvider.get("service0_sub")),
-              textbutton: [
-                TextButton(
-                    child: Text(languageProvider.get("cancel")),
-                    onPressed: () => debugPrint("todo: service cancel")),
-                TextButton(
-                    child: Text(languageProvider.get("ok")),
-                    onPressed: () => debugPrint("todo: service ok")),
-              ]),
-          serviceCard(
-            leading: Icon(Icons.handyman),
-            title: Text(languageProvider.get("service1")),
-            subtitle: Text(languageProvider.get("service1_sub")),
-          ),
-          SizedBox(
-            height: 30.0,
-          ),
-          itemListWidget(type: "user", itemCount: 3),
+          serviceCard1,
+          serviceCard2,
+          const itemListWidget(type: "user", itemCount: 3),
         ],
       ),
-      drawer: Drawer(),
+      drawer: const Drawer(),
       // endDrawer: Drawer(),
     );
   }

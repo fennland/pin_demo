@@ -1,11 +1,17 @@
+// ignore_for_file: unused_import
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:pin_demo/main.dart';
 import '../strings/lang.dart';
 import '../components.dart';
 import 'package:provider/provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import '../utils.dart';
 
 class myPage extends StatefulWidget {
   static var body;
@@ -17,9 +23,34 @@ class myPage extends StatefulWidget {
 }
 
 class _myPageState extends State<myPage> {
+  dynamic cache = 0.0;
+  void initState() {
+    if (!kIsWeb) getSize();
+    super.initState();
+  }
+
+  getSize() async {
+    final _tempDir = await getTemporaryDirectory();
+    dynamic _cache = await getTotalSizeOfFilesInDir(_tempDir);
+    setState(() {
+      cache = _cache;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<LanguageProvider>(context);
+
+    // serviceDisappearingCard
+    var service_dcard = DisappearingCard(
+      cardContext: ListTile(
+        leading: const Icon(Icons.handyman),
+        title: Text(languageProvider.get("service2")),
+        subtitle: Text(languageProvider.get("service2_sub")),
+      ),
+    );
+
+    // Scaffold
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -51,7 +82,7 @@ class _myPageState extends State<myPage> {
                             child: CachedNetworkImage(
                               imageUrl: "https://picsum.photos/250?image=9",
                               placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
+                                  const CircularProgressIndicator(),
                               errorListener: (value) {
                                 debugPrint(
                                     "ERROR in myPage's CachedNetworkImage!");
@@ -59,33 +90,31 @@ class _myPageState extends State<myPage> {
                                     "ERROR in myPage's CachedNetworkImage!");
                               },
                               errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
+                                  const Icon(Icons.error),
                             ),
                           ),
                         ),
                       ),
                       title: Text(languageProvider.get("curUser")),
-                      subtitle: Container(
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 8.0),
-                            LinearPercentIndicator(
-                              alignment: MainAxisAlignment.start,
-                              padding: const EdgeInsets.all(0.0),
-                              width: 100.0,
-                              lineHeight: 14.0,
-                              percent: 0.15,
-                              center: Text(
-                                languageProvider.get("curUserInfo"),
-                                style: const TextStyle(
-                                    fontSize: 10.0, color: Colors.white),
-                              ),
-                              barRadius: const Radius.circular(20.0),
-                              backgroundColor: Theme.of(context).disabledColor,
-                              progressColor: Colors.blueAccent,
+                      subtitle: Column(
+                        children: [
+                          const SizedBox(height: 8.0),
+                          LinearPercentIndicator(
+                            alignment: MainAxisAlignment.start,
+                            padding: const EdgeInsets.all(0.0),
+                            width: 100.0,
+                            lineHeight: 14.0,
+                            percent: 0.15,
+                            center: Text(
+                              languageProvider.get("curUserInfo"),
+                              style: const TextStyle(
+                                  fontSize: 10.0, color: Colors.white),
                             ),
-                          ],
-                        ),
+                            barRadius: const Radius.circular(20.0),
+                            backgroundColor: Theme.of(context).disabledColor,
+                            progressColor: Colors.blueAccent,
+                          ),
+                        ],
                       ),
                       trailing: IconButton(
                         icon: const Icon(Icons.chevron_right),
@@ -108,7 +137,7 @@ class _myPageState extends State<myPage> {
                   title: Text(
                       languageProvider.get("privacy")), // 多语言支持 *experimental
                   onTap: () {
-                    print("yuh~"); // TODO: 我的页面二级跳转
+                    debugPrint("yuh~"); // TODO: 我的页面二级跳转
                   },
                 ),
                 ListTile(
@@ -123,10 +152,27 @@ class _myPageState extends State<myPage> {
                   leading: const Icon(Icons.settings),
                   title: Text(
                       languageProvider.get("setting")), // 多语言支持 *experimental
+                  trailing: !kIsWeb
+                      ? TextButton(
+                          child: Text(renderSize(cache)),
+                          onPressed: () async {
+                            Fluttertoast.showToast(
+                                msg: languageProvider.get("removingCache"));
+                            try {
+                              DefaultCacheManager mgr = DefaultCacheManager();
+                              // mgr.emptyCache(); //clears all data in cache.
+                              final _tempDir = await getTemporaryDirectory();
+                              await requestPermission(_tempDir);
+                              getSize();
+                            } catch (err) {
+                              Fluttertoast.showToast(
+                                  msg: languageProvider.get("remFailed"));
+                            }
+                          },
+                        )
+                      : const Icon(Icons.chevron_right),
                   onTap: () {
-                    DefaultCacheManager mgr = new DefaultCacheManager();
-                    mgr.emptyCache(); //clears all data in cache.
-                    print("TODO: Setting"); // TODO: 我的页面二级跳转
+                    debugPrint("TODO: Setting"); // TODO: 我的页面二级跳转
                   },
                 ),
                 ListTile(
@@ -136,41 +182,16 @@ class _myPageState extends State<myPage> {
                   onTap: () {
                     setState(() {
                       languageProvider.switchLanguage("en-US");
-                      print(languageProvider.currentLanguage);
+                      debugPrint(languageProvider.currentLanguage);
                     });
                   },
                 ),
               ],
             ),
           ),
-          DisappearingCard(
-            cardContext:
-                Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-              ListTile(
-                leading: const Icon(Icons.handyman),
-                title: Text(languageProvider.get("service2")),
-                subtitle: Text(languageProvider.get("service2_sub")),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  TextButton(
-                    child: const Text("yuh"),
-                    onPressed: () => print("yuh"),
-                  ),
-                  const SizedBox(width: 8),
-                  TextButton(
-                    child: const Text("huh"),
-                    onPressed: () => print("huh"),
-                  ),
-                ],
-              )
-            ]),
-          ),
+          service_dcard
         ],
       ),
-      // drawer: Drawer(),
-      // endDrawer: Drawer(),
     );
   }
 }
