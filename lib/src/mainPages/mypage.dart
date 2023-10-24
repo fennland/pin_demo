@@ -157,7 +157,7 @@ class _myPageState extends State<myPage> {
                   leading: const Icon(Icons.settings),
                   title: Text(
                       languageProvider.get("setting")), // 多语言支持 *experimental
-                  trailing: !(kIsWeb || Platform.isMacOS)
+                  trailing: !(kIsWeb || Platform.isMacOS || Platform.isWindows || Platform.isLinux)
                       ? TextButton(
                           child: Text(renderSize(cache)),
                           onPressed: () async {

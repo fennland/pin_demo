@@ -9,7 +9,7 @@ import 'package:pin_demo/src/login/platformAlert.dart';
 import 'package:pin_demo/src/msgPages/conversations.dart';
 import 'package:pin_demo/src/orderPages/newOrder.dart';
 import 'package:pin_demo/src/strings/lang.dart';
-import 'package:pin_demo/src/utils.dart';
+// import 'package:pin_demo/src/utils.dart';
 import 'package:window_manager/window_manager.dart';
 import 'src/mainPages/msgpage.dart';
 import 'src/mainPages/mypage.dart';
@@ -17,7 +17,7 @@ import 'src/mainPages/home.dart';
 import 'src/login/login.dart';
 import 'dart:io' show Platform;
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
-import 'package:flutter_bmflocation/flutter_bmflocation.dart';
+// import 'package:flutter_bmflocation/flutter_bmflocation.dart';
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart'
     show BMFMapSDK, BMF_COORD_TYPE;
 import 'package:provider/provider.dart';
@@ -30,24 +30,22 @@ Future<void> main() async {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown
     ]);
-    if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-      await windowManager.ensureInitialized();
-      WindowUtil.setWindowFunctions(isMacOS: Platform.isMacOS);
-    }
-    runApp(const MyApp());
+    // if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+    //   await windowManager.ensureInitialized();
+    //   WindowUtil.setWindowFunctions(isMacOS: Platform.isMacOS);
+    // }
+    
   }
-
+  runApp(const MyApp()); 
   // 百度地图sdk初始化鉴权
-  if (!kIsWeb && !Platform.isMacOS) {
-    LocationFlutterPlugin myLocPlugin = LocationFlutterPlugin();
+  if (!kIsWeb && !Platform.isMacOS && !Platform.isWindows && !Platform.isLinux) {
+    // LocationFlutterPlugin myLocPlugin = LocationFlutterPlugin();
     BMFMapSDK.setAgreePrivacy(true);
-    myLocPlugin.setAgreePrivacy(true);
+    // myLocPlugin.setAgreePrivacy(true);
     if (Platform.isIOS) {
-      if (!Platform.isMacOS) {
-        myLocPlugin.authAK('bet57swQG0pxa7esLl9a12Vkmc7GtcAi');
+        // myLocPlugin.authAK('bet57swQG0pxa7esLl9a12Vkmc7GtcAi');
         BMFMapSDK.setApiKeyAndCoordType(
             'bet57swQG0pxa7esLl9a12Vkmc7GtcAi', BMF_COORD_TYPE.BD09LL);
-      }
     } else if (Platform.isAndroid) {
       /// 初始化获取Android 系统版本号，如果低于10使用TextureMapView 等于大于10使用Mapview
       await BMFAndroidVersion.initAndroidVersion();
@@ -114,21 +112,21 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with WindowListener {
   int _currentIndex = 0;
   final bodyList = [const homePage(), const msgPage(), const myPage()];
-  @override
-  void initState() {
-    if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-      windowManager.addListener(this);
-    }
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+  //     windowManager.addListener(this);
+  //   }
+  //   super.initState();
+  // }
 
-  @override
-  void dispose() {
-    if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-      windowManager.removeListener(this);
-    }
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+  //     windowManager.removeListener(this);
+  //   }
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {

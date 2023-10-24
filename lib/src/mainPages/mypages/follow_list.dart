@@ -30,7 +30,7 @@ class _follow_listState extends State<follow_list> {
 
   void changeImage() async {
     // 弹出本地图库，并返回选择的文件
-    final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         // 更新图片文件
