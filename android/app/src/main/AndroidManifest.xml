@@ -1,6 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 将以下所有 uses-feature 和 uses-permission 元素移到 <manifest> 标签下面 -->
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
-        android:label="pin_demo"
+        android:label="一起拼"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -11,31 +20,16 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
-            <!-- Specifies an Android theme to apply to this Activity as soon as
-                 the Android process has started. This theme is visible to the user
-                 while the Flutter UI initializes. After that, this theme continues
-                 to determine the Window background behind the Flutter UI. -->
-            <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
+
+            <!-- 将这条 <meta-data> 元素移到下面 -->
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
-<uses-feature
-    android:name="android.hardware.telephony"
-    android:required="false" />
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-<!-- 获取网络状态，根据网络状态切换进行数据请求网络转换 -->
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-<!-- 写外置存储。如果开发者使用了离线地图，并且数据写在外置存储区域，则需要申请该权限 -->
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<!-- 读取外置存储。如果开发者使用了so动态加载功能并且把so文件放在了外置存储区域，则需要申请该权限，否则不需要 -->
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-<!-- 访问网络，进行地图相关业务数据请求，包括地图数据，路线规划，POI检索等 -->
-<uses-permission android:name="android.permission.INTERNET" />
+
+            <!-- 将以下所有元素移到 <manifest> 标签下面 -->
+
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
