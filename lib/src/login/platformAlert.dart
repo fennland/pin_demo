@@ -46,37 +46,41 @@ class _platformAlertState extends State<platformAlert> {
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
-      body: FutureBuilder<bool>(
-          future: Future.value((kIsWeb || Platform.isMacOS)),
-          builder: (context, snapshot) {
-            if (snapshot.hasData && snapshot.data != null) {
-              if (snapshot.data == true) {
-                return AlertDialog(
-                  title: const Icon(Icons.warning),
-                  content:
-                      Text(languageProvider.get("unsupportedPlatformConfirm")),
-                  actions: [
-                    TextButton(
-                      child: Text(languageProvider.get("cancel")),
-                      onPressed: () {
-                        SystemNavigator.pop();
-                      },
-                    ),
-                    TextButton(
-                      child: Text(languageProvider.get("ok")),
-                      onPressed: () {
-                        Navigator.of(context).pushNamed("/login");
-                      },
-                    ),
-                  ],
-                );
+        body: FutureBuilder<bool>(
+            future: Future.value((kIsWeb || Platform.isMacOS)),
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.data != null) {
+                if (snapshot.data == true) {
+                  return AlertDialog(
+                    title: const Icon(Icons.warning),
+                    content: Text(
+                        languageProvider.get("unsupportedPlatformConfirm")),
+                    actions: [
+                      TextButton(
+                        child: Text(languageProvider.get("cancel")),
+                        onPressed: () {
+                          SystemNavigator.pop();
+                        },
+                      ),
+                      TextButton(
+                        child: Text(languageProvider.get("ok")),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed("/login");
+                        },
+                      ),
+                    ],
+                  );
+                } else {
+                  return const loginPage();
+                }
               } else {
                 return const loginPage();
               }
-            } else {
-              return const loginPage();
-            }
-          }),
-    );
+            }),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.language),
+          onPressed: () => languageProvider.switchLanguage(),
+          heroTag: "alert",
+        ));
   }
 }

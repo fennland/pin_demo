@@ -6,6 +6,9 @@ class LanguageProvider with ChangeNotifier {
   final Map<String, dynamic> _languages = {
     'zh': {
       "login": "登录",
+      "onekeyLogin": "一键登录",
+      "usernameLogin": "用户名/手机号",
+      "pwdLogin": "密码",
       "unsupportedPlatformConfirm": "您正在使用网页版或桌面版，部分功能将会受限！",
       "curUser": "陈鹏",
       "curUserInfo": "Lv.1 PIN 会员",
@@ -22,9 +25,9 @@ class LanguageProvider with ChangeNotifier {
       "user1": "小美",
       "user1_sub": "沸羊羊傻逼",
       "user2": "三里屯火锅",
-      "user2_sub": "有没有人今晚出来草比？陈乐洋妈妈今晚出来草比男人我已经找好了",
-      "order0": "今晚出来草比",
-      "order0_sub": "10/22 22:00，炮房",
+      "user2_sub": "有没有人今晚出来？陈乐洋妈妈今晚出来男人我已经找好了",
+      "order0": "今晚出来",
+      "order0_sub": "10/22 22:00，房",
       "order1": "剧本杀！有没有人一起",
       "order1_sub": "10/21 14:30，集美 iOi",
       "order2": "一起发传单",
@@ -47,6 +50,9 @@ class LanguageProvider with ChangeNotifier {
     },
     'en': {
       "login": "Sign in",
+      "onekeyLogin": "QuickPass",
+      "usernameLogin": "Username/Phone",
+      "pwdLogin": "Password",
       "unsupportedPlatformConfirm":
           "You are currently on an unsupported platform, some functions will be restricted.",
       "curUser": "Fenn Xiao",
@@ -59,12 +65,12 @@ class LanguageProvider with ChangeNotifier {
       "setting": "Settings",
       "lang": "Languages",
       "user0": "Mike",
-      "user0_sub": "Fuck me bitch",
+      "user0_sub": "Lucky me",
       "user1": "Selina",
       "user1_sub": "Idiots.",
       "user2": "Tuna",
       "user2_sub": "I like playing football and shoot your nuts.",
-      "order0": "Fuck or Duck?",
+      "order0": "Luck or Duck?",
       "order0_sub": "10/22 22:00, Fifth Ave.",
       "order1": "Thank you, next.",
       "order1_sub": "10/21 14:30, Yuh-riana's Home",
@@ -97,7 +103,7 @@ class LanguageProvider with ChangeNotifier {
   }
 
   // 切换语言
-  void switchLanguage(String languageCode) {
+  void switchLanguage() {
     if (_currentLanguage == "zh") {
       _currentLanguage = "en";
     } else {

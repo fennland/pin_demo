@@ -145,7 +145,7 @@ class _myPageState extends State<myPage> {
                   title:
                       Text(languageProvider.get("help")), // 多语言支持 *experimental
                   onTap: () {
-                    print("yuh yuh~"); // TODO: 我的页面二级跳转
+                    debugPrint("yuh yuh~"); // TODO: 我的页面二级跳转
                   },
                 ),
                 ListTile(
@@ -181,7 +181,7 @@ class _myPageState extends State<myPage> {
                       Text(languageProvider.get("lang")), // 多语言支持 *experimental
                   onTap: () {
                     setState(() {
-                      languageProvider.switchLanguage("en-US");
+                      languageProvider.switchLanguage();
                       debugPrint(languageProvider.currentLanguage);
                     });
                   },
