@@ -30,9 +30,6 @@ PODS:
     - BaiduMapKit/Utils (= 6.5.9)
     - Flutter
     - flutter_baidu_mapapi_base
-  - flutter_bmflocation (3.5.0):
-    - BMKLocationKit (~> 2.0.9)
-    - Flutter
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
@@ -40,6 +37,8 @@ PODS:
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
   - geolocator_apple (1.2.0):
+    - Flutter
+  - image_picker_ios (0.0.1):
     - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
@@ -60,9 +59,9 @@ DEPENDENCIES:
   - flutter_baidu_mapapi_map (from `.symlinks/plugins/flutter_baidu_mapapi_map/ios`)
   - flutter_baidu_mapapi_search (from `.symlinks/plugins/flutter_baidu_mapapi_search/ios`)
   - flutter_baidu_mapapi_utils (from `.symlinks/plugins/flutter_baidu_mapapi_utils/ios`)
-  - flutter_bmflocation (from `.symlinks/plugins/flutter_bmflocation/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
+  - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
@@ -87,12 +86,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_baidu_mapapi_search/ios"
   flutter_baidu_mapapi_utils:
     :path: ".symlinks/plugins/flutter_baidu_mapapi_utils/ios"
-  flutter_bmflocation:
-    :path: ".symlinks/plugins/flutter_bmflocation/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
+  image_picker_ios:
+    :path: ".symlinks/plugins/image_picker_ios/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
@@ -109,10 +108,10 @@ SPEC CHECKSUMS:
   flutter_baidu_mapapi_map: f522de53b927636e725c68f73d2fbf0f37840ea3
   flutter_baidu_mapapi_search: fc9a79e33e4d16ca04dc316a914b86d7a5de0940
   flutter_baidu_mapapi_utils: 04aa6d573e876a2ec05e260541fa7e4ae4f25338
-  flutter_bmflocation: 7ab7efb92d79715fd3c3217075ad97ad18a748b1
   fluttertoast: 31b00dabfa7fb7bacd9e7dbee580d7a2ff4bf265
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
+  image_picker_ios: 4a8aadfbb6dc30ad5141a2ce3832af9214a705b5
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
   sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a

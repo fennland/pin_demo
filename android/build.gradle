@@ -1,16 +1,16 @@
 buildscript {
     ext.kotlin_version = '1.7.10'
     repositories {
-        // google()
-        // mavenCentral()
+        google()
+        mavenCentral()
         maven { url 'https://maven.aliyun.com/repository/google'}
         maven { url 'https://maven.aliyun.com/repository/jcenter'}
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public'}
-        maven { url 'https://download.flutter.io' }
+        // maven { url 'https://download.flutter.io' }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.0'
+        classpath 'com.android.tools.build:gradle:7.4.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.baidu.lbsyun:base:7.5.5@aar"
     }
@@ -18,12 +18,16 @@ buildscript {
 
 allprojects {
     repositories {
-        // google()
-        // mavenCentral()
+        google()
+        mavenCentral()
         maven { url 'https://maven.aliyun.com/repository/google'}
         maven { url 'https://maven.aliyun.com/repository/jcenter'}
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public'}
-        maven { url 'https://download.flutter.io' }
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.aliyun.com/nexus/content/repositories/jcenter' }
+        maven { url 'https://maven.aliyun.com/nexus/content/repositories/google' }
+        maven { url 'https://maven.aliyun.com/nexus/content/repositories/gradle-plugin' }
+        // maven { url 'https://download.flutter.io' }
     }
 
     gradle.projectsEvaluated {

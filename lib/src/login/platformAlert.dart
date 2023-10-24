@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pin_demo/main.dart';
 import 'package:pin_demo/src/login/login.dart';
 import 'package:pin_demo/src/strings/lang.dart';
 import 'package:provider/provider.dart';
@@ -47,14 +48,17 @@ class _platformAlertState extends State<platformAlert> {
     var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
         body: FutureBuilder<bool>(
-            future: Future.value((kIsWeb || Platform.isMacOS)),
+            future: Future.value(
+                (kIsWeb || Platform.isMacOS || isAndroidSimulator)),
             builder: (context, snapshot) {
               if (snapshot.hasData && snapshot.data != null) {
                 if (snapshot.data == true) {
                   return AlertDialog(
                     title: const Icon(Icons.warning),
                     content: Text(
-                        languageProvider.get("unsupportedPlatformConfirm")),
+                      languageProvider.get("unsupportedPlatformConfirm"),
+                      textAlign: TextAlign.center,
+                    ),
                     actions: [
                       TextButton(
                         child: Text(languageProvider.get("cancel")),

@@ -9,6 +9,7 @@ import 'package:pin_demo/src/map/map.dart';
 import '../strings/lang.dart';
 import '../components.dart';
 import 'package:provider/provider.dart';
+import 'package:pin_demo/main.dart' show isAndroidSimulator;
 
 class homePage extends StatefulWidget {
   const homePage({super.key});
@@ -57,7 +58,11 @@ class _homePageState extends State<homePage> {
       ),
       body: Column(
         children: [
-          !(kIsWeb || Platform.isMacOS || Platform.isWindows || Platform.isLinux)
+          !(kIsWeb ||
+                  Platform.isMacOS ||
+                  Platform.isWindows ||
+                  Platform.isLinux ||
+                  isAndroidSimulator)
               ? mapWidget.generateMap(
                   con: myMapController,
                   width: screenSize.width * 0.95,
@@ -71,7 +76,10 @@ class _homePageState extends State<homePage> {
                     const SizedBox(
                       height: 10.0,
                     ),
-                    Text(languageProvider.get("unsupportedPlatformConfirm"))
+                    Text(
+                      languageProvider.get("unsupportedPlatformConfirm"),
+                      textAlign: TextAlign.center,
+                    )
                   ],
                 ),
           const SizedBox(
