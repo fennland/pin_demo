@@ -2,6 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:pin_demo/src/mainPages/mypages/follow_list.dart';
+import 'package:pin_demo/src/mainPages/mypages/person_data.dart';
+import 'package:pin_demo/src/mainPages/mypages/privacy.dart';
 import 'package:pin_demo/src/login/platformAlert.dart';
 import 'package:pin_demo/src/msgPages/conversations.dart';
 import 'package:pin_demo/src/orderPages/newOrder.dart';
@@ -93,6 +96,9 @@ class MyApp extends StatelessWidget {
             '/msg/conversations': (BuildContext context) =>
                 ConversationsPage(username: "TestUser"), // TODO: userName传导
             '/order/new': (BuildContext context) => const newOrderPage(),
+            '/privacy':(context) => privacy(),
+          '/person_data':(context) => person_data(),
+          '/follow_list':(context) => follow_list(),
           }),
     );
   }
