@@ -1,5 +1,7 @@
 // import 'dart:html';
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
@@ -55,7 +57,7 @@ class _homePageState extends State<homePage> {
       ),
       body: Column(
         children: [
-          !(kIsWeb)
+          !(kIsWeb || Platform.isMacOS)
               ? mapWidget.generateMap(
                   con: myMapController,
                   width: screenSize.width * 0.95,
@@ -69,7 +71,7 @@ class _homePageState extends State<homePage> {
                     const SizedBox(
                       height: 10.0,
                     ),
-                    Text(languageProvider.get("webconfirm"))
+                    Text(languageProvider.get("unsupportedPlatformConfirm"))
                   ],
                 ),
           const SizedBox(

@@ -8,14 +8,14 @@ import 'package:pin_demo/src/login/login.dart';
 import 'package:pin_demo/src/strings/lang.dart';
 import 'package:provider/provider.dart';
 
-class WebAlert extends StatefulWidget {
-  const WebAlert({super.key});
+class platformAlert extends StatefulWidget {
+  const platformAlert({super.key});
 
   @override
-  _WebAlertState createState() => _WebAlertState();
+  _platformAlertState createState() => _platformAlertState();
 }
 
-class _WebAlertState extends State<WebAlert> {
+class _platformAlertState extends State<platformAlert> {
   @override
   void initState() {
     super.initState();
@@ -47,13 +47,14 @@ class _WebAlertState extends State<WebAlert> {
     var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
       body: FutureBuilder<bool>(
-          future: Future.value(kIsWeb),
+          future: Future.value((kIsWeb || Platform.isMacOS)),
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data != null) {
               if (snapshot.data == true) {
                 return AlertDialog(
                   title: const Icon(Icons.warning),
-                  content: Text(languageProvider.get("webconfirm")),
+                  content:
+                      Text(languageProvider.get("unsupportedPlatformConfirm")),
                   actions: [
                     TextButton(
                       child: Text(languageProvider.get("cancel")),

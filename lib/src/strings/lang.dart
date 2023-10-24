@@ -6,7 +6,7 @@ class LanguageProvider with ChangeNotifier {
   final Map<String, dynamic> _languages = {
     'zh': {
       "login": "登录",
-      "webconfirm": "您正在使用网页版，部分功能将会受限！",
+      "unsupportedPlatformConfirm": "您正在使用网页版或桌面版，部分功能将会受限！",
       "curUser": "陈鹏",
       "curUserInfo": "Lv.1 PIN 会员",
       "home": "首页",
@@ -47,8 +47,8 @@ class LanguageProvider with ChangeNotifier {
     },
     'en': {
       "login": "Sign in",
-      "webconfirm":
-          "You are currently using WebApp, some functions will be restricted.",
+      "unsupportedPlatformConfirm":
+          "You are currently on an unsupported platform, some functions will be restricted.",
       "curUser": "Fenn Xiao",
       "curUserInfo": "Lv.1 PinVIP",
       "home": "Home",

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:pin_demo/src/login/webalert.dart';
+import 'package:pin_demo/src/login/platformAlert.dart';
 import 'package:pin_demo/src/msgPages/conversations.dart';
 import 'package:pin_demo/src/orderPages/newOrder.dart';
 import 'package:pin_demo/src/strings/lang.dart';
@@ -30,7 +30,7 @@ Future<void> main() async {
   runApp(const MyApp());
 
   // 百度地图sdk初始化鉴权
-  if (!kIsWeb) {
+  if (!kIsWeb && !Platform.isMacOS) {
     LocationFlutterPlugin myLocPlugin = LocationFlutterPlugin();
     BMFMapSDK.setAgreePrivacy(true);
     myLocPlugin.setAgreePrivacy(true);
@@ -84,7 +84,7 @@ class MyApp extends StatelessWidget {
             '/msg': (BuildContext context) => const msgPage(),
             '/my': (BuildContext context) =>
                 const myPage(), // TODO: navigationbar重构
-            '/': (BuildContext context) => WebAlert(),
+            '/': (BuildContext context) => const platformAlert(),
             '/msg/conversations': (BuildContext context) =>
                 ConversationsPage(username: "TestUser"), // TODO: userName传导
             '/order/new': (BuildContext context) => const newOrderPage(),
@@ -108,7 +108,39 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<LanguageProvider>(context);
-
+    // return Scaffold(
+    //   body: FutureBuilder<bool>(
+    //       future: Future.value((kIsWeb || Platform.isMacOS)),
+    //       builder: (context, snapshot) {
+    //         if (snapshot.hasData && snapshot.data != null) {
+    //           if (snapshot.data == true) {
+    //             return AlertDialog(
+    //               title: const Icon(Icons.warning),
+    //               content:
+    //                   Text(languageProvider.get("unsupportedPlatformConfirm")),
+    //               actions: [
+    //                 TextButton(
+    //                   child: Text(languageProvider.get("cancel")),
+    //                   onPressed: () {
+    //                     SystemNavigator.pop();
+    //                   },
+    //                 ),
+    //                 TextButton(
+    //                   child: Text(languageProvider.get("ok")),
+    //                   onPressed: () {
+    //                     Navigator.of(context).pushNamed("/login");
+    //                   },
+    //                 ),
+    //               ],
+    //             );
+    //           } else {
+    //             return const loginPage();
+    //           }
+    //         } else {
+    //           return const loginPage();
+    //         }
+    //       }),
+    // );
     return WillPopScope(
       onWillPop: () async {
         return false; // 禁止侧滑返回
