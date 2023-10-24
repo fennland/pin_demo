@@ -23,41 +23,61 @@ class _loginPageState extends State<loginPage> {
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(languageProvider.get("home")),
-        titleTextStyle: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 18.0,
+        appBar: AppBar(
+          title: Text(languageProvider.get("home")),
+          titleTextStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18.0,
+          ),
+          centerTitle: false,
         ),
-        centerTitle: false,
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Text("一键登录"),
-          const TextField(
-            autofocus: true,
-            decoration: InputDecoration(
-                labelText: "用户名",
-                hintText: "用户名或邮箱",
-                prefixIcon: Icon(Icons.person)),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(languageProvider.get("onekeyLogin"),
+                    style: const TextStyle(
+                        fontSize: 22.0, fontWeight: FontWeight.bold)),
+              ),
+              SizedBox(
+                width: 200.0,
+                child: TextField(
+                  autofocus: true,
+                  decoration: InputDecoration(
+                      hintText: languageProvider.get("usernameLogin"),
+                      prefixIcon: Icon(Icons.person)),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              SizedBox(
+                width: 200.0,
+                child: TextField(
+                  decoration: InputDecoration(
+                      hintText: languageProvider.get("pwdLogin"),
+                      prefixIcon: Icon(Icons.lock)),
+                  textAlign: TextAlign.center,
+                  obscureText: true,
+                ),
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: OutlinedButton(
+                    onPressed: onSubmitPressed,
+                    child: Text(languageProvider.get("login"))),
+              )
+            ],
           ),
-          const TextField(
-            decoration: InputDecoration(
-                labelText: "密码",
-                hintText: "您的登录密码",
-                prefixIcon: Icon(Icons.lock)),
-            obscureText: true,
-          ),
-          const SizedBox(
-            height: 20.0,
-          ),
-          OutlinedButton(
-              onPressed: onSubmitPressed,
-              child: Text(languageProvider.get("login")))
-        ],
-      ),
-    );
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.language),
+          onPressed: () => languageProvider.switchLanguage(),
+          heroTag: "login",
+        ));
   }
 }

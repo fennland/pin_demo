@@ -186,7 +186,7 @@ class _myPageState extends State<myPage> {
                       Text(languageProvider.get("lang")), // 多语言支持 *experimental
                   onTap: () {
                     setState(() {
-                      languageProvider.switchLanguage("en-US");
+                      languageProvider.switchLanguage();
                       debugPrint(languageProvider.currentLanguage);
                     });
                   },

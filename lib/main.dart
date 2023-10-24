@@ -9,6 +9,8 @@ import 'package:pin_demo/src/login/platformAlert.dart';
 import 'package:pin_demo/src/msgPages/conversations.dart';
 import 'package:pin_demo/src/orderPages/newOrder.dart';
 import 'package:pin_demo/src/strings/lang.dart';
+import 'package:pin_demo/src/utils.dart';
+import 'package:window_manager/window_manager.dart';
 import 'src/mainPages/msgpage.dart';
 import 'src/mainPages/mypage.dart';
 import 'src/mainPages/home.dart';
@@ -28,9 +30,12 @@ Future<void> main() async {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown
     ]);
+    if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+      await windowManager.ensureInitialized();
+      WindowUtil.setWindowFunctions(isMacOS: Platform.isMacOS);
+    }
+    runApp(const MyApp());
   }
-
-  runApp(const MyApp());
 
   // 百度地图sdk初始化鉴权
   if (!kIsWeb && !Platform.isMacOS) {
@@ -106,47 +111,29 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WindowListener {
   int _currentIndex = 0;
-
   final bodyList = [const homePage(), const msgPage(), const myPage()];
+  @override
+  void initState() {
+    if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+      windowManager.addListener(this);
+    }
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+      windowManager.removeListener(this);
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<LanguageProvider>(context);
-    // return Scaffold(
-    //   body: FutureBuilder<bool>(
-    //       future: Future.value((kIsWeb || Platform.isMacOS)),
-    //       builder: (context, snapshot) {
-    //         if (snapshot.hasData && snapshot.data != null) {
-    //           if (snapshot.data == true) {
-    //             return AlertDialog(
-    //               title: const Icon(Icons.warning),
-    //               content:
-    //                   Text(languageProvider.get("unsupportedPlatformConfirm")),
-    //               actions: [
-    //                 TextButton(
-    //                   child: Text(languageProvider.get("cancel")),
-    //                   onPressed: () {
-    //                     SystemNavigator.pop();
-    //                   },
-    //                 ),
-    //                 TextButton(
-    //                   child: Text(languageProvider.get("ok")),
-    //                   onPressed: () {
-    //                     Navigator.of(context).pushNamed("/login");
-    //                   },
-    //                 ),
-    //               ],
-    //             );
-    //           } else {
-    //             return const loginPage();
-    //           }
-    //         } else {
-    //           return const loginPage();
-    //         }
-    //       }),
-    // );
+
     return WillPopScope(
       onWillPop: () async {
         return false; // 禁止侧滑返回
