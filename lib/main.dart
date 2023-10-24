@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:pin_demo/src/mainPages/mypages/follow_list.dart';
+import 'package:pin_demo/src/mainPages/mypages/person_data.dart';
+import 'package:pin_demo/src/mainPages/mypages/privacy.dart';
 import 'package:pin_demo/src/strings/lang.dart';
 import 'src/mainPages/msgpage.dart';
 import 'src/mainPages/mypage.dart';
@@ -55,13 +58,14 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
           useMaterial3: true,
         ),
-        home: const MyHomePage(),
+        //home: const MyHomePage(),
         debugShowCheckedModeBanner: false,
-        // routes: {
-        //   '/home':(context) => MyHomePage(),
-        //   '/msg':(context) => msgPage(),
-        //   '/my':(context) => myPage(),
-        // }
+        routes: {
+          '/':(context) => MyHomePage(),
+          '/privacy':(context) => privacy(),
+          '/person_data':(context) => person_data(),
+          '/follow_list':(context) => follow_list(),
+        }
       ),
     );
   }

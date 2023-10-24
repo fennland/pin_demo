@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pin_demo/main.dart';
+import 'package:pin_demo/src/mainPages/mypages/privacy.dart';
 import '../strings/lang.dart';
 import '../components.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +29,7 @@ class _myPageState extends State<myPage> {
               child: InkWell(
                   splashColor: Colors.blue.withAlpha(30),
                   onTap: () {
+                    Navigator.pushNamed(context, "/person_data");
                     debugPrint('Card tapped.');
                   },
                   child:
@@ -72,6 +74,7 @@ class _myPageState extends State<myPage> {
                   title: Text(
                       languageProvider.get("privacy")), // 多语言支持 *experimental
                   onTap: () {
+                    Navigator.pushNamed(context, "/privacy");
                     print("yuh~"); // TODO: 我的页面二级跳转
                   },
                 ),
@@ -80,6 +83,7 @@ class _myPageState extends State<myPage> {
                   title:
                       Text(languageProvider.get("help")), // 多语言支持 *experimental
                   onTap: () {
+                    Navigator.pushNamed(context, "/follow_list");
                     print("yuh yuh~"); // TODO: 我的页面二级跳转
                   },
                 ),
