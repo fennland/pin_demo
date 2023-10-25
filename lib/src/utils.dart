@@ -71,7 +71,7 @@ String renderSize(value) {
 
 class WindowUtil {
   ///默认透明度
-  static const double defaultOpacity = 1.0;
+  static const double defaultOpacity = 0;
 
   ///是否浮窗
   static bool isOnTop = false;
@@ -83,14 +83,13 @@ class WindowUtil {
 
   ///初始化参数配置，这里根据自己的模块业务而定，我窗口默认是140,210
   static void setWindowFunctions({bool? isMacOS}) async {
-    WindowOptions windowOptions = WindowOptions(
-      minimumSize: const Size(320.0, 480.0),
+    WindowOptions windowOptions = const WindowOptions(
+      minimumSize: Size(320.0, 480.0),
       center: true,
-      backgroundColor: Colors.transparent,
+      // backgroundColor: Colors.transparent,
       //设置窗口是否显示在 任务栏或 Dock 上
       skipTaskbar: false,
-      titleBarStyle:
-          isMacOS == true ? TitleBarStyle.normal : TitleBarStyle.hidden,
+      titleBarStyle: TitleBarStyle.normal,
     );
     windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();

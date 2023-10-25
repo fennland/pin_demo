@@ -1,25 +1,102 @@
 import 'package:flutter/foundation.dart';
 
+Map<String, List<Map<String, dynamic>>> messages = {
+  'en': [
+    {
+      'type': 'received',
+      'message': 'Hello',
+    },
+    {
+      'type': 'received',
+      'message': 'Wanna play basketball?',
+    },
+    {
+      'type': 'sent',
+      'message': 'Sure! I\'d love to.',
+    },
+    {
+      'type': 'sent',
+      'message': 'Can I join in the group?',
+    },
+    {
+      'type': 'received',
+      'message': 'OK',
+    },
+    {
+      'type': 'received',
+      'message': 'It gonna be near the Fifth Ave.',
+    },
+    {
+      'type': 'sent',
+      'message': 'Awesome!',
+    },
+  ],
+  'zh': [
+    {
+      'type': 'received',
+      'message': '你好',
+    },
+    {
+      'type': 'received',
+      'message': '今天一起打球吗',
+    },
+    {
+      'type': 'sent',
+      'message': '当然，我很乐意！',
+    },
+    {
+      'type': 'sent',
+      'message': '把我拉进需求群吧！',
+    },
+    {
+      'type': 'received',
+      'message': '好的',
+    },
+    {
+      'type': 'received',
+      'message': '我们会在宝龙一城附近',
+    },
+    {
+      'type': 'sent',
+      'message': 'okk',
+    },
+  ]
+};
+
 class LanguageProvider with ChangeNotifier {
   String _currentLanguage = 'zh';
 
   final Map<String, dynamic> _languages = {
     'zh': {
+      // login
       "login": "登录",
       "onekeyLogin": "一键登录",
       "usernameLogin": "用户名/手机号",
       "pwdLogin": "密码",
       "unsupportedPlatformConfirm": "您正运行在受限支持平台\n（网页、桌面或 Android 模拟器）",
+
+      // curuserinfo
       "curUser": "陈鹏",
       "curUserInfo": "Lv.1 PIN 会员",
+
+      // main - navigationitems
       "home": "首页",
       "msg": "消息",
       "my": "我的",
       "newOrder": "发起新需求",
+
+      // my - listitems
       "privacy": "隐私政策",
       "help": "帮助中心",
       "setting": "设置",
       "lang": "语言",
+      "quit": "退出登录",
+
+      // msg - conversation
+      "msgboxhint": "发送新消息...",
+      "delfriends": "解除关注",
+
+      // msg
       "user0": "小帅",
       "user0_sub": "我的很大你要忍一下",
       "user1": "小美",
@@ -42,8 +119,12 @@ class LanguageProvider with ChangeNotifier {
       "service1_sub": "[19:30] 您有一项需求即将开始",
       "service2": "服务条款变更通知",
       "service2_sub": "我们正在更新服务条款与隐私政策。\n请点击访问更多信息",
+
+      // function
       "ok": "好",
       "cancel": "取消",
+
+      // mypage
       "person_data": "修改个人资料",
       "history": "历史需求",
       "account": "注册、登录或使用账号管理功能添加其他账号：",
@@ -74,7 +155,10 @@ class LanguageProvider with ChangeNotifier {
       "privacy": "Privacy",
       "help": "Help Center",
       "setting": "Settings",
+      "quit": "Quit",
       "lang": "Languages",
+      "msgboxhint": "Type a message...",
+      "delfriends": "Unfollow",
       "user0": "Mike",
       "user0_sub": "Lucky me",
       "user1": "Selina",
@@ -128,6 +212,10 @@ class LanguageProvider with ChangeNotifier {
     return _languages[_currentLanguage][key] ?? 'default';
   }
 
+  List<dynamic> getMsgList() {
+    return _languages[_currentLanguage] ?? _languages["en"];
+  }
+
   // 切换语言
   void switchLanguage() {
     if (_currentLanguage == "zh") {
@@ -136,5 +224,9 @@ class LanguageProvider with ChangeNotifier {
       _currentLanguage = "zh";
     }
     notifyListeners();
+  }
+
+  String getCurLang() {
+    return _currentLanguage;
   }
 }

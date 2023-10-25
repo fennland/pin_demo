@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:pin_demo/src/strings/lang.dart';
+import 'package:provider/provider.dart';
 
 class ConversationsPage extends StatefulWidget {
-  final String username;
+  //final dynamic userData; // TODO: 改为map传入userDataMap
 
-  const ConversationsPage({super.key, required this.username});
+  const ConversationsPage({super.key});
 
   @override
   _ConversationsPageState createState() => _ConversationsPageState();
@@ -11,44 +13,17 @@ class ConversationsPage extends StatefulWidget {
 
 class _ConversationsPageState extends State<ConversationsPage> {
   final TextEditingController _textController = TextEditingController();
-  final List<Map<String, dynamic>> _messages = [
-    {
-      'type': 'received',
-      'message': 'Hello',
-    },
-    {
-      'type': 'received',
-      'message': 'How are you?',
-    },
-    {
-      'type': 'sent',
-      'message': 'I am fine, thank you.',
-    },
-    {
-      'type': 'sent',
-      'message': 'What are you doing?',
-    },
-    {
-      'type': 'received',
-      'message': 'I am working on a Flutter project.',
-    },
-    {
-      'type': 'received',
-      'message': 'That sounds interesting.',
-    },
-    {
-      'type': 'sent',
-      'message': 'Yes, it is.',
-    },
-  ];
+  final List<Map<String, dynamic>>? _messages =
+      messages["zh"]; // TODO: multilanguages
 
   void _addMessage(String message, String type) {
     setState(() {
-      _messages.add({
+      _messages!.add({
         'type': type,
         'message': message,
       });
     });
+    debugPrint(_messages!.toString());
     _textController.clear();
   }
 
@@ -81,50 +56,67 @@ class _ConversationsPageState extends State<ConversationsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final dynamic userData =
+        ModalRoute.of(context)?.settings.arguments ?? "default";
+    var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.username),
+        title: Text(userData),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: _messages.length,
-              itemBuilder: (BuildContext context, int index) {
-                return _buildMessageBubble(
-                    _messages[index]['message'], _messages[index]['type']);
-              },
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: _messages!.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return _buildMessageBubble(
+                      _messages![index]['message'], _messages![index]['type']);
+                },
+              ),
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _textController,
-                    decoration: InputDecoration(
-                      hintText: 'Type a message',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _textController,
+                      decoration: InputDecoration(
+                        hintText: languageProvider.get("msgboxhint"),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8.0),
-                FloatingActionButton(
-                  onPressed: () {
-                    if (_textController.text.isNotEmpty) {
-                      _addMessage(_textController.text, 'sent');
-                    }
-                  },
-                  child: const Icon(Icons.send),
-                ),
-              ],
+                  const SizedBox(width: 8.0),
+                  IconButton(
+                    onPressed: () {
+                      if (_textController.text.isNotEmpty) {
+                        _addMessage(_textController.text, 'sent');
+                      }
+                    },
+                    icon: const Icon(Icons.send),
+                    iconSize: 36.0,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+      endDrawer: Drawer(
+          child: Column(
+        children: [
+          ListTile(
+            leading: Icon(Icons.delete),
+            title: Text(languageProvider.get("delfriends")),
+            onTap: () => debugPrint("TODO: delete friends"),
+          )
+        ],
+      )),
     );
   }
 }

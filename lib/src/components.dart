@@ -151,7 +151,8 @@ class _itemListWidget extends State<itemListWidget> {
                 .get("${widget.type}${index}")), // 多语言支持 *experimental
             subtitle: Text(langProvider.get("${widget.type}${index}_sub")),
             onTap: () {
-              Navigator.pushNamed(context, "/msg/conversations");
+              Navigator.pushNamed(context, "/msg/conversations",
+                  arguments: langProvider.get("${widget.type}${index}"));
             },
           );
         },

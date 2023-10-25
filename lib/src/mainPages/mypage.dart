@@ -52,6 +52,75 @@ class _myPageState extends State<myPage> {
       ),
     );
 
+    ListTile item_privacy = ListTile(
+      leading: const Icon(Icons.privacy_tip),
+      title: Text(languageProvider.get("privacy")), // 多语言支持 *experimental
+      onTap: () {
+        Navigator.pushNamed(context, "/privacy");
+        print("yuh~"); // TODO: 我的页面二级跳转
+      },
+    );
+
+    ListTile item_help = ListTile(
+      leading: const Icon(Icons.headphones),
+      title: Text(languageProvider.get("help")), // 多语言支持 *experimental
+      onTap: () {
+        Navigator.pushNamed(context, "/follow_list");
+        print("yuh yuh~"); // TODO: 我的页面二级跳转
+      },
+    );
+
+    ListTile item_settings = ListTile(
+      leading: const Icon(Icons.settings),
+      title: Text(languageProvider.get("setting")), // 多语言支持 *experimental
+      trailing: !(kIsWeb ||
+              Platform.isMacOS ||
+              Platform.isWindows ||
+              Platform.isLinux)
+          ? TextButton(
+              child: Text(renderSize(cache)),
+              onPressed: () async {
+                Fluttertoast.showToast(
+                    msg: languageProvider.get("removingCache"));
+                try {
+                  DefaultCacheManager mgr = DefaultCacheManager();
+                  // mgr.emptyCache(); //clears all data in cache.
+                  final _tempDir = await getTemporaryDirectory();
+                  await requestPermission(_tempDir);
+                  getSize();
+                } catch (err) {
+                  Fluttertoast.showToast(
+                      msg: languageProvider.get("remFailed"));
+                }
+              },
+            )
+          : const Icon(Icons.chevron_right),
+      onTap: () {
+        debugPrint("TODO: Setting"); // TODO: 我的页面二级跳转
+      },
+    );
+
+    ListTile item_lang = ListTile(
+      leading: const Icon(Icons.language),
+      title: Text(languageProvider.get("lang")),
+      onTap: () {
+        setState(() {
+          languageProvider.switchLanguage();
+          debugPrint(languageProvider.currentLanguage);
+        });
+      },
+    );
+
+    ListTile item_quit = ListTile(
+      // TODO: quit, move to settings
+      leading: const Icon(Icons.exit_to_app),
+      title: Text(languageProvider.get("quit")),
+      onTap: () {
+        Navigator.of(context).pushNamed("/login");
+        debugPrint("TODO: quit");
+      },
+    );
+
     // Scaffold
     return Scaffold(
       appBar: AppBar(
@@ -119,14 +188,7 @@ class _myPageState extends State<myPage> {
                           ),
                         ],
                       ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.chevron_right),
-                        onPressed: () {
-                          const snackBar = SnackBar(content: Text('yuh'));
-                          // 从组件树种找到ScaffoldMessager，并用它去show一个snackBar
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        },
-                      ),
+                      trailing: Icon(Icons.chevron_right),
                     ),
                   ]))),
           const SizedBox(
@@ -135,62 +197,11 @@ class _myPageState extends State<myPage> {
           Expanded(
             child: ListView(
               children: <Widget>[
-                ListTile(
-                  leading: const Icon(Icons.privacy_tip),
-                  title: Text(
-                      languageProvider.get("privacy")), // 多语言支持 *experimental
-                  onTap: () {
-                    Navigator.pushNamed(context, "/privacy");
-                    print("yuh~"); // TODO: 我的页面二级跳转
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.headphones),
-                  title:
-                      Text(languageProvider.get("help")), // 多语言支持 *experimental
-                  onTap: () {
-                    Navigator.pushNamed(context, "/follow_list");
-                    print("yuh yuh~"); // TODO: 我的页面二级跳转
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.settings),
-                  title: Text(
-                      languageProvider.get("setting")), // 多语言支持 *experimental
-                  trailing: !(kIsWeb || Platform.isMacOS || Platform.isWindows || Platform.isLinux)
-                      ? TextButton(
-                          child: Text(renderSize(cache)),
-                          onPressed: () async {
-                            Fluttertoast.showToast(
-                                msg: languageProvider.get("removingCache"));
-                            try {
-                              DefaultCacheManager mgr = DefaultCacheManager();
-                              // mgr.emptyCache(); //clears all data in cache.
-                              final _tempDir = await getTemporaryDirectory();
-                              await requestPermission(_tempDir);
-                              getSize();
-                            } catch (err) {
-                              Fluttertoast.showToast(
-                                  msg: languageProvider.get("remFailed"));
-                            }
-                          },
-                        )
-                      : const Icon(Icons.chevron_right),
-                  onTap: () {
-                    debugPrint("TODO: Setting"); // TODO: 我的页面二级跳转
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.language),
-                  title:
-                      Text(languageProvider.get("lang")), // 多语言支持 *experimental
-                  onTap: () {
-                    setState(() {
-                      languageProvider.switchLanguage();
-                      debugPrint(languageProvider.currentLanguage);
-                    });
-                  },
-                ),
+                item_privacy,
+                item_help,
+                item_settings,
+                item_lang,
+                item_quit,
               ],
             ),
           ),

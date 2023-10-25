@@ -29,6 +29,7 @@ class _loginPageState extends State<loginPage> {
             fontWeight: FontWeight.bold,
             fontSize: 18.0,
           ),
+          automaticallyImplyLeading: false,
           centerTitle: false,
         ),
         body: Center(

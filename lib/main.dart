@@ -9,7 +9,7 @@ import 'package:pin_demo/src/login/platformAlert.dart';
 import 'package:pin_demo/src/msgPages/conversations.dart';
 import 'package:pin_demo/src/orderPages/newOrder.dart';
 import 'package:pin_demo/src/strings/lang.dart';
-// import 'package:pin_demo/src/utils.dart';
+import 'package:pin_demo/src/utils.dart';
 import 'package:window_manager/window_manager.dart';
 import 'src/mainPages/msgpage.dart';
 import 'src/mainPages/mypage.dart';
@@ -33,10 +33,10 @@ Future<void> main() async {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown
     ]);
-    // if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-    //   await windowManager.ensureInitialized();
-    //   WindowUtil.setWindowFunctions(isMacOS: Platform.isMacOS);
-    // }
+    if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+      await windowManager.ensureInitialized();
+      WindowUtil.setWindowFunctions(isMacOS: Platform.isMacOS);
+    }
   }
   runApp(const MyApp());
   // 百度地图sdk初始化鉴权
@@ -81,39 +81,48 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider<LanguageProvider>(
       create: (context) => LanguageProvider(),
       child: MaterialApp(
-          title: '一起拼',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
-            useMaterial3: true,
-          ),
-          darkTheme: ThemeData.dark(
-            useMaterial3: true,
-          ),
-          // home: const MyHomePage(),
-          debugShowCheckedModeBanner: false,
-          // supportedLocales: const [
-          //   // TODO: Localization 类替换多语言方案
-          //   Locale('zh'),
-          //   Locale('en'),
-          // ],
-          routes: {
-            /**
+        title: '一起拼',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
+          useMaterial3: true,
+        ),
+        darkTheme: ThemeData.dark(
+          useMaterial3: true,
+        ),
+        // home: const MyHomePage(),
+        debugShowCheckedModeBanner: false,
+        // supportedLocales: const [
+        //   // TODO: Localization 类替换多语言方案
+        //   Locale('zh'),
+        //   Locale('en'),
+        // ],
+        routes: {
+          /**
          * 命名导航路由，启动程序默认打开的是以'/'对应的界面LoginScreen()
          * 凡是后面使用Navigator.of(context).pushNamed('/Home')，都会跳转到Home()，
          */
-            '/login': (BuildContext context) => const loginPage(),
-            '/home': (BuildContext context) => const MyHomePage(),
-            '/msg': (BuildContext context) => const msgPage(),
-            '/my': (BuildContext context) =>
-                const myPage(), // TODO: navigationbar重构
-            '/': (BuildContext context) => const platformAlert(),
-            '/msg/conversations': (BuildContext context) =>
-                ConversationsPage(username: "TestUser"), // TODO: userName传导
-            '/order/new': (BuildContext context) => const newOrderPage(),
-            '/privacy': (context) => privacy(),
-            '/person_data': (context) => person_data(),
-            '/follow_list': (context) => follow_list(),
-          }),
+          '/login': (BuildContext context) => const loginPage(),
+          '/home': (BuildContext context) => const MyHomePage(),
+          '/msg': (BuildContext context) => const msgPage(),
+          '/my': (BuildContext context) =>
+              const myPage(), // TODO: navigationbar重构
+          '/': (BuildContext context) => const platformAlert(),
+          '/msg/conversations': (BuildContext context) =>
+              ConversationsPage(), // TODO: userName传导
+          '/order/new': (BuildContext context) => const newOrderPage(),
+          '/privacy': (context) => privacy(),
+          '/person_data': (context) => person_data(),
+          '/follow_list': (context) => follow_list(),
+        },
+        // onGenerateRoute: (settings) {
+        //   if (settings.name == '/targetPage') {
+        //     return MaterialPageRoute(
+        //       builder: (context) =>
+        //           ConversationsPage(userData: settings.arguments),
+        //     );
+        //   }
+        // },
+      ),
     );
   }
 }
@@ -128,21 +137,21 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with WindowListener {
   int _currentIndex = 0;
   final bodyList = [const homePage(), const msgPage(), const myPage()];
-  // @override
-  // void initState() {
-  //   if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-  //     windowManager.addListener(this);
-  //   }
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+      windowManager.addListener(this);
+    }
+    super.initState();
+  }
 
-  // @override
-  // void dispose() {
-  //   if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-  //     windowManager.removeListener(this);
-  //   }
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+      windowManager.removeListener(this);
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
