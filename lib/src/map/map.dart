@@ -81,18 +81,18 @@ BMFMapController? myMapController;
 //     return options;
 //   }
 
-  // Future<void> getLocation() async {
-  //   if (Platform.isIOS) {
-  //     _suc = await _myLocPlugin
-  //         .singleLocation({'isReGeocode': true, 'isNetworkState': true});
-  //   } else if (Platform.isAndroid) {
-  //     _suc = await _myLocPlugin.startLocation();
-  //   }
-  //   Map iosMap = initIOSOptions().getMap();
-  //   Map androidMap = initAndroidOptions().getMap();
+// Future<void> getLocation() async {
+//   if (Platform.isIOS) {
+//     _suc = await _myLocPlugin
+//         .singleLocation({'isReGeocode': true, 'isNetworkState': true});
+//   } else if (Platform.isAndroid) {
+//     _suc = await _myLocPlugin.startLocation();
+//   }
+//   Map iosMap = initIOSOptions().getMap();
+//   Map androidMap = initAndroidOptions().getMap();
 
-  //   _suc = await _myLocPlugin.prepareLoc(androidMap, iosMap);
-  // }
+//   _suc = await _myLocPlugin.prepareLoc(androidMap, iosMap);
+// }
 // }
 
 class MapWidget {
@@ -128,32 +128,28 @@ class MapWidget {
       bool zoomEnabled = true}) {
     myMapController = con;
     return Expanded(
-        flex: 2,
-        child: Center(
-          child: SizedBox(
-            // height: height,
-            width: width,
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-              child: InkWell(
-                onTap: onTap,
-                child: !kIsWeb
-                    ? BMFMapWidget(
-                        onBMFMapCreated: onBMFMapCreated,
-                        hitTestBehavior: (zoomEnabled)
-                            ? PlatformViewHitTestBehavior.opaque
-                            : PlatformViewHitTestBehavior.transparent,
-                        mapOptions: initMapOptions(
-                            lat, lon, zoomLevel, isChinese, zoomEnabled),
-                      )
-                    : const Card(
-                        child: Icon(Icons.error),
-                      ),
+      flex: 2,
+      child: Center(
+        child: SizedBox(
+          // height: height,
+          width: width,
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+            child: InkWell(
+              onTap: onTap,
+              child: BMFMapWidget(
+                onBMFMapCreated: onBMFMapCreated,
+                hitTestBehavior: (zoomEnabled)
+                    ? PlatformViewHitTestBehavior.opaque
+                    : PlatformViewHitTestBehavior.transparent,
+                mapOptions:
+                    initMapOptions(lat, lon, zoomLevel, isChinese, zoomEnabled),
               ),
             ),
           ),
         ),
-      );
+      ),
+    );
   }
 
   BMFMapOptions initMapOptions(

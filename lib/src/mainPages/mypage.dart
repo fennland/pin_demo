@@ -121,6 +121,16 @@ class _myPageState extends State<myPage> {
       },
     );
 
+    ListTile item_temporaryTest = ListTile(
+      // TODO: for test, delete
+      leading: const Icon(Icons.build),
+      title: Text(languageProvider.get("newOrder")),
+      onTap: () {
+        Navigator.of(context).pushNamed("/order/new");
+        debugPrint("TODO: newOrder for test");
+      },
+    );
+
     // Scaffold
     return Scaffold(
       appBar: AppBar(
@@ -202,6 +212,7 @@ class _myPageState extends State<myPage> {
                 item_settings,
                 item_lang,
                 item_quit,
+                item_temporaryTest,
               ],
             ),
           ),

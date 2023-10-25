@@ -73,7 +73,8 @@ class LanguageProvider with ChangeNotifier {
       "onekeyLogin": "一键登录",
       "usernameLogin": "用户名/手机号",
       "pwdLogin": "密码",
-      "unsupportedPlatformConfirm": "您正运行在受限支持平台\n（网页、桌面或 Android 模拟器）",
+      "unsupportedPlatformConfirm":
+          "您正运行在bMapSDK受限支持平台\n（网页、桌面或 Android/iOS 模拟器）",
 
       // curuserinfo
       "curUser": "陈鹏",
@@ -83,7 +84,10 @@ class LanguageProvider with ChangeNotifier {
       "home": "首页",
       "msg": "消息",
       "my": "我的",
+
+      // home - newOrder
       "newOrder": "发起新需求",
+      "newOrderInput": "帮我匹配附近 3km 想一起唱歌的 i 人朋友...",
 
       // my - listitems
       "privacy": "隐私政策",
@@ -152,6 +156,8 @@ class LanguageProvider with ChangeNotifier {
       "home": "Home",
       "msg": "Messages",
       "my": "My",
+      "newOrder": "Create a new order",
+      "newOrderInput": "Search who wanna karaoke now...",
       "privacy": "Privacy",
       "help": "Help Center",
       "setting": "Settings",

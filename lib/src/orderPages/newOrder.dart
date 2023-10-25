@@ -1,7 +1,11 @@
 // ignore_for_file: unused_import
 
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
+import 'package:pin_demo/main.dart';
 import 'package:pin_demo/src/map/map.dart';
 import '../strings/lang.dart';
 import '../components.dart';
@@ -15,6 +19,7 @@ class newOrderPage extends StatefulWidget {
 }
 
 class _newOrderPageState extends State<newOrderPage> {
+  final TextEditingController _textController = TextEditingController();
   BMFMapController? myMapController;
   @override
   Widget build(BuildContext context) {
@@ -32,34 +37,98 @@ class _newOrderPageState extends State<newOrderPage> {
           ),
       body: Column(
         children: [
-          mapWidget.generateMap(
-              con: myMapController,
-              width: screenSize.width * 0.95,
-              borderRadius: screenSize.width / 20,
-              zoomLevel: 15,
-              isChinese: (languageProvider.currentLanguage == "zh-CN")),
-          const SizedBox(
-            height: 30.0,
-          ),
-          Expanded(
-            flex: 1,
-            child: Card(
-                child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(screenSize.width * 0.03),
-                  child: Row(
+          !(kIsWeb ||
+                  Platform.isMacOS ||
+                  Platform.isLinux ||
+                  Platform.isWindows ||
+                  isAndroidSimulator ||
+                  Platform.isIOS)
+              ? mapWidget.generateMap(
+                  con: myMapController,
+                  width: screenSize.width * 0.95,
+                  borderRadius: screenSize.width / 20,
+                  zoomLevel: 15,
+                  isChinese: (languageProvider.currentLanguage == "zh-CN"))
+              : Expanded(
+                  flex: 3,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      const Icon(Icons.error),
+                      const SizedBox(
+                        height: 10.0,
+                      ),
                       Text(
-                        languageProvider.get("newOrder"),
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 22.0),
+                        languageProvider.get("unsupportedPlatformConfirm"),
+                        textAlign: TextAlign.center,
                       )
                     ],
                   ),
                 ),
-              ],
-            )),
+          Expanded(
+            flex: 2,
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 180.0),
+              child: Card(
+                  child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                    screenSize.width * 0.02,
+                    screenSize.height * 0.04,
+                    screenSize.width * 0.02,
+                    screenSize.height * 0.04),
+                child: Column(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: TextField(
+                        controller: _textController,
+                        maxLength: 100,
+                        maxLines: null,
+                        style: const TextStyle(fontSize: 15.0),
+                        decoration: InputDecoration(
+                          constraints: const BoxConstraints(
+                              minHeight: 16.0, maxHeight: 120.0),
+                          label: Text(
+                            languageProvider.get("newOrder"),
+                            style: const TextStyle(fontSize: 18.0),
+                          ),
+                          hintText: languageProvider.get("newOrderInput"),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: TextButton(
+                        onPressed: () {
+                          // 按钮点击事件处理
+                        },
+                        style: ButtonStyle(
+                          maximumSize: MaterialStateProperty.all(
+                              const Size(double.infinity, 45)),
+                          minimumSize: MaterialStateProperty.all(
+                              const Size(double.infinity, 30)), // 设置按钮最小尺寸
+                          // padding: MaterialStateProperty.all(
+                          //     EdgeInsets.zero), // 去除默认内边距
+                          shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(16.0))), // 设置按钮圆角
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.blue), // 设置按钮背景色
+                        ),
+                        child: Text(
+                          languageProvider.get("newOrder"),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+            ),
           ),
         ],
       ),

@@ -62,7 +62,8 @@ class _homePageState extends State<homePage> {
                   Platform.isMacOS ||
                   Platform.isWindows ||
                   Platform.isLinux ||
-                  isAndroidSimulator)
+                  isAndroidSimulator ||
+                  Platform.isIOS)
               ? mapWidget.generateMap(
                   con: myMapController,
                   width: screenSize.width * 0.95,
