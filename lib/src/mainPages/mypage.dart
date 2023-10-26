@@ -3,9 +3,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_demo/main.dart';
-import 'package:pin_demo/src/mainPages/mypages/privacy.dart';
-import '../strings/lang.dart';
-import '../components.dart';
+import 'package:pin_demo/src/mypages/privacy.dart';
+import '../utils/strings/lang.dart';
+import '../utils/components.dart';
 import 'package:provider/provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -13,7 +13,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-import '../utils.dart';
+import '../utils/utils.dart';
 
 class myPage extends StatefulWidget {
   static var body;
@@ -26,6 +26,7 @@ class myPage extends StatefulWidget {
 
 class _myPageState extends State<myPage> {
   dynamic cache = 0.0;
+  @override
   void initState() {
     if (!kIsWeb) getSize();
     super.initState();
@@ -57,7 +58,7 @@ class _myPageState extends State<myPage> {
       title: Text(languageProvider.get("privacy")), // 多语言支持 *experimental
       onTap: () {
         Navigator.pushNamed(context, "/privacy");
-        print("yuh~"); // TODO: 我的页面二级跳转
+        debugPrint("yuh~"); // TODO: 我的页面二级跳转
       },
     );
 
@@ -66,7 +67,7 @@ class _myPageState extends State<myPage> {
       title: Text(languageProvider.get("help")), // 多语言支持 *experimental
       onTap: () {
         Navigator.pushNamed(context, "/follow_list");
-        print("yuh yuh~"); // TODO: 我的页面二级跳转
+        debugPrint("yuh yuh~"); // TODO: 我的页面二级跳转
       },
     );
 

@@ -1,15 +1,12 @@
 // import 'dart:html';
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
-import 'package:pin_demo/src/map/map.dart';
-import '../strings/lang.dart';
-import '../components.dart';
+import 'package:pin_demo/src/homePages/search.dart';
+import 'package:pin_demo/src/utils/map.dart';
+import '../utils/strings/lang.dart';
+import '../utils/components.dart';
 import 'package:provider/provider.dart';
-import 'package:pin_demo/main.dart' show isAndroidSimulator;
 
 class homePage extends StatefulWidget {
   const homePage({super.key});
@@ -19,6 +16,7 @@ class homePage extends StatefulWidget {
 }
 
 class _homePageState extends State<homePage> {
+  @override
   void initState() {
     super.initState();
   }
@@ -43,15 +41,11 @@ class _homePageState extends State<homePage> {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              debugPrint("TODO: Search");
-              final snackbar = SnackBar(
-                content: const Text("TODO: Search"),
-                action: SnackBarAction(
-                  label: "OK",
-                  onPressed: () => debugPrint("OK"),
-                ),
-              );
-              ScaffoldMessenger.of(context).showSnackBar(snackbar);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const searchPage(),
+                      maintainState: true));
             },
           ),
         ],

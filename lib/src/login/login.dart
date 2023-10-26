@@ -3,7 +3,7 @@
 // ignore_for_file: camel_case_types
 
 import 'package:flutter/material.dart';
-import '../strings/lang.dart';
+import '../utils/strings/lang.dart';
 import 'package:provider/provider.dart';
 
 class loginPage extends StatefulWidget {
@@ -49,7 +49,7 @@ class _loginPageState extends State<loginPage> {
                   autofocus: true,
                   decoration: InputDecoration(
                       hintText: languageProvider.get("usernameLogin"),
-                      prefixIcon: Icon(Icons.person)),
+                      prefixIcon: const Icon(Icons.person)),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -58,7 +58,7 @@ class _loginPageState extends State<loginPage> {
                 child: TextField(
                   decoration: InputDecoration(
                       hintText: languageProvider.get("pwdLogin"),
-                      prefixIcon: Icon(Icons.lock)),
+                      prefixIcon: const Icon(Icons.lock)),
                   textAlign: TextAlign.center,
                   obscureText: true,
                 ),
@@ -76,9 +76,9 @@ class _loginPageState extends State<loginPage> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.language),
           onPressed: () => languageProvider.switchLanguage(),
           heroTag: "login",
+          child: const Icon(Icons.language),
         ));
   }
 }

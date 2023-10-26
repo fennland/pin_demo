@@ -6,7 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_demo/main.dart';
-import 'package:pin_demo/src/strings/lang.dart';
+import 'package:pin_demo/src/utils/strings/lang.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
@@ -135,6 +135,7 @@ class _itemListWidget extends State<itemListWidget> {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     var langProvider = Provider.of<LanguageProvider>(context);
     return Expanded(
@@ -146,7 +147,7 @@ class _itemListWidget extends State<itemListWidget> {
             leading: CircleAvatar(
               child: ClipOval(
                 child: CachedNetworkImage(
-                  imageUrl: "https://picsum.photos/250?image=${index}",
+                  imageUrl: "https://picsum.photos/250?image=$index",
                   placeholder: (context, url) =>
                       const CircularProgressIndicator(),
                   errorListener: (value) {
@@ -159,11 +160,11 @@ class _itemListWidget extends State<itemListWidget> {
               ),
             ),
             title: Text(langProvider
-                .get("${widget.type}${index}")), // 多语言支持 *experimental
+                .get("${widget.type}$index")), // 多语言支持 *experimental
             subtitle: Text(langProvider.get("${widget.type}${index}_sub")),
             onTap: () {
               Navigator.pushNamed(context, "/msg/conversations",
-                  arguments: langProvider.get("${widget.type}${index}"));
+                  arguments: langProvider.get("${widget.type}$index"));
             },
           );
         },

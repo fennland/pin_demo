@@ -90,6 +90,9 @@ class LanguageProvider with ChangeNotifier {
       "newOrderInput": "帮我匹配附近 3km 想一起唱歌的 i 人朋友...",
       "ordering": "需求匹配中...",
 
+      // home - search
+      "searchInput": "搜索...",
+
       // my - listitems
       "privacy": "隐私政策",
       "help": "帮助中心",
@@ -159,7 +162,8 @@ class LanguageProvider with ChangeNotifier {
       "my": "My",
       "newOrder": "Create a new order",
       "newOrderInput": "Search who wanna karaoke now...",
-      "ordering": "Matching...",
+      "ordering": "Matching",
+      "searchInput": "Search...",
       "privacy": "Privacy",
       "help": "Help Center",
       "setting": "Settings",

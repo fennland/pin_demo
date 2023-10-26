@@ -2,13 +2,12 @@
 
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:pin_demo/main.dart';
-import 'package:pin_demo/src/map/map.dart';
-import '../strings/lang.dart';
-import '../components.dart';
+import 'package:pin_demo/src/utils/map.dart';
+import '../utils/strings/lang.dart';
+import '../utils/components.dart';
 import 'package:provider/provider.dart';
 
 class newOrderPage extends StatefulWidget {

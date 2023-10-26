@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pin_demo/main.dart';
-import 'package:pin_demo/src/components.dart';
+import 'package:pin_demo/src/utils/components.dart';
 import 'package:pin_demo/src/login/login.dart';
-import 'package:pin_demo/src/strings/lang.dart';
+import 'package:pin_demo/src/utils/strings/lang.dart';
 import 'package:provider/provider.dart';
 
 class platformAlert extends StatefulWidget {
@@ -82,9 +82,9 @@ class _platformAlertState extends State<platformAlert> {
               }
             }),
         floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.language),
           onPressed: () => languageProvider.switchLanguage(),
           heroTag: "alert",
+          child: const Icon(Icons.language),
         ));
   }
 }

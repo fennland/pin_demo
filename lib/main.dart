@@ -1,16 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:pin_demo/src/mainPages/mypages/follow_list.dart';
-import 'package:pin_demo/src/mainPages/mypages/person_data.dart';
-import 'package:pin_demo/src/mainPages/mypages/privacy.dart';
+import 'package:pin_demo/src/mypages/follow_list.dart';
+import 'package:pin_demo/src/mypages/person_data.dart';
+import 'package:pin_demo/src/mypages/privacy.dart';
 import 'package:pin_demo/src/login/platformAlert.dart';
 import 'package:pin_demo/src/msgPages/conversations.dart';
 import 'package:pin_demo/src/orderPages/newOrder.dart';
 import 'package:pin_demo/src/orderPages/ordering.dart';
-import 'package:pin_demo/src/strings/lang.dart';
-import 'package:pin_demo/src/utils.dart';
+import 'package:pin_demo/src/utils/strings/lang.dart';
+import 'package:pin_demo/src/utils/utils.dart';
 import 'package:window_manager/window_manager.dart';
 import 'src/mainPages/msgpage.dart';
 import 'src/mainPages/mypage.dart';
@@ -109,12 +108,12 @@ class MyApp extends StatelessWidget {
               const myPage(), // TODO: navigationbar重构
           '/': (BuildContext context) => const platformAlert(),
           '/msg/conversations': (BuildContext context) =>
-              ConversationsPage(), // TODO: userName传导
+              const ConversationsPage(), // TODO: userName传导
           '/order/new': (BuildContext context) => const newOrderPage(),
           '/order/ing': (BuildContext context) => const orderingPage(),
-          '/privacy': (context) => privacy(),
-          '/person_data': (context) => person_data(),
-          '/follow_list': (context) => follow_list(),
+          '/privacy': (context) => const privacy(),
+          '/person_data': (context) => const person_data(),
+          '/follow_list': (context) => const follow_list(),
         },
         // onGenerateRoute: (settings) {
         //   if (settings.name == '/targetPage') {

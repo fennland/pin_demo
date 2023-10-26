@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pin_demo/src/strings/lang.dart';
+import 'package:pin_demo/src/utils/strings/lang.dart';
 import 'package:provider/provider.dart';
 
 class ConversationsPage extends StatefulWidget {
@@ -111,7 +111,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
           child: Column(
         children: [
           ListTile(
-            leading: Icon(Icons.delete),
+            leading: const Icon(Icons.delete),
             title: Text(languageProvider.get("delfriends")),
             onTap: () => debugPrint("TODO: delete friends"),
           )

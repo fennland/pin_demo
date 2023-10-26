@@ -40,9 +40,11 @@ Future getTotalSizeOfFilesInDir(final FileSystemEntity file) async {
   if (file is Directory && file.existsSync()) {
     List children = file.listSync();
     double total = 0;
-    if (children.length > 0)
-      for (final FileSystemEntity child in children)
+    if (children.length > 0) {
+      for (final FileSystemEntity child in children) {
         total += await getTotalSizeOfFilesInDir(child);
+      }
+    }
     return total;
   }
   return 0;

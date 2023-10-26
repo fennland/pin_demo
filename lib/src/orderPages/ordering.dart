@@ -2,14 +2,13 @@
 
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:pin_demo/main.dart';
-import 'package:pin_demo/src/map/map.dart';
-import '../strings/lang.dart';
-import '../components.dart';
+import 'package:pin_demo/src/utils/map.dart';
+import '../utils/strings/lang.dart';
+import '../utils/components.dart';
 import 'package:provider/provider.dart';
 
 class orderingPage extends StatefulWidget {
@@ -38,13 +37,13 @@ class _orderingPageState extends State<orderingPage>
   }
 
   void _startTimer() {
-    Future.delayed(Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 5), () {
       setState(() {
         _showSuccess = true;
       });
       _animationController.forward();
 
-      Future.delayed(Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 2), () {
         Navigator.of(context).pushNamed("/msg/conversations",
             arguments:
                 "New Group"); // TODO: new page after success matching, add listitem into msgList
@@ -58,7 +57,6 @@ class _orderingPageState extends State<orderingPage>
     super.dispose();
   }
 
-  final TextEditingController _textController = TextEditingController();
   BMFMapController? myMapController;
   @override
   Widget build(BuildContext context) {
@@ -140,10 +138,10 @@ class _orderingPageState extends State<orderingPage>
         ),
         AnimatedOpacity(
           opacity: _showSuccess ? 1.0 : 0.0,
-          duration: Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 500),
           child: Container(
             color: Colors.black.withOpacity(0.5),
-            child: Center(
+            child: const Center(
               child: Text(
                 '成功',
                 style: TextStyle(
