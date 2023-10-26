@@ -37,12 +37,7 @@ class _newOrderPageState extends State<newOrderPage> {
           ),
       body: Column(
         children: [
-          !(kIsWeb ||
-                  Platform.isMacOS ||
-                  Platform.isLinux ||
-                  Platform.isWindows ||
-                  isAndroidSimulator ||
-                  Platform.isIOS)
+          unSupportedPlatform
               ? mapWidget.generateMap(
                   con: myMapController,
                   width: screenSize.width * 0.95,
@@ -70,64 +65,64 @@ class _newOrderPageState extends State<newOrderPage> {
             child: Container(
               constraints: const BoxConstraints(minHeight: 180.0),
               child: Card(
-                  child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    screenSize.width * 0.02,
-                    screenSize.height * 0.04,
-                    screenSize.width * 0.02,
-                    screenSize.height * 0.04),
                 child: Column(
                   children: [
                     Expanded(
-                      flex: 3,
-                      child: TextField(
-                        controller: _textController,
-                        maxLength: 100,
-                        maxLines: null,
-                        style: const TextStyle(fontSize: 15.0),
-                        decoration: InputDecoration(
-                          constraints: const BoxConstraints(
-                              minHeight: 16.0, maxHeight: 120.0),
-                          label: Text(
-                            languageProvider.get("newOrder"),
-                            style: const TextStyle(fontSize: 18.0),
-                          ),
-                          hintText: languageProvider.get("newOrderInput"),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                      flex: 5,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 0),
+                        child: TextField(
+                          controller: _textController,
+                          maxLength: 100,
+                          maxLines: null,
+                          style: const TextStyle(fontSize: 15.0),
+                          decoration: InputDecoration(
+                            constraints: const BoxConstraints(
+                                minHeight: 16.0, maxHeight: 120.0),
+                            label: Text(
+                              languageProvider.get("newOrder"),
+                              style: const TextStyle(fontSize: 18.0),
+                            ),
+                            hintText: languageProvider.get("newOrderInput"),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
                           ),
                         ),
                       ),
                     ),
                     Expanded(
-                      flex: 1,
-                      child: TextButton(
-                        onPressed: () {
-                          // 按钮点击事件处理
-                        },
-                        style: ButtonStyle(
-                          maximumSize: MaterialStateProperty.all(
-                              const Size(double.infinity, 45)),
-                          minimumSize: MaterialStateProperty.all(
-                              const Size(double.infinity, 30)), // 设置按钮最小尺寸
-                          // padding: MaterialStateProperty.all(
-                          //     EdgeInsets.zero), // 去除默认内边距
-                          shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(16.0))), // 设置按钮圆角
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.blue), // 设置按钮背景色
-                        ),
-                        child: Text(
-                          languageProvider.get("newOrder"),
-                          style: const TextStyle(color: Colors.white),
+                      flex: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 16.0),
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed("/order/ing");
+                          },
+                          style: ButtonStyle(
+                            maximumSize: MaterialStateProperty.all(
+                                const Size(double.infinity, 60)),
+                            minimumSize: MaterialStateProperty.all(
+                                const Size(double.infinity, 45)), // 设置按钮最小尺寸
+                            // padding: MaterialStateProperty.all(
+                            //     EdgeInsets.zero), // 去除默认内边距
+                            shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(16.0))), // 设置按钮圆角
+                            backgroundColor: MaterialStateProperty.all(
+                                Colors.blue), // 设置按钮背景色
+                          ),
+                          child: Text(
+                            languageProvider.get("newOrder"),
+                            style: const TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
-              )),
+              ),
             ),
           ),
         ],

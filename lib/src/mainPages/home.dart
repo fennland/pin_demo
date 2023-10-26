@@ -58,12 +58,7 @@ class _homePageState extends State<homePage> {
       ),
       body: Column(
         children: [
-          !(kIsWeb ||
-                  Platform.isMacOS ||
-                  Platform.isWindows ||
-                  Platform.isLinux ||
-                  isAndroidSimulator ||
-                  Platform.isIOS)
+          unSupportedPlatform
               ? mapWidget.generateMap(
                   con: myMapController,
                   width: screenSize.width * 0.95,

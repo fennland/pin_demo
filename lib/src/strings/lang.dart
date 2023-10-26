@@ -88,6 +88,7 @@ class LanguageProvider with ChangeNotifier {
       // home - newOrder
       "newOrder": "发起新需求",
       "newOrderInput": "帮我匹配附近 3km 想一起唱歌的 i 人朋友...",
+      "ordering": "需求匹配中...",
 
       // my - listitems
       "privacy": "隐私政策",
@@ -158,6 +159,7 @@ class LanguageProvider with ChangeNotifier {
       "my": "My",
       "newOrder": "Create a new order",
       "newOrderInput": "Search who wanna karaoke now...",
+      "ordering": "Matching...",
       "privacy": "Privacy",
       "help": "Help Center",
       "setting": "Settings",

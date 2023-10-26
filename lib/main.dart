@@ -8,6 +8,7 @@ import 'package:pin_demo/src/mainPages/mypages/privacy.dart';
 import 'package:pin_demo/src/login/platformAlert.dart';
 import 'package:pin_demo/src/msgPages/conversations.dart';
 import 'package:pin_demo/src/orderPages/newOrder.dart';
+import 'package:pin_demo/src/orderPages/ordering.dart';
 import 'package:pin_demo/src/strings/lang.dart';
 import 'package:pin_demo/src/utils.dart';
 import 'package:window_manager/window_manager.dart';
@@ -110,6 +111,7 @@ class MyApp extends StatelessWidget {
           '/msg/conversations': (BuildContext context) =>
               ConversationsPage(), // TODO: userName传导
           '/order/new': (BuildContext context) => const newOrderPage(),
+          '/order/ing': (BuildContext context) => const orderingPage(),
           '/privacy': (context) => privacy(),
           '/person_data': (context) => person_data(),
           '/follow_list': (context) => follow_list(),

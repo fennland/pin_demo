@@ -1,10 +1,21 @@
 // ignore_for_file: unused_import, camel_case_types
 
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pin_demo/main.dart';
 import 'package:pin_demo/src/strings/lang.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
+
+bool unSupportedPlatform = !(kIsWeb ||
+    Platform.isMacOS ||
+    Platform.isIOS ||
+    isAndroidSimulator ||
+    Platform.isLinux ||
+    Platform.isWindows);
 
 class isCardVisibleNotifier extends ChangeNotifier {
   //这里也可以使用with来进行实现
