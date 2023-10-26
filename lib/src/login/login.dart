@@ -3,6 +3,7 @@
 // ignore_for_file: camel_case_types
 
 import 'package:flutter/material.dart';
+import 'package:pin_demo/src/users/defaultUser.dart';
 import '../utils/strings/lang.dart';
 import 'package:provider/provider.dart';
 
@@ -14,9 +15,32 @@ class loginPage extends StatefulWidget {
 }
 
 class _loginPageState extends State<loginPage> {
-  void onSubmitPressed() {
-    debugPrint("TODO: login submit pressed");
-    Navigator.pushNamed(context, "/home");
+  TextEditingController _phoneNumberController = TextEditingController();
+  TextEditingController _pwdController = TextEditingController();
+
+  bool _isValidPhoneNumber = false;
+  bool _isCorrectPwd = false;
+
+  @override
+  void dispose() {
+    _phoneNumberController.dispose();
+    _pwdController.dispose();
+    super.dispose();
+  }
+
+  bool isValidPwd() {
+    String pwd = _pwdController.text;
+    // 密码要求：6位-16位字符
+    return (pwd.length >= 6 && pwd.length <= 16);
+  }
+
+  void _checkPhoneNumberValidity() {
+    String phoneNumber = _phoneNumberController.text;
+    RegExp regExp = RegExp(r'^[1-9]\d{10}$');
+    bool isValid = regExp.hasMatch(phoneNumber);
+    setState(() {
+      _isValidPhoneNumber = isValid;
+    });
   }
 
   @override
@@ -46,16 +70,45 @@ class _loginPageState extends State<loginPage> {
               SizedBox(
                 width: 200.0,
                 child: TextField(
+                  controller: _phoneNumberController,
                   autofocus: true,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                       hintText: languageProvider.get("usernameLogin"),
                       prefixIcon: const Icon(Icons.person)),
                   textAlign: TextAlign.center,
+                  // onSubmitted: (value) {
+                  //   if (value.length == 11 && value[0] == '1') {
+                  //     int? userid = int.tryParse(value);
+                  //     if (userid != null) {
+                  //       languageProvider.set("curUserPhone", userid.toString());
+                  //     } else {
+                  //       SnackBar snackbar = SnackBar(
+                  //         content: Text(
+                  //             languageProvider.get("loginFailedWithoutPhone")),
+                  //         backgroundColor:
+                  //             const Color.fromARGB(255, 255, 109, 109),
+                  //         duration: const Duration(seconds: 2),
+                  //       );
+                  //       ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                  //     }
+                  //   } else {
+                  //     SnackBar snackbar = SnackBar(
+                  //       content: Text(
+                  //           languageProvider.get("loginFailedWithoutPhone")),
+                  //       backgroundColor:
+                  //           const Color.fromARGB(255, 255, 109, 109),
+                  //       duration: const Duration(seconds: 2),
+                  //     );
+                  //     ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                  //   }
+                  // },
                 ),
               ),
               SizedBox(
                 width: 200.0,
                 child: TextField(
+                  controller: _pwdController,
                   decoration: InputDecoration(
                       hintText: languageProvider.get("pwdLogin"),
                       prefixIcon: const Icon(Icons.lock)),
@@ -69,7 +122,46 @@ class _loginPageState extends State<loginPage> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: OutlinedButton(
-                    onPressed: onSubmitPressed,
+                    onPressed: () {
+                      _checkPhoneNumberValidity();
+                      if (_isValidPhoneNumber) {
+                        if (isValidPwd()) {
+                          if (_pwdController.text == curUser["pwd"] &&
+                              _phoneNumberController.text == curUser["phone"]) {
+                            // TODO: security check
+                            Navigator.of(context).pushNamed("/home");
+                          } else {
+                            SnackBar snackbar = SnackBar(
+                              content: Text(
+                                  languageProvider.get("loginFailedIncorrect")),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 255, 109, 109),
+                              duration: const Duration(seconds: 2),
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackbar);
+                          }
+                        } else {
+                          SnackBar snackbar = SnackBar(
+                            content: Text(
+                                languageProvider.get("loginFailedIncorrect")),
+                            backgroundColor:
+                                const Color.fromARGB(255, 255, 109, 109),
+                            duration: const Duration(seconds: 2),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                        }
+                      } else {
+                        SnackBar snackbar = SnackBar(
+                          content: Text(
+                              languageProvider.get("loginFailedWithoutPhone")),
+                          backgroundColor:
+                              const Color.fromARGB(255, 255, 109, 109),
+                          duration: const Duration(seconds: 2),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                      }
+                    },
                     child: Text(languageProvider.get("login"))),
               )
             ],

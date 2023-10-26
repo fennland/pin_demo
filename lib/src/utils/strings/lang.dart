@@ -71,12 +71,15 @@ class LanguageProvider with ChangeNotifier {
       // login
       "login": "登录",
       "onekeyLogin": "一键登录",
-      "usernameLogin": "用户名/手机号",
+      "usernameLogin": "手机号",
       "pwdLogin": "密码",
+      "loginFailedWithoutPhone": "手机号格式不正确",
+      "loginFailedIncorrect": "手机号或密码不正确",
       "unsupportedPlatformConfirm":
           "您正运行在bMapSDK受限支持平台\n（网页、桌面或 Android/iOS 模拟器）",
 
       // curuserinfo
+      "curUserPhone": "19987654321",
       "curUser": "陈鹏",
       "curUserInfo": "Lv.1 PIN 会员",
 
@@ -89,6 +92,8 @@ class LanguageProvider with ChangeNotifier {
       "newOrder": "发起新需求",
       "newOrderInput": "帮我匹配附近 3km 想一起唱歌的 i 人朋友...",
       "ordering": "需求匹配中...",
+      "orderMatched": "匹配成功",
+      "orderFailed": "匹配失败",
 
       // home - search
       "searchInput": "搜索...",
@@ -222,6 +227,10 @@ class LanguageProvider with ChangeNotifier {
   // 根据键值获取当前语言下的字符串
   String get(String key) {
     return _languages[_currentLanguage][key] ?? 'default';
+  }
+
+  void set(String key, String value) {
+    _languages.update(key, (value) => null, ifAbsent: () => 'default');
   }
 
   List<dynamic> getMsgList() {

@@ -12,6 +12,7 @@ class ConversationsPage extends StatefulWidget {
 }
 
 class _ConversationsPageState extends State<ConversationsPage> {
+  Color _bgcolor = Colors.transparent;
   final TextEditingController _textController = TextEditingController();
   final List<Map<String, dynamic>>? _messages =
       messages["zh"]; // TODO: multilanguages
@@ -41,11 +42,20 @@ class _ConversationsPageState extends State<ConversationsPage> {
               color: type == 'sent' ? Colors.blue : Colors.grey[300],
               borderRadius: BorderRadius.circular(20.0),
             ),
-            child: Text(
-              message,
-              style: TextStyle(
-                color: type == 'sent' ? Colors.white : Colors.black,
-                fontSize: 16.0,
+            child: GestureDetector(
+              onLongPressStart: (detail) {
+                // _bgcolor = Colors.grey.withOpacity(0.5);
+                debugPrint("TODO: Long press msg"); // TODO: long press msg
+                setState(() {});
+                // _showMenu(context, detail);
+              },
+              child: Text(
+                message,
+                style: TextStyle(
+                  backgroundColor: _bgcolor,
+                  color: type == 'sent' ? Colors.white : Colors.black,
+                  fontSize: 16.0,
+                ),
               ),
             ),
           ),
@@ -59,6 +69,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
     final dynamic userData =
         ModalRoute.of(context)?.settings.arguments ?? "default";
     var languageProvider = Provider.of<LanguageProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(userData),

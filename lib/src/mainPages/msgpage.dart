@@ -56,7 +56,6 @@ class _msgPageState extends State<msgPage> {
         ],
       ),
       drawer: const Drawer(),
-      // endDrawer: Drawer(),
     );
   }
 }

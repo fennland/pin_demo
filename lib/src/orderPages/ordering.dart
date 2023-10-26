@@ -1,6 +1,7 @@
 // ignore_for_file: unused_import
 
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
@@ -54,6 +55,7 @@ class _orderingPageState extends State<orderingPage>
   @override
   void dispose() {
     _animationController.dispose();
+
     super.dispose();
   }
 
@@ -141,13 +143,26 @@ class _orderingPageState extends State<orderingPage>
           duration: const Duration(milliseconds: 500),
           child: Container(
             color: Colors.black.withOpacity(0.5),
-            child: const Center(
-              child: Text(
-                '成功',
-                style: TextStyle(
-                  fontSize: 32,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+            child: Center(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 32.0),
+                      child:
+                          Icon(Icons.check_circle, color: Colors.greenAccent),
+                    ),
+                    Text(
+                      languageProvider.get("orderMatched"),
+                      style: const TextStyle(
+                        fontSize: 32,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
