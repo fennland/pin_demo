@@ -20,13 +20,6 @@ class privacy extends StatefulWidget {
 class _privacyState extends State<privacy> {
   @override
   Widget build(BuildContext context) {
-    String icons = "";
-            // accessible: 0xe03e
-            icons += "\uE03e";
-            // error:  0xe237
-            icons += " \uE237";
-            // fingerprint: 0xe287
-            icons += " \uE287";
     var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
       appBar: AppBar(title: Text(languageProvider.get("history"))),

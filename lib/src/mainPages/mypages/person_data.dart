@@ -4,6 +4,10 @@ import '../../strings/lang.dart';
 import '../../components.dart';
 import 'package:provider/provider.dart';
 
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 void main(){
   runApp(person_data());
 }
@@ -18,25 +22,92 @@ class person_data extends StatefulWidget {
 }
 
 class _person_dataState extends State<person_data> {
-  List<String> interestKeywords = ['标签1', '标签2', '标签3', '标签4', '标签5'];
+  
+
+  File? _imageFile;
+
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
+
+  bool _generateChip = false;
+
+  void _handleButtonClick() {
+    setState(() {
+      _generateChip = true;
+    });
+  }
+
+  Future<String> generateNewChipAsync() async {
+    await Future.delayed(Duration(seconds: 2));
+    String newChipText = "New Chip";
+    return newChipText;
+  }
+
   @override
   Widget build(BuildContext context) {
-    String icons = "";
-            // accessible: 0xe03e
-            icons += "\uE03e";
-            // error:  0xe237
-            icons += " \uE237";
-            // fingerprint: 0xe287
-            icons += " \uE287";
+    
     var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
       appBar: AppBar(title: Text(languageProvider.get("person_data"))),
       body: Column(
-        
+          
           children: [
-            Image.network(
-              "https://picsum.photos/250?image=9",
-              width: 100.0,
+            ClipOval(
+              
+              child: InkWell(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text("选择头像"),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            leading: Icon(Icons.camera_alt),
+                            title: Text("拍照"),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              _pickImage(ImageSource.camera);
+                            },
+                          ),
+                          // TODO: 拍照功能未实现
+                          ListTile(
+                            leading: Icon(Icons.image),
+                            title: Text("从相册选择"),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              _pickImage(ImageSource.gallery);
+                              
+                            },
+                            
+                          ),
+                          // TODO: 图片尺寸过大会出现渲染溢出
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                child: _imageFile != null
+                    ? Image.file(
+                        _imageFile!,
+                        fit: BoxFit.cover,
+                        width: 100,
+                        height: 100,
+                      )
+                    : Image.network(
+                        "https://picsum.photos/250?image=9",
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+              ),
             ),
             TextField(
               autofocus: true,
@@ -74,7 +145,7 @@ class _person_dataState extends State<person_data> {
                 Expanded(
                   flex: 1,
                   child: Container(
-                    color: Colors.white, // 这里用于表示占据的空间
+                    
                     child: Wrap(
                       spacing: 8.0,
                       runSpacing: 4.0,
@@ -85,28 +156,41 @@ class _person_dataState extends State<person_data> {
                         Chip(label: Text('标签3')),
                         Chip(label: Text('标签4')),
                         Chip(label: Text('标签5')),
-                        //interestKeywords.map((keyword) => Chip(label: Text(keyword))).toList(),
-                        // TODO: 添加标签功能不生效
                       ], 
                     ),
                   ),
                 ),
                 
+                FutureBuilder<String>(
+                  future: generateNewChipAsync(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('生成新的Chip时出错');
+                    } else {
+                      return _generateChip 
+                        ? Chip(
+                            label: Text(snapshot.data!),
+                          )
+                        : Container();
+                    }
+                  },
+                ),
               ],
             ),
             ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  interestKeywords.add('新标签');
-                });
-              },
-              child: Text('添加标签'),
+              onPressed: _handleButtonClick,
+              child: Text('生成新的标签'),
+              // TODO: 添加标签功能仅生效一次
             ),
           ],
       ),
       
     );
   }
+
+  
 
   Row _radioRow(){
     return Row(children: [

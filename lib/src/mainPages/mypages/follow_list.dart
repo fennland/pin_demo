@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 void main(){
   runApp(follow_list());
@@ -19,7 +20,7 @@ class follow_list extends StatefulWidget {
 
   @override
   State<follow_list> createState() => _follow_listState();
-  
+
 }
 
 
@@ -27,6 +28,16 @@ class follow_list extends StatefulWidget {
 class _follow_listState extends State<follow_list> {
   late File imageFile = File('');
 
+  File? _imageFile;
+
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
 
   void changeImage() async {
     // 弹出本地图库，并返回选择的文件
@@ -58,9 +69,11 @@ class _follow_listState extends State<follow_list> {
             Row(
               children: [
                 ClipOval(
-                  child: Image.network(
-                    "https://picsum.photos/250?image=9",
-                    width: 50.0,
+                  child: CachedNetworkImage(
+                    imageUrl: "https://picsum.photos/250?image=9",
+                    placeholder: (context, url) => CircularProgressIndicator(), // 加载中显示的占位符
+                    errorWidget: (context, url, error) => Icon(Icons.error), // 加载失败显示的组件
+                    width: 100,
                   ),
                 ),
                 SizedBox(width: 20.0), // 可选项，用于设置图片和标题之间的间距
@@ -76,9 +89,11 @@ class _follow_listState extends State<follow_list> {
             Row(
               children: [
                 ClipOval(
-                  child: Image.network(
-                    "https://picsum.photos/250?image=9",
-                    width: 50.0,
+                  child: CachedNetworkImage(
+                    imageUrl: "https://picsum.photos/250?image=9",
+                    placeholder: (context, url) => CircularProgressIndicator(), // 加载中显示的占位符
+                    errorWidget: (context, url, error) => Icon(Icons.error), // 加载失败显示的组件
+                    width: 100,
                   ),
                 ),
                 SizedBox(width: 20.0), // 可选项，用于设置图片和标题之间的间距
@@ -94,9 +109,11 @@ class _follow_listState extends State<follow_list> {
             Row(
               children: [
                 ClipOval(
-                  child: Image.network(
-                    "https://picsum.photos/250?image=9",
-                    width: 50.0,
+                  child: CachedNetworkImage(
+                    imageUrl: "https://picsum.photos/250?image=9",
+                    placeholder: (context, url) => CircularProgressIndicator(), // 加载中显示的占位符
+                    errorWidget: (context, url, error) => Icon(Icons.error), // 加载失败显示的组件
+                    width: 100,
                   ),
                 ),
                 SizedBox(width: 20.0), // 可选项，用于设置图片和标题之间的间距
@@ -109,21 +126,52 @@ class _follow_listState extends State<follow_list> {
                 ),
               ],
             ),
-            // ClipOval(
-            //   child: InkWell(
-            //     onTap: changeImage,
-            //     child: imageFile != null
-            //       ? Image.file(
-            //           imageFile,
-            //           fit: BoxFit.cover,
-            //         )
-            //       : Image.network(
-            //           "https://picsum.photos/250?image=9",
-            //           fit: BoxFit.cover,
-            //         ),
-            //   ),
-            // ),
-            // TODO: flutter web 不支持本地加载图像
+            ClipOval(
+              child: InkWell(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text("选择头像"),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            leading: Icon(Icons.camera_alt),
+                            title: Text("拍照"),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              _pickImage(ImageSource.camera);
+                            },
+                          ),
+                          // TODO: 拍照功能未实现
+                          ListTile(
+                            leading: Icon(Icons.image),
+                            title: Text("从相册选择"),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              _pickImage(ImageSource.gallery);
+                            },
+                            
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                child: _imageFile != null
+                    ? Image.file(
+                        _imageFile!,
+                        fit: BoxFit.cover,
+                        width: 100,
+                      )
+                    : Image.network(
+                        "https://picsum.photos/250?image=9",
+                        width: 100,
+                        fit: BoxFit.cover,
+                      ),
+              ),
+            ),
           ],
       ),
     );
