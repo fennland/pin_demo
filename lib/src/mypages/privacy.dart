@@ -18,6 +18,7 @@ class privacy extends StatefulWidget {
 class _privacyState extends State<privacy> {
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD:lib/src/mypages/privacy.dart
     String icons = "";
     // accessible: 0xe03e
     icons += "\uE03e";
@@ -25,6 +26,8 @@ class _privacyState extends State<privacy> {
     icons += " \uE237";
     // fingerprint: 0xe287
     icons += " \uE287";
+=======
+>>>>>>> develop4:lib/src/mainPages/mypages/privacy.dart
     var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
       appBar: AppBar(title: Text(languageProvider.get("history"))),
