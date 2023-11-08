@@ -44,10 +44,17 @@ class _msgPageState extends State<msgPage> {
 
     return Scaffold(
       appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text(languageProvider.get("msg"),
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold, fontSize: 18.0))),
+        automaticallyImplyLeading: false,
+        title: Text(languageProvider.get("msg"),
+            style:
+                const TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.people_outlined),
+            onPressed: () => Navigator.pushNamed(context, "/msg/following"),
+          )
+        ],
+      ),
       body: Column(
         children: [
           serviceCard1,

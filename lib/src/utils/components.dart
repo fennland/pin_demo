@@ -10,12 +10,12 @@ import 'package:pin_demo/src/utils/strings/lang.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
-bool unSupportedPlatform = !(kIsWeb ||
+bool unSupportedPlatform = kIsWeb ||
     Platform.isMacOS ||
     Platform.isIOS ||
     isAndroidSimulator ||
     Platform.isLinux ||
-    Platform.isWindows);
+    Platform.isWindows;
 
 class isCardVisibleNotifier extends ChangeNotifier {
   //这里也可以使用with来进行实现

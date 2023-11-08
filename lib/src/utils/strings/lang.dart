@@ -79,9 +79,26 @@ class LanguageProvider with ChangeNotifier {
           "您正运行在bMapSDK受限支持平台\n（网页、桌面或 Android/iOS 模拟器）",
 
       // curuserinfo
-      "curUserPhone": "19987654321",
-      "curUser": "陈鹏",
+      "curUserPhone": "13333333333",
+      "defaultUserPhone": "13333333333",
+      "curUser": "游客",
+      "defaultUser": "游客",
       "curUserInfo": "Lv.1 PIN 会员",
+      "defaultUserInfo": "开通 PIN 会员",
+      "curUserSigning": "闲暇时候打剧本杀的小男孩一枚",
+      "defaultUserSigning": "这里是一句签名",
+
+      // someUserProfile
+      "someUserProfileFunc_Tag": "备注与标签",
+      "someUserProfileFunc_Needs": "和 ta 的需求历史",
+      // "someUserProfile_Needs":
+      //     "三里屯火锅局 (2023/10/21)\n步道乐跑 (2023/10/20)\n剧本杀有人一起吗 (2023/10/15)\n剧本杀杀杀杀 (2023/9/27)\n剧本杀快上车 (2023/9/24)\n......",
+      "someUserProfile_Needs": "...",
+      "someUserProfileBtn_invite": "邀请...",
+      "someUserProfileBtn_recommend": "推荐给...",
+      "someUserProfileBtn_block": "移入黑名单",
+      "someUserProfileBtn_follow": "关注",
+      "someUserProfileBtn_unfollow": "解除关注",
 
       // main - navigationitems
       "home": "首页",
@@ -94,6 +111,8 @@ class LanguageProvider with ChangeNotifier {
       "ordering": "需求匹配中...",
       "orderMatched": "匹配成功",
       "orderFailed": "匹配失败",
+      "orderCancel?": "确定要取消匹配吗？",
+      "orderCancel?sub": "取消后如再次发起匹配，匹配时间可能会延长",
 
       // home - search
       "searchInput": "搜索...",
@@ -162,12 +181,27 @@ class LanguageProvider with ChangeNotifier {
           "You are currently on an unsupported platform, some functions will be restricted.",
       "curUser": "Fenn Xiao",
       "curUserInfo": "Lv.1 PinVIP",
+      "curUserSigning": "",
+
+      // someUserProfile
+      "someUserProfileFunc_Tag": "Tag",
+      "someUserProfileFunc_Needs": "Needs",
+      "someUserProfileBtn_invite": "Invite...",
+      "someUserProfileBtn_recommend": "Recommend to...",
+      "someUserProfileBtn_block": "Block",
+      "someUserProfileBtn_follow": "Follow",
+      "someUserProfileBtn_unfollow": "Unfollow",
+
       "home": "Home",
       "msg": "Messages",
       "my": "My",
       "newOrder": "Create a new order",
       "newOrderInput": "Search who wanna karaoke now...",
       "ordering": "Matching",
+      "orderSuccess": "Pin!",
+      "orderFailed": "Failed...",
+      "orderCancel?": "Sure to Cancel?",
+      "orderCancel?sub": "If you wanna edit your match, press \"Edit\"",
       "searchInput": "Search...",
       "privacy": "Privacy",
       "help": "Help Center",

@@ -36,7 +36,7 @@ class _newOrderPageState extends State<newOrderPage> {
           ),
       body: Column(
         children: [
-          unSupportedPlatform
+          !unSupportedPlatform
               ? mapWidget.generateMap(
                   con: myMapController,
                   width: screenSize.width * 0.95,

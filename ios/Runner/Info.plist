@@ -56,5 +56,12 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+<string>Access to share photos</string>
+<key>NSCameraUsageDescription</key>
+<string>Access to share photos</string>
+<key>NSFileProviderItem-Attachments</key>
+<true/>
+
 </dict>
 </plist>

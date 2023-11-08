@@ -52,7 +52,7 @@ class _homePageState extends State<homePage> {
       ),
       body: Column(
         children: [
-          unSupportedPlatform
+          !unSupportedPlatform
               ? mapWidget.generateMap(
                   con: myMapController,
                   width: screenSize.width * 0.95,
@@ -78,6 +78,13 @@ class _homePageState extends State<homePage> {
           itemList,
         ],
       ),
+      floatingActionButton: unSupportedPlatform
+          ? FloatingActionButton(
+              child: const Icon(Icons.add),
+              onPressed: () => Navigator.pushNamed(context, "/order/new"),
+              heroTag: "newOrder",
+            )
+          : Container(),
     );
   }
 }

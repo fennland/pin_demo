@@ -6,8 +6,9 @@ import 'package:pin_demo/src/mypages/person_data.dart';
 import 'package:pin_demo/src/mypages/privacy.dart';
 import 'package:pin_demo/src/login/platformAlert.dart';
 import 'package:pin_demo/src/msgPages/conversations.dart';
-import 'package:pin_demo/src/orderPages/newOrder.dart';
+import 'package:pin_demo/src/orderPages/new.dart';
 import 'package:pin_demo/src/orderPages/ordering.dart';
+import 'package:pin_demo/src/users/someUserProfile.dart';
 import 'package:pin_demo/src/utils/strings/lang.dart';
 import 'package:pin_demo/src/utils/utils.dart';
 import 'package:window_manager/window_manager.dart';
@@ -109,11 +110,13 @@ class MyApp extends StatelessWidget {
           '/': (BuildContext context) => const platformAlert(),
           '/msg/conversations': (BuildContext context) =>
               const ConversationsPage(), // TODO: userName传导
+          '/users/some/profile': (BuildContext context) =>
+              const someUserProfile(),
           '/order/new': (BuildContext context) => const newOrderPage(),
           '/order/ing': (BuildContext context) => const orderingPage(),
           '/privacy': (context) => const privacy(),
-          '/person_data': (context) => const person_data(),
-          '/follow_list': (context) => const follow_list(),
+          '/my/profile': (context) => const person_data(),
+          '/msg/following': (context) => const follow_list(),
         },
         // onGenerateRoute: (settings) {
         //   if (settings.name == '/targetPage') {

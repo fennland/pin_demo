@@ -66,7 +66,7 @@ class _searchPageState extends State<searchPage> {
       body: Column(
         children: [
           _showMore
-              ? unSupportedPlatform
+              ? !unSupportedPlatform
                   ? mapWidget.generateMap(
                       con: myMapController,
                       width: screenSize.width * 0.95,

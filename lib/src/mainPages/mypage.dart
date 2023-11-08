@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_demo/main.dart';
 import 'package:pin_demo/src/mypages/privacy.dart';
+import 'package:pin_demo/src/users/someUserProfile.dart';
 import '../utils/strings/lang.dart';
 import '../utils/components.dart';
 import 'package:provider/provider.dart';
@@ -66,7 +67,7 @@ class _myPageState extends State<myPage> {
       leading: const Icon(Icons.headphones),
       title: Text(languageProvider.get("help")), // 多语言支持 *experimental
       onTap: () {
-        Navigator.pushNamed(context, "/follow_list");
+        Navigator.of(context).pushNamed("/users/some/profile");
         debugPrint("yuh yuh~"); // TODO: 我的页面二级跳转
       },
     );
@@ -122,15 +123,15 @@ class _myPageState extends State<myPage> {
       },
     );
 
-    ListTile item_temporaryTest = ListTile(
-      // TODO: for test, delete
-      leading: const Icon(Icons.build),
-      title: Text(languageProvider.get("newOrder")),
-      onTap: () {
-        Navigator.of(context).pushNamed("/order/new");
-        debugPrint("TODO: newOrder for test");
-      },
-    );
+    // ListTile item_temporaryTest = ListTile(
+    //   // TODO: for test, delete
+    //   leading: const Icon(Icons.build),
+    //   title: Text(languageProvider.get("newOrder")),
+    //   onTap: () {
+    //     Navigator.of(context).pushNamed("/order/new");
+    //     debugPrint("TODO: newOrder for test");
+    //   },
+    // );
 
     // Scaffold
     return Scaffold(
@@ -150,8 +151,7 @@ class _myPageState extends State<myPage> {
               child: InkWell(
                   splashColor: Colors.blue.withAlpha(30),
                   onTap: () {
-                    Navigator.pushNamed(context, "/person_data");
-                    debugPrint('Card tapped.');
+                    Navigator.pushNamed(context, "/my/profile");
                   },
                   child:
                       Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
@@ -213,7 +213,7 @@ class _myPageState extends State<myPage> {
                 item_settings,
                 item_lang,
                 item_quit,
-                item_temporaryTest,
+                // item_temporaryTest,
               ],
             ),
           ),

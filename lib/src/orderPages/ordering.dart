@@ -1,5 +1,6 @@
 // ignore_for_file: unused_import
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
@@ -11,6 +12,7 @@ import 'package:pin_demo/src/utils/map.dart';
 import '../utils/strings/lang.dart';
 import '../utils/components.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class orderingPage extends StatefulWidget {
   const orderingPage({super.key});
@@ -21,7 +23,9 @@ class orderingPage extends StatefulWidget {
 
 class _orderingPageState extends State<orderingPage>
     with SingleTickerProviderStateMixin {
+  late Timer _timer;
   bool _showSuccess = false;
+  bool _showConfirmationCard = false;
   late AnimationController _animationController;
   late Animation<double> _opacityAnimation;
 
@@ -38,31 +42,62 @@ class _orderingPageState extends State<orderingPage>
   }
 
   void _startTimer() {
-    Future.delayed(const Duration(seconds: 5), () {
+    _timer = Timer(const Duration(seconds: 5), () {
       setState(() {
         _showSuccess = true;
       });
       _animationController.forward();
-
-      Future.delayed(const Duration(seconds: 2), () {
-        Navigator.of(context).pushNamed("/msg/conversations",
-            arguments:
-                "New Group"); // TODO: new page after success matching, add listitem into msgList
-      });
     });
   }
 
   @override
   void dispose() {
     _animationController.dispose();
-
+    _timer.cancel(); // 取消计时器任务
     super.dispose();
   }
 
   BMFMapController? myMapController;
+
+  Future<void> _shareContent() async {
+    try {
+      await Share.share(
+          'Hello, check out this amazing content!\nhttps://example.com'); //TODO: Share content
+    } catch (e) {
+      debugPrint('Sharing failed: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<LanguageProvider>(context);
+    var serviceCard = BackdropFilter(
+      filter: _showConfirmationCard
+          ? ImageFilter.blur(sigmaX: 5, sigmaY: 5)
+          : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+      child: DisappearingCard(
+        automaticallyDisappear: true,
+        defaultBtns: true,
+        cardContext: ListTile(
+          leading: const Icon(Icons.question_mark),
+          title: Text(languageProvider.get("orderCancel?")),
+          subtitle: Text(languageProvider.get("orderCancel?sub")),
+        ),
+        btnLeftBehaviour: () {
+          setState(() {
+            _showConfirmationCard = false;
+            _startTimer();
+          });
+        },
+        btnRightBehaviour: () {
+          setState(() {
+            _showConfirmationCard = false;
+          });
+          Navigator.pop(context, "/order/new"); // TODO: 解决卡出new group
+        },
+      ),
+    );
+
     var mapWidget = MapWidget(
       onTap: () {
         debugPrint("TODO: newOrder map onTap");
@@ -73,7 +108,7 @@ class _orderingPageState extends State<orderingPage>
     return Scaffold(
       appBar: AppBar(
         title: Row(children: [
-          !_showSuccess
+          (!_showSuccess && !_showConfirmationCard)
               ? Padding(
                   padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
                   child: Container(
@@ -88,15 +123,20 @@ class _orderingPageState extends State<orderingPage>
         centerTitle: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () => debugPrint("TODO: ordering search"),
-          ),
-          IconButton(
               icon: const Icon(Icons.edit),
               onPressed: () => debugPrint("TODO: ordering edit")),
           IconButton(
               icon: const Icon(Icons.cancel_outlined),
-              onPressed: () => debugPrint("TODO: ordering cancel")),
+              onPressed: () {
+                setState(() {
+                  _timer.cancel();
+                  _showConfirmationCard = true;
+                });
+              }),
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: _shareContent,
+          ),
         ],
       ),
       body: Stack(children: [
@@ -106,7 +146,7 @@ class _orderingPageState extends State<orderingPage>
               clipBehavior: Clip.hardEdge,
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20))),
-              child: unSupportedPlatform
+              child: !unSupportedPlatform
                   ? mapWidget.generateMap(
                       con: myMapController,
                       width: screenSize.width * 0.95,
@@ -150,24 +190,37 @@ class _orderingPageState extends State<orderingPage>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 32.0),
-                      child:
-                          Icon(Icons.check_circle, color: Colors.greenAccent),
+                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
+                      child: Icon(Icons.check_circle,
+                          color: Colors.greenAccent, size: 64.0),
                     ),
-                    Text(
-                      languageProvider.get("orderMatched"),
-                      style: const TextStyle(
-                        fontSize: 32,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
+                      child: Text(
+                        languageProvider.get("orderMatched"),
+                        style: const TextStyle(
+                          fontSize: 32,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
+                    ElevatedButton(
+                      child: Text(languageProvider.get("ok")),
+                      onPressed: () {
+                        Navigator.of(context).popAndPushNamed(
+                            "/msg/conversations",
+                            arguments:
+                                "New Group"); // TODO: new page after success matching, add listitem into msgList
+                      },
+                    )
                   ],
                 ),
               ),
             ),
           ),
         ),
+        (_showConfirmationCard) ? serviceCard : Container()
       ]),
     );
   }
