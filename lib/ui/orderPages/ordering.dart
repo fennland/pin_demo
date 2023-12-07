@@ -9,8 +9,8 @@ import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:pin_demo/main.dart';
 import 'package:pin_demo/src/utils/map.dart';
-import '../utils/strings/lang.dart';
-import '../utils/components.dart';
+import 'package:pin_demo/src/utils/constants/lang.dart';
+import 'package:pin_demo/src/utils/components.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 

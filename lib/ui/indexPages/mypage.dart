@@ -3,10 +3,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_demo/main.dart';
-import 'package:pin_demo/src/mypages/privacy.dart';
+import 'package:pin_demo/ui/mypages/privacy.dart';
 import 'package:pin_demo/src/users/someUserProfile.dart';
-import '../utils/strings/lang.dart';
-import '../utils/components.dart';
+import 'package:pin_demo/src/utils/constants/lang.dart';
+import 'package:pin_demo/src/utils/components.dart';
 import 'package:provider/provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -14,7 +14,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-import '../utils/utils.dart';
+import 'package:pin_demo/src/utils/utils.dart';
 
 class myPage extends StatefulWidget {
   static var body;

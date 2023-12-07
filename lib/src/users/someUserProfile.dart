@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:pin_demo/src/utils/strings/lang.dart';
+import 'package:pin_demo/src/utils/constants/lang.dart';
 import 'package:provider/provider.dart';
 
 class someUserProfile extends StatefulWidget {

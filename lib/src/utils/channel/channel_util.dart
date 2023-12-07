@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 
-import 'bilibili_channel.dart';
+import 'channel.dart';
 
 ///建立Method通道
 ///参考资料 https://juejin.cn/post/7035211019618091045
@@ -21,11 +21,11 @@ class ChannelUtil {
   static final ChannelUtil _instance = ChannelUtil._internal();
 
   factory ChannelUtil() {
-    _getMediaMethodChannel ??= MethodChannel(BilibiliChannel.uploadChannel);
-    _stayAliveChannel ??= MethodChannel(BilibiliChannel.stayAliveChannel);
-    _startServiceChannel ??= MethodChannel(BilibiliChannel.startServiceChannel);
-    _chartChannel ??= MethodChannel(BilibiliChannel.chartChannel);
-    _takeMediaChannel ??= MethodChannel(BilibiliChannel.takeMediaChannel);
+    _getMediaMethodChannel ??= MethodChannel(PinChannel.uploadChannel);
+    _stayAliveChannel ??= MethodChannel(PinChannel.stayAliveChannel);
+    _startServiceChannel ??= MethodChannel(PinChannel.startServiceChannel);
+    _chartChannel ??= MethodChannel(PinChannel.chartChannel);
+    _takeMediaChannel ??= MethodChannel(PinChannel.takeMediaChannel);
     return _instance;
   }
 

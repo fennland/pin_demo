@@ -16,7 +16,7 @@ class HYJsonParse {
     //2、将jsonString转成Map/List
     final result = json.decode(jsonString);
 
-    //3、将Map中的内哦荣转成一个个的对象
+    //3、将Map中的内容转成一个个的对象
     return HyBigDataModel.fromJson(result);
   }
 

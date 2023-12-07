@@ -4,22 +4,22 @@
 
 import 'dart:convert';
 
-WechatUsersModel wechatUsersModelFromJson(String str) =>
-    WechatUsersModel.fromJson(json.decode(str));
+UsersModel UsersModelFromJson(String str) =>
+    UsersModel.fromJson(json.decode(str));
 
-class WechatUsersModel {
+class UsersModel {
   int? code;
   String? message;
   List<UserModel>? data;
 
-  WechatUsersModel({
+  UsersModel({
     this.code,
     this.message,
     this.data,
   });
 
-  factory WechatUsersModel.fromJson(Map<String, dynamic> json) =>
-      WechatUsersModel(
+  factory UsersModel.fromJson(Map<String, dynamic> json) =>
+      UsersModel(
         code: json["code"],
         message: json["message"],
         data: json["data"] == null
@@ -34,6 +34,7 @@ class UserModel {
   String? userId; //用户Id
   String? userName; //名称
   String? latestMsg; //最新消息
+  // List<Float, Float>? latestPosition; //最新位置
   String? avatar; //头像
 
   UserModel({

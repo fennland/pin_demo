@@ -4,30 +4,30 @@
 
 import 'dart:convert';
 
-WechatLoginModel wechatLoginModelFromJson(String str) =>
-    WechatLoginModel.fromJson(json.decode(str));
+LoginModel loginModelFromJson(String str) =>
+    LoginModel.fromJson(json.decode(str));
 
-String wechatLoginModelToJson(WechatLoginModel data) =>
+String loginModelToJson(LoginModel data) =>
     json.encode(data.toJson());
 
-class WechatLoginModel {
+class LoginModel {
   int? code;
   String? message;
-  WechatLoginData? data;
+  LoginData? data;
 
-  WechatLoginModel({
+  LoginModel({
     this.code,
     this.message,
     this.data,
   });
 
-  factory WechatLoginModel.fromJson(Map<String, dynamic> json) =>
-      WechatLoginModel(
+  factory LoginModel.fromJson(Map<String, dynamic> json) =>
+      LoginModel(
         code: json["code"],
         message: json["message"],
         data: json["data"] == null
             ? null
-            : WechatLoginData.fromJson(json["data"]),
+            : LoginData.fromJson(json["data"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -37,19 +37,19 @@ class WechatLoginModel {
       };
 }
 
-class WechatLoginData {
+class LoginData {
   String? userId;
   String? userName;
   String? avatar;
 
-  WechatLoginData({
+  LoginData({
     this.userId,
     this.userName,
     this.avatar,
   });
 
-  factory WechatLoginData.fromJson(Map<String, dynamic> json) =>
-      WechatLoginData(
+  factory LoginData.fromJson(Map<String, dynamic> json) =>
+      LoginData(
         userId: json["userId"],
         userName: json["userName"],
         avatar: json["avatar"],

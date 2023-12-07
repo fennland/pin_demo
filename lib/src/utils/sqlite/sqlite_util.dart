@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'package:pin_demo/src//utils/constant.dart';
+import 'package:pin_demo/src/utils/constants/constant.dart';
 
 ///数据库sqlite
 class SqliteUtil {

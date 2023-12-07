@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:pin_demo/main.dart';
 import 'package:pin_demo/src/utils/map.dart';
-import '../utils/strings/lang.dart';
-import '../utils/components.dart';
+import 'package:pin_demo/src/utils/constants/lang.dart';
+import 'package:pin_demo/src/utils/components.dart';
 import 'package:provider/provider.dart';
 
 class newOrderPage extends StatefulWidget {

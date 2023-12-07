@@ -7,7 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 // import 'package:flutter_bmflocation/flutter_bmflocation.dart';
-import 'package:pin_demo/src/utils/strings/lang.dart';
+import 'package:pin_demo/src/utils/constants//lang.dart';
 // import 'package:flutter_bmflocation/bdmap_location_flutter_plugin.dart';
 
 BMFMapController? myMapController;

@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:pin_demo/main.dart';
-import '../utils/components.dart';
-import '../utils/strings/lang.dart';
+import 'package:pin_demo/src/utils/components.dart';
+import 'package:pin_demo/src/utils/constants/lang.dart';
 import 'package:provider/provider.dart';
 
 class msgPage extends StatefulWidget {

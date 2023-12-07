@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pin_demo/src/utils/strings/lang.dart';
+import 'package:pin_demo/src/utils/constants/lang.dart';
 import 'package:provider/provider.dart';
 
 class ConversationsPage extends StatefulWidget {

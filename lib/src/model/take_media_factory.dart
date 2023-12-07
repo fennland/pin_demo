@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../channel/channel_util.dart';
+import 'package:pin_demo/src/utils/channel/channel_util.dart';
 
 ///拍摄媒体（Android & Ios）
 abstract class TakeMediaFactory {
