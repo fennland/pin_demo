@@ -62,7 +62,7 @@ class _orderingPageState extends State<orderingPage>
   Future<void> _shareContent() async {
     try {
       await Share.share(
-          'Hello, check out this amazing content!\nhttps://example.com'); //TODO: Share content
+          '一起拼app\nhttps://pin.fennland.me/'); //TODO: Share content
     } catch (e) {
       debugPrint('Sharing failed: $e');
     }
@@ -209,9 +209,8 @@ class _orderingPageState extends State<orderingPage>
                       child: Text(languageProvider.get("ok")),
                       onPressed: () {
                         Navigator.of(context).popAndPushNamed(
-                            "/msg/conversations",
-                            arguments:
-                                "New Group"); // TODO: new page after success matching, add listitem into msgList
+                          "/msg/conversations",
+                        ); // TODO: new page after success matching, add listitem into msgList
                       },
                     )
                   ],

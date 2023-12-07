@@ -28,19 +28,19 @@ class _msgPageState extends State<msgPage> {
         subtitle: Text(languageProvider.get("service0_sub")),
       ),
     );
-    var serviceCard2 = DisappearingCard(
-      automaticallyDisappear: true,
-      defaultBtns: false,
-      cardContext: ListTile(
-        leading: const Icon(Icons.handyman),
-        title: Text(languageProvider.get("service1")),
-        subtitle: Text(languageProvider.get("service1_sub")),
-      ),
-      buttonLeft: TextButton(
-        child: const Text("testOK"),
-        onPressed: () => debugPrint("it's a test"),
-      ),
-    );
+    // var serviceCard2 = DisappearingCard(
+    //   automaticallyDisappear: true,
+    //   defaultBtns: false,
+    //   cardContext: ListTile(
+    //     leading: const Icon(Icons.handyman),
+    //     title: Text(languageProvider.get("service1")),
+    //     subtitle: Text(languageProvider.get("service1_sub")),
+    //   ),
+    //   buttonLeft: TextButton(
+    //     child: const Text("testOK"),
+    //     onPressed: () => debugPrint("it's a test"),
+    //   ),
+    // );
 
     return Scaffold(
       appBar: AppBar(
@@ -58,7 +58,7 @@ class _msgPageState extends State<msgPage> {
       body: Column(
         children: [
           serviceCard1,
-          serviceCard2,
+          // serviceCard2,
           const itemListWidget(type: "user", itemCount: 3),
         ],
       ),

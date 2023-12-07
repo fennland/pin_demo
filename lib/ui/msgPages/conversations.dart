@@ -3,19 +3,41 @@ import 'package:pin_demo/src/utils/strings/lang.dart';
 import 'package:provider/provider.dart';
 
 class ConversationsPage extends StatefulWidget {
-  //final dynamic userData; // TODO: 改为map传入userDataMap
+  final Map<String, dynamic>? userData;
 
-  const ConversationsPage({super.key});
+  const ConversationsPage({Key? key, this.userData}) : super(key: key);
 
   @override
   _ConversationsPageState createState() => _ConversationsPageState();
 }
 
 class _ConversationsPageState extends State<ConversationsPage> {
-  Color _bgcolor = Colors.transparent;
+  final Color _bgcolor = Colors.transparent;
   final TextEditingController _textController = TextEditingController();
-  final List<Map<String, dynamic>>? _messages =
-      messages["zh"]; // TODO: multilanguages
+  late Map<String, dynamic> _defaultMsgData;
+  List<Map<String, String>>? _messages;
+
+  @override
+  void initState() {
+    super.initState();
+    _defaultMsgData = {
+      'title': 'New Group',
+      'msgs': [
+        {
+          "type": "sent",
+          "message": '你已加入需求群，来沟通交流吧！',
+        },
+        {
+          "type": "received",
+          "message": '这是一条测试消息',
+        }
+      ],
+    };
+
+    _messages = widget.userData != null
+        ? widget.userData!['msgs']
+        : _defaultMsgData['msgs'];
+  }
 
   void _addMessage(String message, String type) {
     setState(() {
@@ -66,13 +88,15 @@ class _ConversationsPageState extends State<ConversationsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final dynamic userData =
-        ModalRoute.of(context)?.settings.arguments ?? "default";
+    // final dynamic userData =
+    //     ModalRoute.of(context)?.settings.arguments ?? _defaultMsgData;
     var languageProvider = Provider.of<LanguageProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(userData),
+        title: Text(widget.userData != null
+            ? widget.userData!['title']
+            : _defaultMsgData['title']),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -82,8 +106,8 @@ class _ConversationsPageState extends State<ConversationsPage> {
               child: ListView.builder(
                 itemCount: _messages!.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return _buildMessageBubble(
-                      _messages![index]['message'], _messages![index]['type']);
+                  return _buildMessageBubble(_messages![index]['message']!,
+                      _messages![index]['type']!);
                 },
               ),
             ),
