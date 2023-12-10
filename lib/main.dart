@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pin_demo/ui/msgPages/conversations.dart';
 import 'package:pin_demo/ui/mypages/follow_list.dart';
 import 'package:pin_demo/ui/mypages/person_data.dart';
 import 'package:pin_demo/ui/mypages/privacy.dart';
 import 'package:pin_demo/ui/login/platform_alert.dart';
-import 'package:pin_demo/ui/msgPages/conversations.dart';
-import 'package:pin_demo/ui/orderPages/new.dart';
 import 'package:pin_demo/ui/orderPages/ordering.dart';
+import 'package:pin_demo/ui/orderPages/new.dart';
 import 'package:pin_demo/src/users/someUserProfile.dart';
 import 'package:pin_demo/src/utils/constants/lang.dart';
 import 'package:pin_demo/src/utils/utils.dart';
@@ -119,6 +119,7 @@ class MyApp extends StatelessWidget {
           '/my/profile': (context) => const person_data(),
           '/msg/following': (context) => const follow_list(),
           '/server/test': (context) => TestServerPage(),
+          '/settings': (context) => const settings(),
         },
         // onGenerateRoute: (settings) {
         //   if (settings.name == '/targetPage') {

@@ -20,7 +20,7 @@ class _privacyState extends State<privacy> {
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
-      appBar: AppBar(title: Text(languageProvider.get("history"))),
+      appBar: AppBar(title: Text(languageProvider.get("privacy_policy"))),
       body: Column(
         children: [
           ListTile(

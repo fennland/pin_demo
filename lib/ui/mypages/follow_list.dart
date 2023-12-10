@@ -44,7 +44,7 @@ class _follow_listState extends State<follow_list> {
     icons += " \uE287";
     var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
-      appBar: AppBar(title: Text(languageProvider.get("关注列表(4)"))),
+      appBar: AppBar(title: Text(languageProvider.get("follow_list"))),
       body: Column(
         children: [
           Row(
@@ -98,21 +98,7 @@ class _follow_listState extends State<follow_list> {
               ),
             ],
           ),
-          // ClipOval(
-          //   child: InkWell(
-          //     onTap: changeImage,
-          //     child: imageFile != null
-          //       ? Image.file(
-          //           imageFile,
-          //           fit: BoxFit.cover,
-          //         )
-          //       : Image.network(
-          //           "https://picsum.photos/250?image=9",
-          //           fit: BoxFit.cover,
-          //         ),
-          //   ),
-          // ),
-          // TODO: flutter web 不支持本地加载图像
+          
         ],
       ),
     );

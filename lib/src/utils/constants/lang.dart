@@ -159,9 +159,11 @@ class LanguageProvider with ChangeNotifier {
       "ok": "好",
       "cancel": "取消",
 
-      // mypage
+      // mypages - person_data
       "person_data": "修改个人资料",
-      "history": "历史需求",
+
+      // mypages - privacy
+      "privacy_policy": "隐私政策",
       "account": "注册、登录或使用账号管理功能添加其他账号：",
       "sub_account": "账户昵称、密码、密码保护选项、电子邮箱、手机号码、第三方账号信息",
       "requirement": "发布需求、与其他用户发送信息：",
@@ -171,6 +173,17 @@ class LanguageProvider with ChangeNotifier {
       "sub_address_book": "通讯录信息",
       "search": "搜索：",
       "sub_search": "关键字信息、搜索历史记录、设备信息",
+
+      // mypages - privacy
+      "follow_list": "关注列表",
+
+      // mypages - settings
+      "settings": "设置",
+      "account_management": "账号管理",
+      "account_and_security": "账号与安全",
+      "push_notification_settings": "推送通知设置",
+      "general_settings": "通用设置",
+      "customer_service_center": "客服中心",
       "remCache": "清除缓存",
       "removingCache": "清除中",
       "remFailed": "清除失败：请检查存储权限后再试"
@@ -244,7 +257,7 @@ class LanguageProvider with ChangeNotifier {
       "ok": "OK ",
       "cancel": "Cancel",
       "person_data": "Edit Profile",
-      "history": "Historical needs",
+      "privacy_policy": "Privacy Policy",
       "account":
           "Register, log in, or use account management features to add other accounts: ",
       "sub_account":
@@ -258,6 +271,13 @@ class LanguageProvider with ChangeNotifier {
       "sub_address_book": "contact book information",
       "search": "Search: ",
       "sub_search": "keyword information, search history, device information",
+      "follow_list": "follow list",
+      "settings": "settings",
+      "account_management": "account management",
+      "account_and_security": "account and security",
+      "push_notification_settings": "push notification settings",
+      "general_settings": "general settings",
+      "customer_service_center": "customer service center",
       "remCache": "Clean",
       "removingCache": "Cleaning...",
       "remFailed": "Failed: Please check permission."

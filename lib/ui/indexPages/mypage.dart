@@ -101,6 +101,7 @@ class _myPageState extends State<myPage> {
             )
           : const Icon(Icons.chevron_right),
       onTap: () {
+        Navigator.pushNamed(context, "/settings");
         debugPrint("TODO: Setting"); // TODO: 我的页面二级跳转
       },
     );
