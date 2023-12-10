@@ -2,10 +2,15 @@
 
 // ignore_for_file: camel_case_types
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:pin_demo/src/users/defaultUser.dart';
 import 'package:pin_demo/src/utils/constants/lang.dart';
 import 'package:provider/provider.dart';
+import 'package:pin_demo/src/utils/constants/constant.dart';
+import 'package:pin_demo/src/utils/shared/shared_preference_util.dart';
+import 'package:pin_demo/src/model/users_model.dart';
+import 'package:http/http.dart' as http;
 
 class loginPage extends StatefulWidget {
   const loginPage({super.key});
@@ -43,6 +48,27 @@ class _loginPageState extends State<loginPage> {
     });
   }
 
+  Future<Map<String, dynamic>> _postLoginForm(phone, pwd) async {
+    try {
+      var response = await http.post(
+        Uri.parse(Constant.urlWebMap["login"]!),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'phone': phone, 'pwd': pwd}),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // debugPrint(response.body);
+        return ({
+          "code": response.statusCode,
+          "result": json.decode(response.body)
+        });
+      } else {
+        return ({"code": response.statusCode, "result": {}});
+      }
+    } catch (e) {
+      return ({"code": 500, "error": e.toString()});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<LanguageProvider>(context);
@@ -77,32 +103,6 @@ class _loginPageState extends State<loginPage> {
                       hintText: languageProvider.get("usernameLogin"),
                       prefixIcon: const Icon(Icons.person)),
                   textAlign: TextAlign.center,
-                  // onSubmitted: (value) {
-                  //   if (value.length == 11 && value[0] == '1') {
-                  //     int? userid = int.tryParse(value);
-                  //     if (userid != null) {
-                  //       languageProvider.set("curUserPhone", userid.toString());
-                  //     } else {
-                  //       SnackBar snackbar = SnackBar(
-                  //         content: Text(
-                  //             languageProvider.get("loginFailedWithoutPhone")),
-                  //         backgroundColor:
-                  //             const Color.fromARGB(255, 255, 109, 109),
-                  //         duration: const Duration(seconds: 2),
-                  //       );
-                  //       ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                  //     }
-                  //   } else {
-                  //     SnackBar snackbar = SnackBar(
-                  //       content: Text(
-                  //           languageProvider.get("loginFailedWithoutPhone")),
-                  //       backgroundColor:
-                  //           const Color.fromARGB(255, 255, 109, 109),
-                  //       duration: const Duration(seconds: 2),
-                  //     );
-                  //     ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                  //   }
-                  // },
                 ),
               ),
               SizedBox(
@@ -122,14 +122,48 @@ class _loginPageState extends State<loginPage> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: OutlinedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       _checkPhoneNumberValidity();
                       if (_isValidPhoneNumber) {
                         if (isValidPwd()) {
-                          if (_pwdController.text == curUser["pwd"] &&
-                              _phoneNumberController.text == curUser["phone"]) {
-                            // TODO: security check
+                          var loginResult = await _postLoginForm(
+                              _phoneNumberController.text, _pwdController.text);
+                          if (loginResult["code"] == 200 ||
+                              loginResult["code"] == 201) {
+                            print(loginResult["result"]);
+                            saveUserInfo(UserModel(
+                                userName: loginResult["result"]["data"]
+                                    ["username"],
+                                userID: loginResult["result"]["data"]["id"],
+                                phone: loginResult["result"]["data"]["phone"],
+                                avatar: loginResult["result"]["data"]["avatar"],
+                                sign: loginResult["result"]["data"]["sign"]));
                             Navigator.of(context).pushNamed("/home");
+                          } else if (loginResult["code"] == 404) {
+                            SnackBar snackbar = SnackBar(
+                              content:
+                                  Text(languageProvider.get("loginNoSuchUser")),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 255, 109, 109),
+                              duration: const Duration(seconds: 2),
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackbar);
+                          } else if (loginResult["code"] == 500 ||
+                              loginResult["code"] == 403) {
+                            SnackBar snackbar = SnackBar(
+                                content: Text(
+                                    languageProvider.get("loginBadNetwork")),
+                                backgroundColor:
+                                    const Color.fromARGB(255, 255, 109, 109),
+                                duration: const Duration(seconds: 5),
+                                action: SnackBarAction(
+                                    label: languageProvider
+                                        .get("loginBadNetworkTest"),
+                                    onPressed: () => Navigator.of(context)
+                                        .pushNamed("/server/test")));
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackbar);
                           } else {
                             SnackBar snackbar = SnackBar(
                               content: Text(

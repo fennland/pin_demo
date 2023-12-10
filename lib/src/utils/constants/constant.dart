@@ -16,8 +16,10 @@ class Constant {
 
   ///网页端设置代理,处理跨域问题
   static const Map<String, String> urlWebMap = {
-    "login": "http://127.0.0.1:8001",
-    "search": "http://127.0.0.1:8002",
-    "app": "http://127.0.0.1:8003",
+    "login": "http://console.fennland.me:5000/user/login",
+    "database": "http://console.fennland.me:5000/database",
+    "hello": "http://console.fennland.me:5000/hello"
+    // "search": "http://127.0.0.1:8002",
+    // "app": "http://127.0.0.1:8003",
   };
 }

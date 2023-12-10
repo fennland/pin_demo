@@ -75,6 +75,9 @@ class LanguageProvider with ChangeNotifier {
       "pwdLogin": "密码",
       "loginFailedWithoutPhone": "手机号格式不正确",
       "loginFailedIncorrect": "手机号或密码不正确",
+      "loginNoSuchUser": "用户不存在",
+      "loginBadNetwork": "网络状态差，请稍后重试",
+      "loginBadNetworkTest": "网络测试",
       "unsupportedPlatformConfirm":
           "您正运行在bMapSDK受限支持平台\n（网页、桌面或 Android/iOS 模拟器）",
 
@@ -177,6 +180,11 @@ class LanguageProvider with ChangeNotifier {
       "onekeyLogin": "QuickPass",
       "usernameLogin": "Username/Phone",
       "pwdLogin": "Password",
+      "loginFailedWithoutPhone": "Bad Format of Phone Number or Password",
+      "loginFailedIncorrect": "Incorrect",
+      "loginNoSuchUser": "No such user",
+      "loginBadNetwork": "Bad network connection...",
+      "loginBadNetworkTest": "Test Net",
       "unsupportedPlatformConfirm":
           "You are currently on an unsupported platform, some functions will be restricted.",
       "curUser": "Fenn Xiao",

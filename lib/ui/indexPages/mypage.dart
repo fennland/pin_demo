@@ -13,6 +13,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pin_demo/src/model/users_model.dart';
 import 'dart:io';
 import 'package:pin_demo/src/utils/utils.dart';
 
@@ -27,9 +28,11 @@ class myPage extends StatefulWidget {
 
 class _myPageState extends State<myPage> {
   dynamic cache = 0.0;
+  var userName = "";
   @override
   void initState() {
     if (!kIsWeb) getSize();
+
     super.initState();
   }
 
@@ -67,7 +70,7 @@ class _myPageState extends State<myPage> {
       leading: const Icon(Icons.headphones),
       title: Text(languageProvider.get("help")), // 多语言支持 *experimental
       onTap: () {
-        Navigator.of(context).pushNamed("/users/some/profile");
+        Navigator.of(context).pushNamed("/server/test");
         debugPrint("yuh yuh~"); // TODO: 我的页面二级跳转
       },
     );
@@ -123,16 +126,6 @@ class _myPageState extends State<myPage> {
       },
     );
 
-    // ListTile item_temporaryTest = ListTile(
-    //   // TODO: for test, delete
-    //   leading: const Icon(Icons.build),
-    //   title: Text(languageProvider.get("newOrder")),
-    //   onTap: () {
-    //     Navigator.of(context).pushNamed("/order/new");
-    //     debugPrint("TODO: newOrder for test");
-    //   },
-    // );
-
     // Scaffold
     return Scaffold(
       appBar: AppBar(
@@ -142,83 +135,105 @@ class _myPageState extends State<myPage> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
         ),
       ),
-      body: Column(
-        children: [
-          Card(
-              clipBehavior: Clip.hardEdge,
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20))),
-              child: InkWell(
-                  splashColor: Colors.blue.withAlpha(30),
-                  onTap: () {
-                    Navigator.pushNamed(context, "/my/profile");
-                  },
-                  child:
-                      Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                    ListTile(
-                      leading: SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: CircleAvatar(
-                          radius: 50.0,
-                          child: ClipOval(
-                            child: CachedNetworkImage(
-                              imageUrl: "https://picsum.photos/250?image=9",
-                              placeholder: (context, url) =>
-                                  const CircularProgressIndicator(),
-                              errorListener: (value) {
-                                debugPrint(
-                                    "ERROR in myPage's CachedNetworkImage!");
-                                ErrorHint(
-                                    "ERROR in myPage's CachedNetworkImage!");
-                              },
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.error),
-                            ),
-                          ),
-                        ),
-                      ),
-                      title: Text(languageProvider.get("curUser")),
-                      subtitle: Column(
-                        children: [
-                          const SizedBox(height: 8.0),
-                          LinearPercentIndicator(
-                            alignment: MainAxisAlignment.start,
-                            padding: const EdgeInsets.all(0.0),
-                            width: 100.0,
-                            lineHeight: 14.0,
-                            percent: 0.15,
-                            center: Text(
-                              languageProvider.get("curUserInfo"),
-                              style: const TextStyle(
-                                  fontSize: 10.0, color: Colors.white),
-                            ),
-                            barRadius: const Radius.circular(20.0),
-                            backgroundColor: Theme.of(context).disabledColor,
-                            progressColor: Colors.blueAccent,
-                          ),
-                        ],
-                      ),
-                      trailing: Icon(Icons.chevron_right),
-                    ),
-                  ]))),
-          const SizedBox(
-            height: 30.0,
-          ),
-          Expanded(
-            child: ListView(
-              children: <Widget>[
-                item_privacy,
-                item_help,
-                item_settings,
-                item_lang,
-                item_quit,
-                // item_temporaryTest,
+      body: FutureBuilder(
+        future: getUserInfo(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final user = snapshot.data;
+            return Column(
+              children: [
+                Card(
+                    clipBehavior: Clip.hardEdge,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    child: InkWell(
+                        splashColor: Colors.blue.withAlpha(30),
+                        onTap: () {
+                          Navigator.pushNamed(context, "/my/profile");
+                        },
+                        child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              ListTile(
+                                leading: SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: CircleAvatar(
+                                    radius: 50.0,
+                                    child: ClipOval(
+                                      child: CachedNetworkImage(
+                                        imageUrl: user?.avatar ??
+                                            "https://picsum.photos/250?image=8",
+                                        placeholder: (context, url) =>
+                                            const CircularProgressIndicator(),
+                                        errorListener: (value) {
+                                          debugPrint(
+                                              "ERROR in myPage's CachedNetworkImage!");
+                                          ErrorHint(
+                                              "ERROR in myPage's CachedNetworkImage!");
+                                        },
+                                        errorWidget: (context, url, error) =>
+                                            const Icon(Icons.error),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                title: Text(user?.userName ??
+                                    languageProvider.get(
+                                        "curUser")), // TODO: userName from userModel
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(height: 8.0),
+                                    // LinearPercentIndicator(
+                                    //   alignment: MainAxisAlignment.start,
+                                    //   padding: const EdgeInsets.all(0.0),
+                                    //   width: 100.0,
+                                    //   lineHeight: 14.0,
+                                    //   percent: 0.15,
+                                    //   center: Text(
+                                    //     languageProvider.get("curUserInfo"),
+                                    //     style: const TextStyle(
+                                    //         fontSize: 10.0,
+                                    //         color: Colors.white),
+                                    //   ),
+                                    //   barRadius: const Radius.circular(20.0),
+                                    //   backgroundColor:
+                                    //       Theme.of(context).disabledColor,
+                                    //   progressColor: Colors.blueAccent,
+                                    // ),
+                                    Text(
+                                      user?.sign ?? "还没有签名...",
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(fontSize: 12.0),
+                                    )
+                                  ],
+                                ),
+                                trailing: Icon(Icons.chevron_right),
+                              ),
+                            ]))),
+                const SizedBox(
+                  height: 30.0,
+                ),
+                Expanded(
+                  child: ListView(
+                    children: <Widget>[
+                      item_privacy,
+                      item_help,
+                      item_settings,
+                      item_lang,
+                      item_quit,
+                      // item_temporaryTest,
+                    ],
+                  ),
+                ),
+                service_dcard
               ],
-            ),
-          ),
-          service_dcard
-        ],
+            );
+          } else {
+            return const CircularProgressIndicator();
+          }
+        },
       ),
     );
   }

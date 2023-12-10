@@ -16,6 +16,7 @@ import 'package:pin_demo/ui/indexPages/msgpage.dart';
 import 'package:pin_demo/ui/indexPages/mypage.dart';
 import 'package:pin_demo/ui/indexPages/home.dart';
 import 'package:pin_demo/ui/login/login.dart';
+import 'package:pin_demo/src/server/flask_test.dart';
 import 'dart:io' show Platform;
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 // import 'package:flutter_bmflocation/flutter_bmflocation.dart';
@@ -117,6 +118,7 @@ class MyApp extends StatelessWidget {
           '/privacy': (context) => const privacy(),
           '/my/profile': (context) => const person_data(),
           '/msg/following': (context) => const follow_list(),
+          '/server/test': (context) => TestServerPage(),
         },
         // onGenerateRoute: (settings) {
         //   if (settings.name == '/targetPage') {
