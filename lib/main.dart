@@ -6,6 +6,7 @@ import 'package:pin_demo/src/mypages/person_data.dart';
 import 'package:pin_demo/src/mypages/privacy.dart';
 import 'package:pin_demo/src/login/platformAlert.dart';
 import 'package:pin_demo/src/msgPages/conversations.dart';
+import 'package:pin_demo/src/mypages/settings.dart';
 import 'package:pin_demo/src/orderPages/newOrder.dart';
 import 'package:pin_demo/src/orderPages/ordering.dart';
 import 'package:pin_demo/src/utils/strings/lang.dart';
@@ -114,6 +115,7 @@ class MyApp extends StatelessWidget {
           '/privacy': (context) => const privacy(),
           '/person_data': (context) => const person_data(),
           '/follow_list': (context) => const follow_list(),
+          '/settings': (context) => const settings(),
         },
         // onGenerateRoute: (settings) {
         //   if (settings.name == '/targetPage') {
