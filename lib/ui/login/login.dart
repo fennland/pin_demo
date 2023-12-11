@@ -5,11 +5,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:pin_demo/src/utils/constants/lang.dart';
 import 'package:provider/provider.dart';
 import 'package:pin_demo/src/utils/constants/constant.dart';
 import 'package:pin_demo/src/utils/shared/shared_preference_util.dart';
 import 'package:pin_demo/src/model/users_model.dart';
+import 'package:pin_demo/src/utils/map.dart';
 import 'package:http/http.dart' as http;
 
 class loginPage extends StatefulWidget {
@@ -20,8 +22,11 @@ class loginPage extends StatefulWidget {
 }
 
 class _loginPageState extends State<loginPage> {
+  final LocationService _locationService = LocationService();
   TextEditingController _phoneNumberController = TextEditingController();
   TextEditingController _pwdController = TextEditingController();
+  double _currentPosition_x = 0.0;
+  double _currentPosition_y = 0.0;
 
   bool _isValidPhoneNumber = false;
   bool _isCorrectPwd = false;
@@ -53,7 +58,12 @@ class _loginPageState extends State<loginPage> {
       var response = await http.post(
         Uri.parse(Constant.urlWebMap["login"]!),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'phone': phone, 'pwd': pwd}),
+        body: json.encode({
+          'phone': phone,
+          'pwd': pwd,
+          'position_x': _currentPosition_x,
+          'position_y': _currentPosition_y
+        }),
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         // debugPrint(response.body);
@@ -66,6 +76,19 @@ class _loginPageState extends State<loginPage> {
       }
     } catch (e) {
       return ({"code": 500, "error": e.toString()});
+    }
+  }
+
+  // 调用LocationService的getCurrentLocation方法获取当前位置信息
+  Future<void> _getCurrentLocation() async {
+    try {
+      final Position position = await _locationService.getCurrentLocation();
+      setState(() {
+        _currentPosition_x = position.longitude;
+        _currentPosition_y = position.latitude;
+      });
+    } catch (e) {
+      print(e.toString());
     }
   }
 
@@ -132,12 +155,19 @@ class _loginPageState extends State<loginPage> {
                               loginResult["code"] == 201) {
                             print(loginResult["result"]);
                             saveUserInfo(UserModel(
-                                userName: loginResult["result"]["data"]
-                                    ["username"],
-                                userID: loginResult["result"]["data"]["id"],
-                                phone: loginResult["result"]["data"]["phone"],
-                                avatar: loginResult["result"]["data"]["avatar"],
-                                sign: loginResult["result"]["data"]["sign"]));
+                              userName: loginResult["result"]["data"]
+                                  ["userName"],
+                              userID: loginResult["result"]["data"]["userID"],
+                              phone: loginResult["result"]["data"]["phone"],
+                              avatar: loginResult["result"]["data"]["avatar"],
+                              sign: loginResult["result"]["data"]["sign"],
+                              gender: loginResult["result"]["data"]["gender"],
+                              fav: loginResult["result"]["data"]["fav"],
+                              position_x: loginResult["result"]["data"]
+                                  ["position_x"],
+                              position_y: loginResult["result"]["data"]
+                                  ["position_y"],
+                            ));
                             Navigator.of(context).pushNamed("/home");
                           } else if (loginResult["code"] == 404) {
                             SnackBar snackbar = SnackBar(

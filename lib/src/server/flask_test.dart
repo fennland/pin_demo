@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:pin_demo/src/utils/constants/constant.dart';
+import 'package:pin_demo/src/utils/map.dart';
 import 'package:http/http.dart' as http;
 
 class TestServerPage extends StatefulWidget {
@@ -9,13 +11,31 @@ class TestServerPage extends StatefulWidget {
 }
 
 class _TestServerPageState extends State<TestServerPage> {
+  final LocationService _locationService = LocationService();
+  double _currentPosition_x = 0.0;
+  double _currentPosition_y = 0.0;
   String connectionInfo = '';
   String dbInfo = '';
+  String positionInfo = '';
 
   @override
   void initState() {
     super.initState();
     _getConnectionInfo();
+    _getCurrentLocation();
+  }
+
+  // 调用LocationService的getCurrentLocation方法获取当前位置信息
+  Future<void> _getCurrentLocation() async {
+    try {
+      final Position position = await _locationService.getCurrentLocation();
+      setState(() {
+        _currentPosition_x = position.longitude;
+        _currentPosition_y = position.latitude;
+      });
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future<void> _getConnectionInfo() async {
@@ -62,7 +82,7 @@ class _TestServerPageState extends State<TestServerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Flask-SQLite Connection')),
+      appBar: AppBar(title: Text('PinTestTool')),
       body: Container(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -75,6 +95,10 @@ class _TestServerPageState extends State<TestServerPage> {
             Text('数据库信息：', style: TextStyle(fontSize: 18)),
             SizedBox(height: 8),
             Text(dbInfo),
+            SizedBox(height: 16),
+            Text('经度：${_currentPosition_x}'),
+            SizedBox(height: 12),
+            Text('纬度：${_currentPosition_y}'),
           ],
         ),
       ),

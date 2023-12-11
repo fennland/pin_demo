@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart';
@@ -180,5 +181,33 @@ class MapWidget {
     controller.setMapDidLoadCallback(callback: () {
       debugPrint('mapDidLoad-地图加载完成');
     });
+  }
+}
+
+class LocationService {
+  Future<Position> getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    //检查系统是否启用了位置服务
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // 如果没有启用位置服务，则跳转到系统设置页面让用户手动打开
+      return Future.error('位置服务没有启用');
+    }
+
+    // 检查应用是否被授权获取位置信息
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      // 如果没有授权，则弹出对话框提示用户授权
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // 用户还是拒绝了授权，则无法获取位置信息
+        return Future.error('位置服务没有授权');
+      }
+    }
+
+    // 最后，如果系统已经启用了位置服务并且应用已经被授权获取位置信息，则可以获取当前位置信息
+    return await Geolocator.getCurrentPosition();
   }
 }

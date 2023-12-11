@@ -39,8 +39,8 @@ class UserModel {
   String? avatar; //头像
   int? gender;
   int? age;
-  Double? position_x;
-  Double? position_y;
+  double? position_x;
+  double? position_y;
   String? sign;
   List<String>? fav;
   String? lastLoginTime;
