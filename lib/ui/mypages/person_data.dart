@@ -39,12 +39,6 @@ class _person_dataState extends State<person_data> {
 
   bool _generateChip = false;
 
-  // void _handleButtonClick() {
-  //   setState(() {
-  //     _generateChip = true;
-  //   });
-  // }
-
   void showTimeoutSnackbar(BuildContext context) {
     bool timedOut = false; // 设置超时标记
 
@@ -100,8 +94,7 @@ class _person_dataState extends State<person_data> {
   }
 
   String buttonText = '运动';
-  TextEditingController textEditingController =
-      TextEditingController(); // 添加一个文本编辑控制器
+  TextEditingController textEditingController = TextEditingController(); // 添加一个文本编辑控制器
 
   @override
   Widget build(BuildContext context) {
@@ -182,13 +175,6 @@ class _person_dataState extends State<person_data> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Expanded(
-              //   flex: 2,
-              //   child: Container(
-              //     color: Colors.red, // 这里用于表示剩余的空间
-              //     child: SizedBox(),
-              //   ),
-              // ),
               Expanded(
                 flex: 1,
                 child: Container(
@@ -203,40 +189,68 @@ class _person_dataState extends State<person_data> {
                           hintText: "输入按钮文本",
                         ),
                       ),
-                      ActionChip(
-                        backgroundColor: _backgroundColor,
-                        pressElevation: 10,
-                        tooltip: "点击",
-                        //长按提示
-                        labelPadding: EdgeInsets.all(2),
-                        label: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.sports, // 选择你希望显示的图标
-                              color: Colors.white, // 设置图标颜色
-                            ),
-                            SizedBox(width: 2), // 加入一些间距
-                            Text(buttonText), // 使用 buttonText 变量作为文本
-                          ],
-                        ),
-
-                        onPressed: () {
+                      GestureDetector(
+                        onTap: () {
                           setState(() {
                             _isSelected = !_isSelected;
-                            if (_isSelected) {
-                              _backgroundColor = Colors.blue;
-                              buttonText =
-                                  textEditingController.text; // 使用输入的文本作为按钮文本
-                            } else {
-                              _backgroundColor = Colors.grey;
-                              buttonText = '运动'; // 恢复按钮文本
+                            if(_isSelected){
+                              _backgroundColor = Color.fromARGB(0, 255, 0, 0);
+                            }
+                            else{
+                              _backgroundColor = Color.fromARGB(0, 154, 76, 76);
                             }
                           });
-                          SnackBar sb = const SnackBar(content: Text("点击"));
+                          SnackBar sb = const SnackBar(content: Text("单击"));
                           ScaffoldMessenger.of(context).showSnackBar(sb);
                         },
+                        onDoubleTap: () {
+                          setState(() {
+                            if (_isSelected) {
+                              buttonText = textEditingController.text.isNotEmpty
+                                  ? textEditingController.text
+                                  : '运动';
+                            } else {
+                              buttonText = '';
+                            }
+                          });
+                          SnackBar sb = const SnackBar(content: Text("双击"));
+                          ScaffoldMessenger.of(context).showSnackBar(sb);
+                        },
+                        child: ActionChip(
+                          backgroundColor: _backgroundColor,
+                          pressElevation: 10,
+                          tooltip: "点击",
+                          labelPadding: EdgeInsets.all(2),
+                          label: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.sports,
+                                color: _backgroundColor,
+                              ),
+                              SizedBox(width: 2),
+                              Text(buttonText),
+                            ],
+                          ),
+                        ),
                       ),
+                      
+                        
+                        // onPressed: () {
+                        //   setState(() {
+                        //     _isSelected = !_isSelected;
+                        //     if (_isSelected) {
+                        //       _backgroundColor = Colors.blue;
+                              
+                        //     } else {
+                        //       _backgroundColor = Colors.grey;
+                              
+                        //     }
+                        //   });
+                        //   SnackBar sb = const SnackBar(content: Text("点击"));
+                        //   ScaffoldMessenger.of(context).showSnackBar(sb);
+                        // },
+                      
                       ..._generatedChips,
                       Chip(label: Text('标签1')),
                       Chip(label: Text('标签2')),
@@ -248,22 +262,6 @@ class _person_dataState extends State<person_data> {
                 ),
               ),
 
-              // FutureBuilder<String>(
-              //   future: generateNewChipAsync(),
-              //   builder: (context, snapshot) {
-              //     if (snapshot.connectionState == ConnectionState.waiting) {
-              //       return CircularProgressIndicator();
-              //     } else if (snapshot.hasError) {
-              //       return Text('生成新的Chip时出错');
-              //     } else {
-              //       return _generateChip
-              //         ? Chip(
-              //             label: Text(snapshot.data!),
-              //           )
-              //         : Container();
-              //     }
-              //   },
-              // ),
             ],
           ),
           ElevatedButton(
