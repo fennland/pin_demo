@@ -2,8 +2,12 @@
 
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
+import 'package:pin_demo/src/utils/constants/constant.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:window_manager/window_manager.dart';
 
 Future<void> requestPermission(FileSystemEntity file) async {
@@ -152,8 +156,6 @@ class WindowUtil {
     windowManager.setAlwaysOnTop(isAlwaysOnTop ?? false);
   }
 }
-
-
 
 // 正则表达式判断
 
@@ -373,8 +375,6 @@ class WindowUtil {
 //     return words;
 //   }
 
-
-
 //   /// Extract numeric value of string
 //   /// Example: OTP 12312 27/04/2020 => 1231227042020ß
 //   /// If firstword only is true, then the example return is "12312"
@@ -399,3 +399,83 @@ class WindowUtil {
 //   }
 
 // }
+
+Future<void> shareContent(content) async {
+  try {
+    await Share.share(
+        content + "PIN! 一起拼\nhttps://pin.fennland.me/"); //TODO: Share content
+  } catch (e) {
+    debugPrint('Sharing failed: $e');
+  }
+}
+
+Future<bool> checkConnectivity() async {
+  try {
+    final dio = Dio();
+    final response = await dio.get(Constant.urlWebMap["hello"]!);
+    return response.statusCode == 200;
+  } catch (e) {
+    return false;
+  }
+}
+
+Widget generateAvatar(String title, context) {
+  final List<String> words = title.split(' ');
+  String initials = '';
+  if (words.isNotEmpty) {
+    initials = words[0][0].toUpperCase();
+  }
+
+  return CircleAvatar(
+    backgroundColor: Theme.of(context).colorScheme.primary, // 设置背景颜色
+    child: Text(
+      initials,
+      style:
+          TextStyle(color: Theme.of(context).colorScheme.onPrimary), // 设置前景文本颜色
+    ),
+  );
+}
+
+// String formatTimestamp(String timestamp) {
+//   DateTime now = DateTime.now();
+//   DateTime messageTime = DateTime.parse(timestamp);
+
+//   if (now.difference(messageTime).inDays == 0) {
+//     if (now.day != messageTime.day) {
+//       return '昨天';
+//     } else {
+//       return DateFormat.Hm().format(messageTime);
+//     }
+//   } else if (now.difference(messageTime).inDays < 7) {
+//     return DateFormat.E().format(messageTime);
+//   } else if (now.difference(messageTime).inDays < 30) {
+//     return '${now.difference(messageTime).inDays ~/ 7}周前';
+//   } else {
+//     return '${now.difference(messageTime).inDays ~/ 30}个月前';
+//   }
+// }
+
+String formatTimestamp(String timestamp) {
+  DateTime dateTime = DateTime.parse(timestamp);
+  DateTime now = DateTime.now();
+
+  if (now.difference(dateTime).inMinutes < 1) {
+    return '刚刚';
+  } else if (now.difference(dateTime).inMinutes < 60) {
+    return '${now.difference(dateTime).inMinutes}分钟前';
+  } else if (now.year == dateTime.year &&
+      now.month == dateTime.month &&
+      now.day == dateTime.day) {
+    return DateFormat('HH:mm').format(dateTime);
+  } else if (now.year == dateTime.year &&
+      now.month == dateTime.month &&
+      now.day - dateTime.day == 1) {
+    return '昨天';
+  } else if (now.year == dateTime.year && now.difference(dateTime).inDays < 7) {
+    return DateFormat('EEEE').format(dateTime);
+  } else if (now.year == dateTime.year) {
+    return DateFormat('MM-dd').format(dateTime);
+  } else {
+    return DateFormat('yyyy-MM-dd').format(dateTime);
+  }
+}

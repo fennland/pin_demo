@@ -11,6 +11,7 @@ import 'package:pin_demo/main.dart';
 import 'package:pin_demo/src/utils/map.dart';
 import 'package:pin_demo/src/utils/constants/lang.dart';
 import 'package:pin_demo/src/utils/components.dart';
+import 'package:pin_demo/src/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -58,15 +59,6 @@ class _orderingPageState extends State<orderingPage>
   }
 
   BMFMapController? myMapController;
-
-  Future<void> _shareContent() async {
-    try {
-      await Share.share(
-          '一起拼app\nhttps://pin.fennland.me/'); //TODO: Share content
-    } catch (e) {
-      debugPrint('Sharing failed: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +127,7 @@ class _orderingPageState extends State<orderingPage>
               }),
           IconButton(
             icon: const Icon(Icons.share),
-            onPressed: _shareContent,
+            onPressed: () => shareContent(""),
           ),
         ],
       ),

@@ -5,7 +5,10 @@
 import 'dart:convert';
 import 'dart:ffi';
 import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:pin_demo/src/utils/constants/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 UsersModel UsersModelFromJson(String str) =>
     UsersModel.fromJson(json.decode(str));
@@ -63,7 +66,7 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      userID: json["userId"],
+      userID: json["userID"],
       userName: json["userName"],
       phone: json["phone"],
       avatar: json["avatar"],
@@ -78,8 +81,11 @@ void saveUserInfo(UserModel user) async {
     prefs.setInt('userID', user.userID!);
     prefs.setString('userName', user.userName!);
     prefs.setString('phone', user.phone!);
-    prefs.setString('avatar', user.avatar!);
-    prefs.setString('sign', user.sign!);
+    prefs.setString(
+        'avatar',
+        user.avatar ??
+            "https://img2.baidu.com/it/u=3726660842,3936973858&fm=253&fmt=auto&app=138&f=JPEG?w=300&h=300");
+    prefs.setString('sign', user.sign ?? "");
     // 其他属性同理
   } catch (e) {
     debugPrint(e.toString());
@@ -108,4 +114,87 @@ Future<UserModel?> getUserInfo() async {
   } else {
     return null;
   }
+}
+
+Future<Map<String, dynamic>> requestUserInfo(int userid) async {
+  try {
+    var response = await http.get(
+      Uri.parse(Constant.urlWebMap["get_user"]! + userid.toString()),
+      headers: {'Content-Type': 'application/json'},
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      debugPrint(response.body);
+      return ({
+        "code": response.statusCode,
+        "result": json.decode(response.body)
+      });
+    } else {
+      return ({"code": response.statusCode, "result": {}});
+    }
+  } catch (e) {
+    return ({"code": 500, "error": e.toString()});
+  }
+}
+
+Future<Map<String, dynamic>> postLoginForm(
+    phone, pwd, currentPosition_x, currentPosition_y) async {
+  try {
+    var response = await http.post(
+      Uri.parse(Constant.urlWebMap["login"]!),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'phone': phone,
+        'pwd': pwd,
+        'position_x': currentPosition_x ?? 0.0,
+        'position_y': currentPosition_y ?? 0.0
+      }),
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // debugPrint(response.body);
+      return ({
+        "code": response.statusCode,
+        "result": json.decode(response.body)
+      });
+    } else {
+      return ({"code": response.statusCode, "result": {}});
+    }
+  } catch (e) {
+    return ({"code": 500, "error": e.toString()});
+  }
+}
+
+Future<Map<String, dynamic>> postRegisterForm(
+    username, phone, pwd, gender) async {
+  try {
+    var response = await http.post(
+      Uri.parse(Constant.urlWebMap["register"]!),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(
+          {'userName': username, 'phone': phone, 'pwd': pwd, 'gender': gender}),
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // debugPrint(response.body);
+      return ({
+        "code": response.statusCode,
+        "result": json.decode(response.body)
+      });
+    } else {
+      return ({"code": response.statusCode, "result": {}});
+    }
+  } catch (e) {
+    return ({"code": 500, "error": e.toString()});
+  }
+}
+
+Future<Map<String, dynamic>> getCurrentLocation(
+    locationService, mounted) async {
+  try {
+    final Position position = await locationService.getCurrentLocation();
+    if (mounted) {
+      return {"x": position.longitude, "y": position.latitude};
+    }
+  } catch (e) {
+    print(e.toString());
+  }
+  return {"x": 0.0, "y": 0.0};
 }
