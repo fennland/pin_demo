@@ -18,7 +18,8 @@ class newOrderPage extends StatefulWidget {
 }
 
 class _newOrderPageState extends State<newOrderPage> {
-  final TextEditingController _textController = TextEditingController();
+  final TextEditingController _orderNameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   BMFMapController? myMapController;
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,7 @@ class _newOrderPageState extends State<newOrderPage> {
                   zoomLevel: 15,
                   isChinese: (languageProvider.currentLanguage == "zh-CN"))
               : Expanded(
-                  flex: 3,
+                  flex: 4,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -60,29 +61,55 @@ class _newOrderPageState extends State<newOrderPage> {
                   ),
                 ),
           Expanded(
-            flex: 2,
+            flex: 3,
             child: Container(
               constraints: const BoxConstraints(minHeight: 180.0),
               child: Card(
                 child: Column(
                   children: [
                     Expanded(
-                      flex: 5,
+                      flex: 3,
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 0),
                         child: TextField(
-                          controller: _textController,
+                          controller: _orderNameController,
+                          // maxLength: 24,
+                          maxLines: 1,
+                          style: const TextStyle(fontSize: 15.0),
+                          decoration: InputDecoration(
+                            constraints: const BoxConstraints(
+                                minHeight: 16.0, maxHeight: 16.0),
+                            label: Text(
+                              languageProvider.get("newOrder_orderName"),
+                              style: const TextStyle(fontSize: 16.0),
+                            ),
+                            hintText:
+                                languageProvider.get("newOrder_orderName_hint"),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 8.0),
+                        child: TextField(
+                          controller: _descriptionController,
                           maxLength: 100,
                           maxLines: null,
                           style: const TextStyle(fontSize: 15.0),
                           decoration: InputDecoration(
                             constraints: const BoxConstraints(
-                                minHeight: 16.0, maxHeight: 120.0),
+                                minHeight: 16.0, maxHeight: 32.0),
                             label: Text(
-                              languageProvider.get("newOrder"),
-                              style: const TextStyle(fontSize: 18.0),
+                              languageProvider.get("newOrder_description"),
+                              style: const TextStyle(fontSize: 16.0),
                             ),
-                            hintText: languageProvider.get("newOrderInput"),
+                            hintText: languageProvider
+                                .get("newOrder_description_hint"),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),

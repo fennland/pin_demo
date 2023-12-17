@@ -99,6 +99,20 @@ class _TestServerPageState extends State<TestServerPage> {
             Text('经度：${_currentPosition_x}'),
             SizedBox(height: 12),
             Text('纬度：${_currentPosition_y}'),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                OutlinedButton(
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed("/server/test/orders"),
+                    child: Text("newOrderTest")),
+                SizedBox(width: 16),
+                OutlinedButton(
+                    onPressed: () => Navigator.of(context)
+                        .pushNamed("/server/test/ordergroups"),
+                    child: Text("OrderGroudTest"))
+              ],
+            )
           ],
         ),
       ),

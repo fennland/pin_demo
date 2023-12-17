@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
 Map<String, List<Map<String, dynamic>>> messages = {
   'en': [
@@ -71,9 +72,11 @@ class LanguageProvider with ChangeNotifier {
       // login
       "login": "登录",
       "register": "注册",
-      "registerNotOpened": "注册尚未开放",
-      "forgetPwd": "忘记密码？",
       "onekeyLogin": "注册或登录",
+      "username": "用户名",
+      "gender": "性别",
+      "gender_female": "女",
+      "gender_male": "男",
       "usernameLogin": "手机号",
       "pwdLogin": "密码",
       "loginFailedWithoutPhone": "手机号格式不正确",
@@ -81,6 +84,8 @@ class LanguageProvider with ChangeNotifier {
       "loginNoSuchUser": "用户不存在",
       "loginBadNetwork": "网络状态差，请稍后重试",
       "loginBadNetworkTest": "网络测试",
+      "registerAlreadyHaveSuchUser": "已存在此用户，请尝试登录",
+      "registerSuccess": "注册成功！请重新登录",
       "unsupportedPlatformConfirm":
           "您正运行在bMapSDK受限支持平台\n（网页、桌面或 Android/iOS 模拟器）",
 
@@ -113,12 +118,16 @@ class LanguageProvider with ChangeNotifier {
 
       // home - newOrder
       "newOrder": "发起新需求",
-      "newOrderInput": "帮我匹配附近 3km 想一起唱歌的 i 人朋友...",
+      "newOrder_description": "需求描述",
+      "newOrder_description_hint": "附近有人想一起唱歌吗？...",
+      "newOrder_orderName": "需求名称",
+      "newOrder_orderName_hint": "快来一起唱歌吧",
       "ordering": "需求匹配中...",
       "orderMatched": "匹配成功",
       "orderFailed": "匹配失败",
       "orderCancel?": "确定要取消匹配吗？",
       "orderCancel?sub": "取消后如再次发起匹配，匹配时间可能会延长",
+      "orderInfoInitiator": "发起人",
 
       // home - search
       "searchInput": "搜索...",
@@ -135,6 +144,7 @@ class LanguageProvider with ChangeNotifier {
       "delfriends": "解除关注",
 
       // msg
+      "noMsgs": "还没有信息呢，快加入需求群吧！",
       "user0": "小帅",
       "user0_sub": "我的很大你要忍一下",
       "user1": "小美",
@@ -193,17 +203,21 @@ class LanguageProvider with ChangeNotifier {
     },
     'en': {
       "login": "Sign in",
-      "register": "register",
-      "registerNotOpened": "Registration not yet open",
-      "forgetPwd": "Forgot password?",
+      "register": "Sign up",
       "onekeyLogin": "Register or Login",
-      "usernameLogin": "Username/Phone",
+      "username": "Username",
+      "gender": "Gender",
+      "gender_female": "Female",
+      "gender_male": "Male",
+      "usernameLogin": "Phone",
       "pwdLogin": "Password",
       "loginFailedWithoutPhone": "Bad Format of Phone Number or Password",
       "loginFailedIncorrect": "Incorrect",
       "loginNoSuchUser": "No such user",
       "loginBadNetwork": "Bad network connection...",
       "loginBadNetworkTest": "Test Net",
+      "registerAlreadyHaveSuchUser": "User already Exists",
+      "registerSuccess": "Successfully Registered",
       "unsupportedPlatformConfirm":
           "You are currently on an unsupported platform, some functions will be restricted.",
       "curUser": "Fenn Xiao",
@@ -223,12 +237,17 @@ class LanguageProvider with ChangeNotifier {
       "msg": "Messages",
       "my": "My",
       "newOrder": "Create a new order",
+      "newOrder_description": "Description",
+      "newOrder_description_hint": "Anyone who wanna karaoke now? ...",
+      "newOrder_orderName": "Order Name",
+      "newOrder_orderName_hint": "Karaoke NOW!!",
       "newOrderInput": "Search who wanna karaoke now...",
       "ordering": "Matching",
       "orderSuccess": "Pin!",
       "orderFailed": "Failed...",
       "orderCancel?": "Sure to Cancel?",
       "orderCancel?sub": "If you wanna edit your match, press \"Edit\"",
+      "orderInfoInitiator": "Initiator",
       "searchInput": "Search...",
       "privacy": "Privacy",
       "help": "Help Center",
@@ -253,6 +272,7 @@ class LanguageProvider with ChangeNotifier {
       "order3_sub": "10/22 14:00, West Coast",
       "order4": "有中国人吗",
       "order4_sub": "10/22 19:00, 南极洲",
+      "noMsgs": "No messages...",
       "service0": "Services #1",
       "service0_sub": "[3.7km] Placeholder",
       "service1": "Services #2",
@@ -309,8 +329,10 @@ class LanguageProvider with ChangeNotifier {
   void switchLanguage() {
     if (_currentLanguage == "zh") {
       _currentLanguage = "en";
+      Intl.defaultLocale = 'en_US';
     } else {
       _currentLanguage = "zh";
+      Intl.defaultLocale = 'zh_CN';
     }
     notifyListeners();
   }

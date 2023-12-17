@@ -122,8 +122,9 @@ class _myPageState extends State<myPage> {
       leading: const Icon(Icons.exit_to_app),
       title: Text(languageProvider.get("quit")),
       onTap: () {
-        Navigator.of(context).pushNamed("/login");
-        debugPrint("TODO: quit");
+        Navigator.of(context).pushReplacementNamed("/login");
+        // Navigator.of(context).pushNamed("/login");
+        // debugPrint("TODO: quit");
       },
     );
 
