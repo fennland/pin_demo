@@ -100,6 +100,8 @@ Future<UserModel?> getUserInfo() async {
   String? phone = prefs.getString('phone');
   String? avatar = prefs.getString('avatar');
   String? sign = prefs.getString('sign');
+  // String? gender = prefs.getString('gender');
+  // String? keyword = prefs.getString('keyword');
   // 其他属性同理
 
   if (userId != null && userName != null && phone != null) {
@@ -109,6 +111,8 @@ Future<UserModel?> getUserInfo() async {
       phone: phone,
       avatar: avatar,
       sign: sign,
+      // gender: gender,
+      // keyword: keyword,
       // 其他属性同理
     );
   } else {

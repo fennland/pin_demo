@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pin_demo/src/model/users_model.dart';
 import 'package:pin_demo/src/utils/constants/lang.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +22,27 @@ class person_data extends StatefulWidget {
   @override
   State<person_data> createState() => _person_dataState();
 }
+
+// // 定义一个类来表示每个 ActionChip 的数据
+//   class ActionChipData {
+//     final Widget label;
+
+//     ActionChipData({required this.label});
+//   }
+
+  class ActionChipData {
+    final Widget label;
+    bool isSelected;
+    Color backgroundColor;
+
+    ActionChipData({
+      required this.label,
+      this.isSelected = false,
+      this.backgroundColor = Colors.grey,
+    });
+  }
+
+
 
 class _person_dataState extends State<person_data> {
   bool _isSelected = false;
@@ -62,14 +84,40 @@ class _person_dataState extends State<person_data> {
     // 如果超时了，在回调中设置 timedOut = true;
   }
 
-  Future<String> generateNewChipAsync() async {
-    await Future.delayed(Duration(seconds: 2));
-    String newChipText = "New Chip";
-    return newChipText;
-  }
+  // Future<String> generateNewChipAsync() async {
+  //   await Future.delayed(Duration(seconds: 2));
+  //   String newChipText = "New Chip";
+  //   return newChipText;
+  // }
+
+  // List<Widget> _generatedChips = [];
+
+  // void _handleButtonClick() {
+  //   setState(() {
+  //     _generatedChips.add(_buildNewChip());
+  //   });
+  // }
+
+  // Widget _buildNewChip() {
+  //   return FutureBuilder<String>(
+  //     future: generateNewChipAsync(),
+  //     builder: (context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return CircularProgressIndicator();
+  //       } else if (snapshot.hasError) {
+  //         return Text('生成新的Chip时出错');
+  //       } else {
+  //         return Chip(
+  //           label: Text(snapshot.data!),
+  //         );
+  //       }
+  //     },
+  //   );
+  // }
 
   List<Widget> _generatedChips = [];
 
+  
   void _handleButtonClick() {
     setState(() {
       _generatedChips.add(_buildNewChip());
@@ -85,13 +133,66 @@ class _person_dataState extends State<person_data> {
         } else if (snapshot.hasError) {
           return Text('生成新的Chip时出错');
         } else {
-          return Chip(
-            label: Text(snapshot.data!),
+          String chipText = snapshot.data!;
+          ActionChipData newChipData = ActionChipData(
+            label: Text(chipText),
+            isSelected: false,
+            backgroundColor: Colors.grey,
           );
+          return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            newChipData.isSelected = !newChipData.isSelected;
+                            if(newChipData.isSelected){
+                              newChipData.backgroundColor = Colors.blue;
+                            }
+                            else{
+                              newChipData.backgroundColor = Colors.grey;
+                            }
+                          });
+                          SnackBar sb = const SnackBar(content: Text("单击"));
+                          ScaffoldMessenger.of(context).showSnackBar(sb);
+                        },
+                        onDoubleTap: () {
+                          setState(() {
+                            if (textEditingController.text == '') {
+                              buttonText = '运动';
+                            } else {
+                              buttonText = textEditingController.text;
+                            }
+                          });
+                          SnackBar sb = const SnackBar(content: Text("双击"));
+                          ScaffoldMessenger.of(context).showSnackBar(sb);
+                        },
+                        child: ActionChip(
+                          backgroundColor: _backgroundColor,
+                          pressElevation: 10,
+                          tooltip: "点击",
+                          labelPadding: EdgeInsets.all(2),
+                          label: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.sports,
+                                color: _backgroundColor,
+                              ),
+                              SizedBox(width: 2),
+                              Text(buttonText),
+                            ],
+                          ),
+                        ),
+                      );
         }
       },
     );
   }
+
+  Future<String> generateNewChipAsync() async {
+    await Future.delayed(Duration(seconds: 2));
+    String newChipText = "New Chip";
+    return newChipText;
+  }
+
 
   String buttonText = '运动';
   TextEditingController textEditingController = TextEditingController(); // 添加一个文本编辑控制器
@@ -101,7 +202,12 @@ class _person_dataState extends State<person_data> {
     var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
       appBar: AppBar(title: Text(languageProvider.get("person_data"))),
-      body: Column(
+      body: FutureBuilder(
+        future: getUserInfo(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final user = snapshot.data;
+            return Column(
         children: [
           ClipOval(
             child: InkWell(
@@ -156,15 +262,17 @@ class _person_dataState extends State<person_data> {
           TextField(
             autofocus: true,
             decoration: InputDecoration(
-                hintText: "陈鹏", // TODO: 改成保存当前名字，点选后可以删掉再改，而不是hint作为placeholder
+                hintText: (user?.userName ??languageProvider.get("curUser")),
+                // hintText: "陈鹏", // TODO: 改成保存当前名字，点选后可以删掉再改，而不是hint作为placeholder getUserInfo(userName)
                 prefixIcon: Icon(Icons.person)),
           ),
           _radioRow(),
           TextField(
             autofocus: true,
             decoration: InputDecoration(
-                hintText:
-                    "一句话描述自己", // TODO: 改成保存当前名字，点选后可以删掉再改，而不是hint作为placeholder
+                // hintText:
+                //     "一句话描述自己", // TODO: 改成保存当前名字，点选后可以删掉再改，而不是hint作为placeholder
+                hintText: (user?.sign ??languageProvider.get("curUserSigning")),
                 prefixIcon: Icon(Icons.person)),
           ),
           Row(
@@ -172,6 +280,7 @@ class _person_dataState extends State<person_data> {
               Text('兴趣关键词'),
             ],
           ),
+
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -194,10 +303,10 @@ class _person_dataState extends State<person_data> {
                           setState(() {
                             _isSelected = !_isSelected;
                             if(_isSelected){
-                              _backgroundColor = Color.fromARGB(0, 255, 0, 0);
+                              _backgroundColor = Colors.blue;
                             }
                             else{
-                              _backgroundColor = Color.fromARGB(0, 154, 76, 76);
+                              _backgroundColor = Colors.grey;
                             }
                           });
                           SnackBar sb = const SnackBar(content: Text("单击"));
@@ -205,12 +314,10 @@ class _person_dataState extends State<person_data> {
                         },
                         onDoubleTap: () {
                           setState(() {
-                            if (_isSelected) {
-                              buttonText = textEditingController.text.isNotEmpty
-                                  ? textEditingController.text
-                                  : '运动';
+                            if (textEditingController.text == '') {
+                              buttonText = '运动';
                             } else {
-                              buttonText = '';
+                              buttonText = textEditingController.text;
                             }
                           });
                           SnackBar sb = const SnackBar(content: Text("双击"));
@@ -235,28 +342,7 @@ class _person_dataState extends State<person_data> {
                         ),
                       ),
                       
-                        
-                        // onPressed: () {
-                        //   setState(() {
-                        //     _isSelected = !_isSelected;
-                        //     if (_isSelected) {
-                        //       _backgroundColor = Colors.blue;
-                              
-                        //     } else {
-                        //       _backgroundColor = Colors.grey;
-                              
-                        //     }
-                        //   });
-                        //   SnackBar sb = const SnackBar(content: Text("点击"));
-                        //   ScaffoldMessenger.of(context).showSnackBar(sb);
-                        // },
-                      
                       ..._generatedChips,
-                      Chip(label: Text('标签1')),
-                      Chip(label: Text('标签2')),
-                      Chip(label: Text('标签3')),
-                      Chip(label: Text('标签4')),
-                      Chip(label: Text('标签5')),
                     ],
                   ),
                 ),
@@ -270,8 +356,14 @@ class _person_dataState extends State<person_data> {
             // TODO: 添加标签功能仅生效一次
           ),
         ],
-      ),
-    );
+      );
+          }
+          else{
+            return  const Center(child: CircularProgressIndicator(),);
+          }
+        },
+    ),
+    );        
   }
 
   Row _radioRow() {
