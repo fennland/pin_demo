@@ -80,6 +80,8 @@ flutter {
 }
 
 dependencies {
+    // classpath "com.android.tools.build:gradle:8.5"
+    // classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     implementation 'com.baidu.lbsyun:BaiduMapSDK_Map:7.5.5'
 implementation 'com.baidu.lbsyun:BaiduMapSDK_Search:7.5.5'
 implementation 'com.baidu.lbsyun:BaiduMapSDK_Util:7.5.5'

@@ -70,7 +70,10 @@ class LanguageProvider with ChangeNotifier {
     'zh': {
       // login
       "login": "登录",
-      "onekeyLogin": "一键登录",
+      "register": "注册",
+      "registerNotOpened": "注册尚未开放",
+      "forgetPwd": "忘记密码？",
+      "onekeyLogin": "注册或登录",
       "usernameLogin": "手机号",
       "pwdLogin": "密码",
       "loginFailedWithoutPhone": "手机号格式不正确",
@@ -190,7 +193,10 @@ class LanguageProvider with ChangeNotifier {
     },
     'en': {
       "login": "Sign in",
-      "onekeyLogin": "QuickPass",
+      "register": "register",
+      "registerNotOpened": "Registration not yet open",
+      "forgetPwd": "Forgot password?",
+      "onekeyLogin": "Register or Login",
       "usernameLogin": "Username/Phone",
       "pwdLogin": "Password",
       "loginFailedWithoutPhone": "Bad Format of Phone Number or Password",
