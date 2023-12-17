@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
 Map<String, List<Map<String, dynamic>>> messages = {
   'en': [
@@ -117,7 +118,10 @@ class LanguageProvider with ChangeNotifier {
 
       // home - newOrder
       "newOrder": "发起新需求",
-      "newOrderInput": "帮我匹配附近 3km 想一起唱歌的 i 人朋友...",
+      "newOrder_description": "需求描述",
+      "newOrder_description_hint": "附近有人想一起唱歌吗？...",
+      "newOrder_orderName": "需求名称",
+      "newOrder_orderName_hint": "快来一起唱歌吧",
       "ordering": "需求匹配中...",
       "orderMatched": "匹配成功",
       "orderFailed": "匹配失败",
@@ -233,6 +237,10 @@ class LanguageProvider with ChangeNotifier {
       "msg": "Messages",
       "my": "My",
       "newOrder": "Create a new order",
+      "newOrder_description": "Description",
+      "newOrder_description_hint": "Anyone who wanna karaoke now? ...",
+      "newOrder_orderName": "Order Name",
+      "newOrder_orderName_hint": "Karaoke NOW!!",
       "newOrderInput": "Search who wanna karaoke now...",
       "ordering": "Matching",
       "orderSuccess": "Pin!",
@@ -321,8 +329,10 @@ class LanguageProvider with ChangeNotifier {
   void switchLanguage() {
     if (_currentLanguage == "zh") {
       _currentLanguage = "en";
+      Intl.defaultLocale = 'en_US';
     } else {
       _currentLanguage = "zh";
+      Intl.defaultLocale = 'zh_CN';
     }
     notifyListeners();
   }

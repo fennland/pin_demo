@@ -38,14 +38,18 @@ class _msgPageState extends State<msgPage> {
       List<chatMessagesModel> responseMsgs =
           await orderApi.getUserLatestMessages();
       // print(responseOrders);
-      setState(() {
-        if (responseMsgs != []) {
-          msgs = responseMsgs;
-        } else {
-          noMsgs = true;
-        }
-      });
-      return responseMsgs;
+      if (mounted) {
+        setState(() {
+          if (responseMsgs != []) {
+            msgs = responseMsgs;
+          } else {
+            noMsgs = true;
+          }
+        });
+        return responseMsgs;
+      } else {
+        return [];
+      }
     } catch (error) {
       debugPrint(error.toString());
       setState(() {
@@ -180,7 +184,8 @@ class _msgPageState extends State<msgPage> {
             child: !badNetwork
                 ? !noMsgs
                     ? FutureBuilder(
-                        future: _getMsgs(),
+                        future: Future.delayed(
+                            const Duration(milliseconds: 200), _getMsgs),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
                             return const Center(

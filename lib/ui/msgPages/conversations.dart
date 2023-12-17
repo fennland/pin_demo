@@ -180,13 +180,25 @@ class _ConversationsPageState extends State<ConversationsPage> {
   void initState() {
     super.initState();
     setState(() {
-      getGPMsgs();
+      _getGPMsgs();
     });
   }
 
-  Future<void> getGPMsgs() async {
+  Future<void> _getGPMsgs() async {
     try {
       _messages = await orderApi.getGroupMessages(widget.groupID);
+    } catch (error) {
+      debugPrint(error.toString());
+    }
+  }
+
+  Future<void> _newGPMsgs(messageText) async {
+    try {
+      var _newMessages =
+          await orderApi.newMessage(widget.userID, widget.groupID, messageText);
+      setState(() {
+        _getGPMsgs();
+      });
     } catch (error) {
       debugPrint(error.toString());
     }
@@ -253,7 +265,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
         title: Text(widget.groupName ?? "未命名的聊天"),
       ),
       body: FutureBuilder(
-          future: getGPMsgs(),
+          future: _getGPMsgs(),
           builder: (BuildContext context, snapshot) {
             if (snapshot.hasData) {
               setState(() {
@@ -311,11 +323,11 @@ class _ConversationsPageState extends State<ConversationsPage> {
                               //   senderID: widget.userID,
                               //   senderName: '',
                               //   timestamp: DateTime.now().toString(),
-                              // );
+                              _newGPMsgs(_textController.text);
                               // setState(() {
                               //   _messages!.add(newMsg);
                               // });
-                              // _textController.clear();
+                              _textController.clear();
                             }
                           },
                           icon: const Icon(Icons.send),

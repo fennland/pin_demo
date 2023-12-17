@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:pin_demo/src/model/order_model.dart';
 import 'package:pin_demo/src/server/order_test.dart';
 import 'package:pin_demo/ui/login/register.dart';
@@ -45,7 +47,11 @@ Future<void> main() async {
       WindowUtil.setWindowFunctions(isMacOS: Platform.isMacOS);
     }
   }
-  runApp(const MyApp());
+  initializeDateFormatting("zh_CN").then((_) {
+    Intl.defaultLocale = "zh_CN";
+    // 在初始化完成后继续执行您的应用程序逻辑
+    runApp(MyApp());
+  });
   // 百度地图sdk初始化鉴权
   if (!kIsWeb &&
       !Platform.isMacOS &&

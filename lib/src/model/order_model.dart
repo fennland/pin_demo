@@ -79,7 +79,7 @@ class orderApi {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
-        print(responseData);
+        // print(responseData);
         return orderModel.fromJson(responseData);
       } else {
         throw Exception('Failed to create order');
@@ -105,7 +105,7 @@ class orderApi {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
-        print(responseData);
+        // print(responseData);
         List<orderModel> orders = [];
         for (var orderData in responseData) {
           orders.add(orderModel.fromJson(orderData));
@@ -132,7 +132,7 @@ class orderApi {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
-        print(responseData);
+        // print(responseData);
         List<chatMessagesModel> msgs = [];
         for (var msgData in responseData) {
           msgs.add(chatMessagesModel.fromJson(msgData));
@@ -159,7 +159,7 @@ class orderApi {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
-        print(responseData);
+        // print(responseData);
 
         Map<int, chatMessagesModel> groupMsgs = {};
 
@@ -201,7 +201,7 @@ class orderApi {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
-        print(responseData);
+        // print(responseData);
         List<chatMessagesModel> msgs = [];
         for (var msgData in responseData) {
           msgs.add(chatMessagesModel.fromJson(msgData));
@@ -215,31 +215,82 @@ class orderApi {
       throw Exception('Failed to connect to server ');
     }
   }
-}
 
-Future<List<chatMessagesModel>> getOrderMessages(orderID) async {
-  try {
-    final response = await http.get(
-      Uri.parse(Constant.urlWebMap["msg_get"]! +
-          "?type=order&orderID=" +
-          orderID.toString()),
-      headers: {'Content-Type': 'application/json'},
-    );
+  static Future<chatMessagesModel> newMessage(
+      senderID, groupID, messageText) async {
+    try {
+      final response = await http.post(
+        Uri.parse(Constant.urlWebMap["new_msg"]!),
+        body: json.encode({
+          'senderID': senderID,
+          'groupID': groupID,
+          'messageText': messageText,
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final responseData = jsonDecode(response.body);
-      print(responseData);
-      List<chatMessagesModel> msgs = [];
-      for (var msgData in responseData) {
-        msgs.add(chatMessagesModel.fromJson(msgData));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        // print(responseData);
+        return chatMessagesModel.fromJson(responseData);
+      } else {
+        throw Exception(
+            'Failed to create msg with statusCode = ${response.statusCode}');
       }
-      return msgs;
-    } else {
-      throw Exception(
-          'Failed to get user msgs with status: ${response.statusCode}.');
+    } catch (error) {
+      throw Exception('Failed to connect to server');
     }
-  } catch (error) {
-    throw Exception('Failed to connect to server ');
+  }
+
+  static Future<List<chatMessagesModel>> getOrderMessages(orderID) async {
+    try {
+      final response = await http.get(
+        Uri.parse(Constant.urlWebMap["msg_get"]! +
+            "?type=order&orderID=" +
+            orderID.toString()),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        // print(responseData);
+        List<chatMessagesModel> msgs = [];
+        for (var msgData in responseData) {
+          msgs.add(chatMessagesModel.fromJson(msgData));
+        }
+        return msgs;
+      } else {
+        throw Exception(
+            'Failed to get user msgs with status: ${response.statusCode}.');
+      }
+    } catch (error) {
+      throw Exception('Failed to connect to server ');
+    }
+  }
+
+  static Future<orderModel> newOrder(senderID, groupID, messageText) async {
+    try {
+      final response = await http.post(
+        Uri.parse(Constant.urlWebMap["new_msg"]!),
+        body: json.encode({
+          'senderID': senderID,
+          'groupID': groupID,
+          'messageText': messageText,
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        // print(responseData);
+        return orderModel.fromJson(responseData);
+      } else {
+        throw Exception(
+            'Failed to create msg with statusCode = ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('Failed to connect to server');
+    }
   }
 }
 

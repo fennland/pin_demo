@@ -1,5 +1,6 @@
 // import 'dart:html';
 
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
@@ -32,50 +33,60 @@ class _homePageState extends State<homePage> {
   bool badNetwork = false;
 
   BMFMapController? myMapController;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  // 调用LocationService的getCurrentLocation方法获取当前位置信息
+  Future<void> _getCurrentLocation() async {
+    try {
+      final Position position = await _locationService.getCurrentLocation();
+      // setState(() {
+      _currentPosition_x = position.longitude;
+      _currentPosition_y = position.latitude;
+      // });
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<List<orderModel>> _getOrders() async {
+    try {
+      // print(responseOrders);
+      _getCurrentLocation();
+      List<orderModel> responseOrders = await orderApi.getSurroundingOrder(
+          distance, _currentPosition_x, _currentPosition_y);
+      if (mounted) {
+        setState(() {
+          orders = responseOrders;
+        });
+        return responseOrders;
+      }
+      debugPrint("notMounted");
+      return [];
+    } catch (error) {
+      debugPrint(error.toString());
+      setState(() {
+        badNetwork = true;
+      });
+      return [];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<LanguageProvider>(context);
     var mapWidget = MapWidget(
       onTap: () => Navigator.pushNamed(context, "/order/new"),
     );
-
-    // 调用LocationService的getCurrentLocation方法获取当前位置信息
-    Future<void> _getCurrentLocation() async {
-      try {
-        final Position position = await _locationService.getCurrentLocation();
-        // setState(() {
-        _currentPosition_x = position.longitude;
-        _currentPosition_y = position.latitude;
-        // });
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    }
-
-    Future<List<orderModel>> _getOrders() async {
-      try {
-        _getCurrentLocation();
-        List<orderModel> responseOrders = await orderApi.getSurroundingOrder(
-            distance, _currentPosition_x, _currentPosition_y);
-        // print(responseOrders);
-        setState(() {
-          orders = responseOrders;
-        });
-        return responseOrders;
-      } catch (error) {
-        debugPrint(error.toString());
-        setState(() {
-          badNetwork = true;
-        });
-        return [];
-      }
-    }
-
-    @override
-    void initState() {
-      super.initState();
-      // _getCurrentLocation();
-    }
 
     var screenSize = MediaQuery.of(context).size;
 
@@ -169,7 +180,8 @@ class _homePageState extends State<homePage> {
             },
             child: !badNetwork
                 ? FutureBuilder<List<orderModel>>(
-                    future: _getOrders(), // 调用 _getOrders() 获取订单数据
+                    future: Future.delayed(const Duration(milliseconds: 500),
+                        _getOrders), // 调用 _getOrders() 获取订单数据
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
                         return const Center(child: CircularProgressIndicator());
@@ -213,7 +225,7 @@ class _homePageState extends State<homePage> {
                                       (BuildContext context, int index) {
                                     return ListTile(
                                       onTap: () {
-                                        debugPrint(orders[index].toString());
+                                        // debugPrint(orders[index].toString());
                                         Navigator.of(context).push(
                                             MaterialPageRoute(
                                                 builder: (context) =>
