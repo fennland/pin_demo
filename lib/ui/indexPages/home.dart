@@ -11,6 +11,7 @@ import 'package:pin_demo/src/utils/map.dart';
 import 'package:pin_demo/src/utils/utils.dart';
 import 'package:pin_demo/src/utils/constants/lang.dart';
 import 'package:pin_demo/src/utils/components.dart';
+import 'package:pin_demo/ui/msgPages/conversations.dart';
 import 'package:pin_demo/ui/orderPages/orderinfo.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity/connectivity.dart';
@@ -18,6 +19,7 @@ import 'package:connectivity/connectivity.dart';
 import '../../src/utils/constants/constant.dart';
 
 class homePage extends StatefulWidget {
+  // final orderModel? ordering;
   const homePage({super.key});
 
   @override
@@ -30,6 +32,7 @@ class _homePageState extends State<homePage> {
   double _currentPosition_x = 0.0;
   double _currentPosition_y = 0.0;
   final double distance = 1.0;
+  bool isMatched = false;
   bool badNetwork = false;
 
   BMFMapController? myMapController;
@@ -46,15 +49,19 @@ class _homePageState extends State<homePage> {
   }
 
   // 调用LocationService的getCurrentLocation方法获取当前位置信息
-  Future<void> _getCurrentLocation() async {
+  Future<bool> _getCurrentLocation() async {
     try {
       final Position position = await _locationService.getCurrentLocation();
-      // setState(() {
       _currentPosition_x = position.longitude;
       _currentPosition_y = position.latitude;
-      // });
+      if (_currentPosition_x != 0.0 && _currentPosition_y != 0.0) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       debugPrint(e.toString());
+      return false;
     }
   }
 
@@ -80,6 +87,27 @@ class _homePageState extends State<homePage> {
       return [];
     }
   }
+
+  // Future<bool> _isOrderMatched() async {
+  //   try {
+  //     orderModel responseOrder =
+  //         await orderApi.getOrderInfo(widget.ordering?.orderID);
+  //     if (mounted) {
+  //       isMatched = (responseOrder.statusCode == 200);
+  //       return (responseOrder.statusCode == 200);
+  //     }
+  //     debugPrint("notMounted");
+  //     isMatched = false;
+  //     return false;
+  //   } catch (error) {
+  //     debugPrint(error.toString());
+  //     setState(() {
+  //       badNetwork = true;
+  //     });
+  //     isMatched = false;
+  //     return false;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -192,14 +220,28 @@ class _homePageState extends State<homePage> {
                           child: Column(
                             children: [
                               !unSupportedPlatform
-                                  ? mapWidget.generateMap(
-                                      con: myMapController,
-                                      width: screenSize.width * 0.95,
-                                      zoomLevel: 15,
-                                      isChinese:
-                                          (languageProvider.currentLanguage ==
-                                              "zh-CN"),
-                                      zoomEnabled: false)
+                                  ? FutureBuilder(
+                                      future: _getCurrentLocation(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData &&
+                                            snapshot.data == true) {
+                                          setState(() {});
+                                        }
+                                        return mapWidget.generateMap(
+                                            flex: 2,
+                                            bgColor: Theme.of(context)
+                                                .dialogBackgroundColor,
+                                            con: myMapController,
+                                            lat: _currentPosition_x,
+                                            lon: _currentPosition_y,
+                                            width: screenSize.width * 0.95,
+                                            zoomLevel: 15,
+                                            isChinese: (languageProvider
+                                                    .currentLanguage ==
+                                                "zh"),
+                                            zoomEnabled: false);
+                                      },
+                                    )
                                   : Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -219,10 +261,10 @@ class _homePageState extends State<homePage> {
                                 height: 30.0,
                               ),
                               Expanded(
+                                flex: 4,
                                 child: ListView.separated(
                                   itemCount: orders.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
+                                  itemBuilder: (context, int index) {
                                     return ListTile(
                                       onTap: () {
                                         // debugPrint(orders[index].toString());
@@ -244,7 +286,12 @@ class _homePageState extends State<homePage> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           orders[index].description != null
-                                              ? Text(orders[index].description!)
+                                              ? Text(
+                                                  orders[index].description!,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                )
                                               : Container(),
                                           Text(
                                             orders[index].startTime,
@@ -281,13 +328,51 @@ class _homePageState extends State<homePage> {
         ],
       ),
       floatingActionButton: !badNetwork
-          ? unSupportedPlatform
-              ? FloatingActionButton(
-                  child: const Icon(Icons.add),
-                  onPressed: () => Navigator.pushNamed(context, "/order/new"),
-                  heroTag: "newOrder",
-                )
-              : Container()
+          // ? widget.ordering == null
+          ? FloatingActionButton(
+              onPressed: () => Navigator.pushNamed(context, "/order/new"),
+              heroTag: "newOrder",
+              child: const Icon(Icons.add),
+            )
+          // : FloatingActionButton(
+          //     onPressed: () {
+          //       if (isMatched) {
+          //         Navigator.of(context).push(MaterialPageRoute(
+          //             builder: (context) => ConversationsPage(
+          //                 groupID: widget.ordering?.groupID,
+          //                 groupName: widget.ordering?.orderName)));
+          //       }
+          //     },
+          //     heroTag: "ordering",
+          //     child: FutureBuilder(
+          //       future: _isOrderMatched(),
+          //       builder: (BuildContext context, snapshot) {
+          //         if (snapshot.hasData && snapshot.data == true) {
+          //           return Center(
+          //               child: Column(
+          //             children: [
+          //               const Icon(Icons.check_circle,
+          //                   color: Colors.greenAccent),
+          //               Text(languageProvider.get("orderMatched"),
+          //                   style: Theme.of(context).textTheme.labelSmall)
+          //             ],
+          //           ));
+          //         } else {
+          //           return Center(
+          //               child: Column(
+          //             children: [
+          //               const SizedBox(
+          //                   width: 24.0,
+          //                   height: 24.0,
+          //                   child: CircularProgressIndicator()),
+          //               Text(languageProvider.get("ordering"),
+          //                   style: Theme.of(context).textTheme.labelSmall)
+          //             ],
+          //           ));
+          //         }
+          //       },
+          //     ),
+          //   )
           : Container(),
     );
   }

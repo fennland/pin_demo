@@ -21,6 +21,7 @@ class Constant {
     "get_user": "http://s.pin.fennland.me:5000/user/get/",
     "new_order": "http://s.pin.fennland.me:5000/orders/new",
     "surrounding_order": "http://s.pin.fennland.me:5000/orders/get",
+    "get_order": "http://s.pin.fennland.me:5000/orders/get",
     "msg_get": "http://s.pin.fennland.me:5000/orders/msg/get",
     "new_msg": "http://s.pin.fennland.me:5000/orders/msg/new",
     "order": "http://s.pin.fennland.me:5000/orders",

@@ -122,7 +122,7 @@ class LanguageProvider with ChangeNotifier {
       "newOrder_description_hint": "附近有人想一起唱歌吗？...",
       "newOrder_orderName": "需求名称",
       "newOrder_orderName_hint": "快来一起唱歌吧",
-      "ordering": "需求匹配中...",
+      "ordering": "匹配...",
       "orderMatched": "匹配成功",
       "orderFailed": "匹配失败",
       "orderCancel?": "确定要取消匹配吗？",

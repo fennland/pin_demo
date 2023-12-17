@@ -100,8 +100,8 @@ class MapWidget {
 
   static const double _defaultWidth = 350.0;
   static const double _defaultHeight = 200.0;
-  static const double _defaultLat = 24.612261;
-  static const double _defaultLon = 118.088745;
+  static const double _defaultLat = 24.935234;
+  static const double _defaultLon = 118.644241;
 
   final double? width;
   final double? height;
@@ -125,10 +125,12 @@ class MapWidget {
       double lon = _defaultLon,
       int zoomLevel = 12,
       bool isChinese = true,
-      bool zoomEnabled = true}) {
+      bool zoomEnabled = true,
+      Color bgColor = Colors.white,
+      int flex = 2}) {
     myMapController = con;
     return Expanded(
-      flex: 2,
+      flex: flex,
       child: Center(
         child: SizedBox(
           // height: height,
@@ -142,8 +144,13 @@ class MapWidget {
                 hitTestBehavior: (zoomEnabled)
                     ? PlatformViewHitTestBehavior.opaque
                     : PlatformViewHitTestBehavior.transparent,
-                mapOptions:
-                    initMapOptions(lat, lon, zoomLevel, isChinese, zoomEnabled),
+                mapOptions: initMapOptions(
+                    lat != 0.0 ? lat : _defaultLat,
+                    lon != 0.0 ? lon : _defaultLon,
+                    zoomLevel,
+                    isChinese,
+                    zoomEnabled,
+                    bgColor),
               ),
             ),
           ),
@@ -152,18 +159,19 @@ class MapWidget {
     );
   }
 
-  BMFMapOptions initMapOptions(
-      double lat, double lon, int zoomLevel, bool isChinese, bool zoomEnabled) {
+  BMFMapOptions initMapOptions(double lat, double lon, int zoomLevel,
+      bool isChinese, bool zoomEnabled, Color bgColor) {
     BMFMapOptions mapOptions = BMFMapOptions(
       center: BMFCoordinate(lat, lon),
       zoomLevel: zoomLevel,
+      backgroundColor: bgColor,
       // TODO: backgroundColor 地图暗黑模式适配
       languageType:
           (isChinese) ? BMFMapLanguageType.Chinese : BMFMapLanguageType.English,
       zoomEnabled: zoomEnabled,
       gesturesEnabled: zoomEnabled,
     );
-    debugPrint(zoomEnabled.toString());
+    // debugPrint(zoomEnabled.toString());
     return mapOptions;
   }
 
@@ -180,6 +188,7 @@ class MapWidget {
     /// 地图加载回调
     controller.setMapDidLoadCallback(callback: () {
       debugPrint('mapDidLoad-地图加载完成');
+      debugPrint('lat:${lat}, lon:${lon}');
     });
   }
 }

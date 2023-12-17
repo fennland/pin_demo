@@ -86,7 +86,9 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final orderModel? ordering;
+
+  const MyApp({super.key, this.ordering});
 
   // This widget is the root of your application.
   @override
@@ -103,6 +105,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         // home: const MyHomePage(),
+
         debugShowCheckedModeBanner: false,
         // supportedLocales: const [
         //   // TODO: Localization 类替换多语言方案
@@ -125,7 +128,7 @@ class MyApp extends StatelessWidget {
               const someUserProfile(),
           '/order/new': (BuildContext context) => const newOrderPage(),
           // '/order/info': (BuildContext context) => const orderInfoPage(),
-          '/order/ing': (BuildContext context) => const orderingPage(),
+          // '/order/ing': (BuildContext context) => const orderingPage(),
           '/privacy': (context) => const privacy(),
           '/my/profile': (context) => const person_data(),
           '/msg/following': (context) => const follow_list(),

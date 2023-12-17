@@ -149,21 +149,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:pin_demo/src/model/order_model.dart';
+import 'package:pin_demo/src/model/users_model.dart';
 import 'package:pin_demo/src/utils/constants/lang.dart';
 import 'package:pin_demo/src/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class ConversationsPage extends StatefulWidget {
-  final int? userID;
   final String? groupName;
   final int? groupID;
   // final List<chatMessagesModel>? msgs;
 
   const ConversationsPage(
-      {Key? key,
-      required this.userID,
-      required this.groupName,
-      required this.groupID})
+      {Key? key, required this.groupName, required this.groupID})
       : super(key: key);
 
   @override
@@ -174,14 +171,23 @@ class _ConversationsPageState extends State<ConversationsPage> {
   final Color _bgcolor = Colors.transparent;
   final TextEditingController _textController = TextEditingController();
   late Map<String, dynamic> _defaultMsgData;
+  int? userID;
   List<chatMessagesModel> _messages = [];
 
   @override
   void initState() {
     super.initState();
     setState(() {
+      _getUserID();
       _getGPMsgs();
     });
+  }
+
+  Future<void> _getUserID() async {
+    var user = await getUserInfo();
+    if (user != null) {
+      userID = user.userID;
+    }
   }
 
   Future<void> _getGPMsgs() async {
@@ -192,10 +198,10 @@ class _ConversationsPageState extends State<ConversationsPage> {
     }
   }
 
-  Future<void> _newGPMsgs(messageText) async {
+  Future<void> newGPMsgs(messageText) async {
     try {
       var _newMessages =
-          await orderApi.newMessage(widget.userID, widget.groupID, messageText);
+          await orderApi.newMessage(userID, widget.groupID, messageText);
       setState(() {
         _getGPMsgs();
       });
@@ -287,7 +293,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
                       itemCount: _messages!.length,
                       itemBuilder: (BuildContext context, int index) {
                         var msg = _messages![index];
-                        bool isSent = msg.senderID == widget.userID;
+                        bool isSent = msg.senderID == userID;
                         Widget bubble = _buildMessageBubble(
                           msg.messageText!,
                           isSent,
@@ -323,7 +329,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
                               //   senderID: widget.userID,
                               //   senderName: '',
                               //   timestamp: DateTime.now().toString(),
-                              _newGPMsgs(_textController.text);
+                              newGPMsgs(_textController.text);
                               // setState(() {
                               //   _messages!.add(newMsg);
                               // });

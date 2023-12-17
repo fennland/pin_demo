@@ -210,7 +210,6 @@ class _msgPageState extends State<msgPage> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         ConversationsPage(
-                                                            userID: userID,
                                                             groupName:
                                                                 msgs[index]
                                                                     .groupName,

@@ -120,6 +120,32 @@ class orderApi {
     }
   }
 
+  static Future<orderModel> getOrderInfo(orderID) async {
+    try {
+      final response = await http.get(
+        Uri.parse(Constant.urlWebMap["get_order"]! +
+            "?type=id&orderID=" +
+            orderID.toString()),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        // print(responseData);
+        List<orderModel> orders = [];
+        for (var orderData in responseData) {
+          orders.add(orderModel.fromJson(orderData));
+        }
+        return orders[0];
+      } else {
+        throw Exception(
+            'Failed to get order with status: ${response.statusCode}.');
+      }
+    } catch (error) {
+      throw Exception('Failed to connect to server ');
+    }
+  }
+
   static Future<List<chatMessagesModel>> getUserMessages() async {
     try {
       UserModel? user = await getUserInfo();

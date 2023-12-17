@@ -30,19 +30,17 @@ class person_data extends StatefulWidget {
 //     ActionChipData({required this.label});
 //   }
 
-  class ActionChipData {
-    final Widget label;
-    bool isSelected;
-    Color backgroundColor;
+class ActionChipData {
+  final Widget label;
+  bool isSelected;
+  Color backgroundColor;
 
-    ActionChipData({
-      required this.label,
-      this.isSelected = false,
-      this.backgroundColor = Colors.grey,
-    });
-  }
-
-
+  ActionChipData({
+    required this.label,
+    this.isSelected = false,
+    this.backgroundColor = Colors.grey,
+  });
+}
 
 class _person_dataState extends State<person_data> {
   bool _isSelected = false;
@@ -117,7 +115,6 @@ class _person_dataState extends State<person_data> {
 
   List<Widget> _generatedChips = [];
 
-  
   void _handleButtonClick() {
     setState(() {
       _generatedChips.add(_buildNewChip());
@@ -140,48 +137,47 @@ class _person_dataState extends State<person_data> {
             backgroundColor: Colors.grey,
           );
           return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            newChipData.isSelected = !newChipData.isSelected;
-                            if(newChipData.isSelected){
-                              newChipData.backgroundColor = Colors.blue;
-                            }
-                            else{
-                              newChipData.backgroundColor = Colors.grey;
-                            }
-                          });
-                          SnackBar sb = const SnackBar(content: Text("单击"));
-                          ScaffoldMessenger.of(context).showSnackBar(sb);
-                        },
-                        onDoubleTap: () {
-                          setState(() {
-                            if (textEditingController.text == '') {
-                              buttonText = '运动';
-                            } else {
-                              buttonText = textEditingController.text;
-                            }
-                          });
-                          SnackBar sb = const SnackBar(content: Text("双击"));
-                          ScaffoldMessenger.of(context).showSnackBar(sb);
-                        },
-                        child: ActionChip(
-                          backgroundColor: _backgroundColor,
-                          pressElevation: 10,
-                          tooltip: "点击",
-                          labelPadding: EdgeInsets.all(2),
-                          label: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.sports,
-                                color: _backgroundColor,
-                              ),
-                              SizedBox(width: 2),
-                              Text(buttonText),
-                            ],
-                          ),
-                        ),
-                      );
+            onTap: () {
+              setState(() {
+                newChipData.isSelected = !newChipData.isSelected;
+                if (newChipData.isSelected) {
+                  newChipData.backgroundColor = Colors.blue;
+                } else {
+                  newChipData.backgroundColor = Colors.grey;
+                }
+              });
+              SnackBar sb = const SnackBar(content: Text("单击"));
+              ScaffoldMessenger.of(context).showSnackBar(sb);
+            },
+            onDoubleTap: () {
+              setState(() {
+                if (textEditingController.text == '') {
+                  buttonText = '运动';
+                } else {
+                  buttonText = textEditingController.text;
+                }
+              });
+              SnackBar sb = const SnackBar(content: Text("双击"));
+              ScaffoldMessenger.of(context).showSnackBar(sb);
+            },
+            child: ActionChip(
+              backgroundColor: _backgroundColor,
+              pressElevation: 10,
+              tooltip: "点击",
+              labelPadding: EdgeInsets.all(2),
+              label: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.sports,
+                    color: _backgroundColor,
+                  ),
+                  SizedBox(width: 2),
+                  Text(buttonText),
+                ],
+              ),
+            ),
+          );
         }
       },
     );
@@ -193,9 +189,9 @@ class _person_dataState extends State<person_data> {
     return newChipText;
   }
 
-
   String buttonText = '运动';
-  TextEditingController textEditingController = TextEditingController(); // 添加一个文本编辑控制器
+  TextEditingController textEditingController =
+      TextEditingController(); // 添加一个文本编辑控制器
 
   @override
   Widget build(BuildContext context) {
@@ -208,162 +204,164 @@ class _person_dataState extends State<person_data> {
           if (snapshot.hasData) {
             final user = snapshot.data;
             return Column(
-        children: [
-          ClipOval(
-            child: InkWell(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text("选择头像"),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (!Platform.isWindows) // 判断平台为Windows时不显示拍照选项
-                          ListTile(
-                            leading: Icon(Icons.camera_alt),
-                            title: Text("拍照"),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              _pickImage(ImageSource.gallery);
-                            },
-                          ),
-                        // TODO: 拍照功能未实现
-                        ListTile(
-                          leading: Icon(Icons.image),
-                          title: Text("从相册选择"),
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            _pickImage(ImageSource.gallery);
-                          },
-                        ),
-                        // TODO: 图片尺寸过大会出现渲染溢出
-                      ],
-                    ),
-                  ),
-                );
-              },
-              child: _imageFile != null
-                  ? Image.file(
-                      _imageFile!,
-                      fit: BoxFit.cover,
-                      width: 100,
-                      height: 100,
-                    )
-                  : FadeInImage(
-                      placeholder: AssetImage('assets/placeholder.jpg'),
-                      image: NetworkImage('https://picsum.photos/250?image=9'),
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
-            ),
-          ),
-          TextField(
-            autofocus: true,
-            decoration: InputDecoration(
-                hintText: (user?.userName ??languageProvider.get("curUser")),
-                // hintText: "陈鹏", // TODO: 改成保存当前名字，点选后可以删掉再改，而不是hint作为placeholder getUserInfo(userName)
-                prefixIcon: Icon(Icons.person)),
-          ),
-          _radioRow(),
-          TextField(
-            autofocus: true,
-            decoration: InputDecoration(
-                // hintText:
-                //     "一句话描述自己", // TODO: 改成保存当前名字，点选后可以删掉再改，而不是hint作为placeholder
-                hintText: (user?.sign ??languageProvider.get("curUserSigning")),
-                prefixIcon: Icon(Icons.person)),
-          ),
-          Row(
-            children: [
-              Text('兴趣关键词'),
-            ],
-          ),
-
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 1,
-                child: Container(
-                  child: Wrap(
-                    spacing: 4.0,
-                    runSpacing: 2.0,
-                    alignment: WrapAlignment.start,
-                    children: [
-                      TextField(
-                        controller: textEditingController,
-                        decoration: InputDecoration(
-                          hintText: "输入按钮文本",
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _isSelected = !_isSelected;
-                            if(_isSelected){
-                              _backgroundColor = Colors.blue;
-                            }
-                            else{
-                              _backgroundColor = Colors.grey;
-                            }
-                          });
-                          SnackBar sb = const SnackBar(content: Text("单击"));
-                          ScaffoldMessenger.of(context).showSnackBar(sb);
-                        },
-                        onDoubleTap: () {
-                          setState(() {
-                            if (textEditingController.text == '') {
-                              buttonText = '运动';
-                            } else {
-                              buttonText = textEditingController.text;
-                            }
-                          });
-                          SnackBar sb = const SnackBar(content: Text("双击"));
-                          ScaffoldMessenger.of(context).showSnackBar(sb);
-                        },
-                        child: ActionChip(
-                          backgroundColor: _backgroundColor,
-                          pressElevation: 10,
-                          tooltip: "点击",
-                          labelPadding: EdgeInsets.all(2),
-                          label: Row(
+              children: [
+                ClipOval(
+                  child: InkWell(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text("选择头像"),
+                          content: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
-                                Icons.sports,
-                                color: _backgroundColor,
+                              if (!Platform.isWindows) // 判断平台为Windows时不显示拍照选项
+                                ListTile(
+                                  leading: Icon(Icons.camera_alt),
+                                  title: Text("拍照"),
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                    _pickImage(ImageSource.gallery);
+                                  },
+                                ),
+                              // TODO: 拍照功能未实现
+                              ListTile(
+                                leading: Icon(Icons.image),
+                                title: Text("从相册选择"),
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                  _pickImage(ImageSource.gallery);
+                                },
                               ),
-                              SizedBox(width: 2),
-                              Text(buttonText),
+                              // TODO: 图片尺寸过大会出现渲染溢出
                             ],
                           ),
                         ),
-                      ),
-                      
-                      ..._generatedChips,
-                    ],
+                      );
+                    },
+                    child: _imageFile != null
+                        ? Image.file(
+                            _imageFile!,
+                            fit: BoxFit.cover,
+                            width: 100,
+                            height: 100,
+                          )
+                        : FadeInImage(
+                            placeholder: AssetImage('assets/placeholder.jpg'),
+                            image: NetworkImage(
+                                'https://img2.baidu.com/it/u=3726660842,3936973858&fm=253&fmt=auto&app=138&f=JPEG?w=300&h=300'),
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
-              ),
-
-            ],
-          ),
-          ElevatedButton(
-            onPressed: _handleButtonClick,
-            child: Text('生成新的标签'),
-            // TODO: 添加标签功能仅生效一次
-          ),
-        ],
-      );
-          }
-          else{
-            return  const Center(child: CircularProgressIndicator(),);
+                TextField(
+                  autofocus: true,
+                  decoration: InputDecoration(
+                      hintText:
+                          (user?.userName ?? languageProvider.get("curUser")),
+                      // hintText: "陈鹏", // TODO: 改成保存当前名字，点选后可以删掉再改，而不是hint作为placeholder getUserInfo(userName)
+                      prefixIcon: Icon(Icons.person)),
+                ),
+                _radioRow(),
+                TextField(
+                  autofocus: true,
+                  decoration: InputDecoration(
+                      // hintText:
+                      //     "一句话描述自己", // TODO: 改成保存当前名字，点选后可以删掉再改，而不是hint作为placeholder
+                      hintText: (user?.sign ??
+                          languageProvider.get("curUserSigning")),
+                      prefixIcon: Icon(Icons.person)),
+                ),
+                Row(
+                  children: [
+                    Text('兴趣关键词'),
+                  ],
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        child: Wrap(
+                          spacing: 4.0,
+                          runSpacing: 2.0,
+                          alignment: WrapAlignment.start,
+                          children: [
+                            TextField(
+                              controller: textEditingController,
+                              decoration: InputDecoration(
+                                hintText: "输入按钮文本",
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isSelected = !_isSelected;
+                                  if (_isSelected) {
+                                    _backgroundColor = Colors.blue;
+                                  } else {
+                                    _backgroundColor = Colors.grey;
+                                  }
+                                });
+                                SnackBar sb =
+                                    const SnackBar(content: Text("单击"));
+                                ScaffoldMessenger.of(context).showSnackBar(sb);
+                              },
+                              onDoubleTap: () {
+                                setState(() {
+                                  if (textEditingController.text == '') {
+                                    buttonText = '运动';
+                                  } else {
+                                    buttonText = textEditingController.text;
+                                  }
+                                });
+                                SnackBar sb =
+                                    const SnackBar(content: Text("双击"));
+                                ScaffoldMessenger.of(context).showSnackBar(sb);
+                              },
+                              child: ActionChip(
+                                backgroundColor: _backgroundColor,
+                                pressElevation: 10,
+                                tooltip: "点击",
+                                labelPadding: EdgeInsets.all(2),
+                                label: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.sports,
+                                      color: _backgroundColor,
+                                    ),
+                                    SizedBox(width: 2),
+                                    Text(buttonText),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            ..._generatedChips,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                ElevatedButton(
+                  onPressed: _handleButtonClick,
+                  child: Text('生成新的标签'),
+                  // TODO: 添加标签功能仅生效一次
+                ),
+              ],
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
         },
-    ),
-    );        
+      ),
+    );
   }
 
   Row _radioRow() {
