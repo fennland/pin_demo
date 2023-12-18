@@ -26,7 +26,8 @@ import 'package:pin_demo/src/server/flask_test.dart';
 import 'package:pin_demo/ui/mypages/settings.dart';
 import 'dart:io' show Platform;
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
-// import 'package:flutter_bmflocation/flutter_bmflocation.dart';
+import 'package:flutter_bmflocation/flutter_bmflocation.dart';
+import 'package:flutter_baidu_mapapi_utils/flutter_baidu_mapapi_utils.dart';
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart'
     show BMFMapSDK, BMF_COORD_TYPE;
 import 'package:provider/provider.dart';
@@ -35,6 +36,11 @@ import 'package:device_info_plus/device_info_plus.dart';
 var isAndroidSimulator = false;
 
 Future<void> main() async {
+  ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+    debugPrint(errorDetails.toString());
+    return Container(); // 返回一个空的容器作为错误小部件
+  };
+
   if (!kIsWeb) {
     WidgetsFlutterBinding.ensureInitialized(); //不加这个强制横/竖屏会报错
     SystemChrome.setPreferredOrientations([
@@ -50,7 +56,7 @@ Future<void> main() async {
   initializeDateFormatting("zh_CN").then((_) {
     Intl.defaultLocale = "zh_CN";
     // 在初始化完成后继续执行您的应用程序逻辑
-    runApp(MyApp());
+    runApp(const MyApp());
   });
   // 百度地图sdk初始化鉴权
   if (!kIsWeb &&
@@ -121,8 +127,7 @@ class MyApp extends StatelessWidget {
           '/register': (BuildContext context) => const registerPage(),
           '/home': (BuildContext context) => const MyHomePage(),
           '/msg': (BuildContext context) => const msgPage(),
-          '/my': (BuildContext context) =>
-              const myPage(), // TODO: navigationbar重构
+          '/my': (BuildContext context) => const myPage(),
           '/': (BuildContext context) => const platformAlert(),
           '/users/some/profile': (BuildContext context) =>
               const someUserProfile(),

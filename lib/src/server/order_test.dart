@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types, library_private_types_in_public_api, non_constant_identifier_names
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -7,17 +9,19 @@ import 'package:pin_demo/src/model/order_model.dart';
 import 'package:http/http.dart' as http;
 
 class orderTestServerPage extends StatefulWidget {
+  const orderTestServerPage({super.key});
+
   @override
   _orderTestServerState createState() => _orderTestServerState();
 }
 
 class _orderTestServerState extends State<orderTestServerPage> {
   final LocationService _locationService = LocationService();
-  TextEditingController _orderNameController = TextEditingController();
-  TextEditingController _startTimeController = TextEditingController();
-  TextEditingController _initiatorController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
-  TextEditingController _distanceController = TextEditingController();
+  final TextEditingController _orderNameController = TextEditingController();
+  final TextEditingController _startTimeController = TextEditingController();
+  final TextEditingController _initiatorController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _distanceController = TextEditingController();
   double _currentPosition_x = 0.0;
   double _currentPosition_y = 0.0;
   String orderInfo = "no info";
@@ -39,7 +43,7 @@ class _orderTestServerState extends State<orderTestServerPage> {
         _currentPosition_y = position.latitude;
       });
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 
@@ -53,7 +57,7 @@ class _orderTestServerState extends State<orderTestServerPage> {
         orders = responseOrders;
       });
     } catch (error) {
-      print(error.toString());
+      debugPrint(error.toString());
     }
   }
 
@@ -68,7 +72,7 @@ class _orderTestServerState extends State<orderTestServerPage> {
       backgroundColor: Colors.blue, // 设置背景颜色
       child: Text(
         initials,
-        style: TextStyle(color: Colors.white), // 设置前景文本颜色
+        style: const TextStyle(color: Colors.white), // 设置前景文本颜色
       ),
     );
   }
@@ -119,9 +123,9 @@ class _orderTestServerState extends State<orderTestServerPage> {
                 Expanded(
                   flex: 1,
                   child: Column(children: [
-                    Text('经度：${_currentPosition_x}'),
+                    Text('经度：$_currentPosition_x'),
                     const SizedBox(height: 12),
-                    Text('纬度：${_currentPosition_y}'),
+                    Text('纬度：$_currentPosition_y'),
                   ]),
                 ),
                 Expanded(

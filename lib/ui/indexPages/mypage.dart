@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unused_import, camel_case_types, no_leading_underscores_for_local_identifiers, non_constant_identifier_names
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,7 @@ import 'dart:io';
 import 'package:pin_demo/src/utils/utils.dart';
 
 class myPage extends StatefulWidget {
-  static var body;
+  // static var body;
 
   const myPage({super.key});
 
@@ -181,8 +181,7 @@ class _myPageState extends State<myPage> {
                                   ),
                                 ),
                                 title: Text(user?.userName ??
-                                    languageProvider.get(
-                                        "curUser")), // TODO: userName from userModel
+                                    languageProvider.get("curUser")),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -207,11 +206,11 @@ class _myPageState extends State<myPage> {
                                     Text(
                                       user?.sign ?? "还没有签名...",
                                       textAlign: TextAlign.left,
-                                      style: TextStyle(fontSize: 12.0),
+                                      style: const TextStyle(fontSize: 12.0),
                                     )
                                   ],
                                 ),
-                                trailing: Icon(Icons.chevron_right),
+                                trailing: const Icon(Icons.chevron_right),
                               ),
                             ]))),
                 const SizedBox(

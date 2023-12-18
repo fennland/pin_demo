@@ -1,152 +1,6 @@
-// import 'package:flutter/material.dart';
-// import 'package:pin_demo/src/model/order_model.dart';
-// import 'package:pin_demo/src/utils/constants/lang.dart';
-// import 'package:provider/provider.dart';
+// ignore_for_file: library_private_types_in_public_api, no_leading_underscores_for_local_identifiers
 
-// class ConversationsPage extends StatefulWidget {
-//   final int? userID;
-//   final String? groupName;
-//   final List<chatMessagesModel>? msgs;
-
-//   const ConversationsPage(
-//       {Key? key, required this.userID, required this.groupName, this.msgs})
-//       : super(key: key);
-
-//   @override
-//   _ConversationsPageState createState() => _ConversationsPageState();
-// }
-
-// class _ConversationsPageState extends State<ConversationsPage> {
-//   final Color _bgcolor = Colors.transparent;
-//   final TextEditingController _textController = TextEditingController();
-//   late Map<String, dynamic> _defaultMsgData;
-//   List<Map<String, String>>? _messages;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//   }
-
-//   // void _addMessage(String message, String type) {
-//   //   setState(() {
-//   //     _messages!.add({
-//   //       'type': type,
-//   //       'message': message,
-//   //     });
-//   //   });
-//   //   debugPrint(_messages!.toString());
-//   //   _textController.clear();
-//   // }
-
-//   Widget _buildMessageBubble(String message, String type) {
-//     return Container(
-//       margin: const EdgeInsets.symmetric(vertical: 10.0),
-//       child: Row(
-//         mainAxisAlignment: type == 'sent'
-//             ? MainAxisAlignment.end
-//             : MainAxisAlignment.start, // TODO: 检查senderID == 当前 userID
-//         children: [
-//           Container(
-//             padding:
-//                 const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-//             decoration: BoxDecoration(
-//               color: type == 'sent'
-//                   ? Colors.blue
-//                   : Colors.grey[300], // TODO: 检查senderID == 当前 userID
-//               borderRadius: BorderRadius.circular(20.0),
-//             ),
-//             child: GestureDetector(
-//               onLongPressStart: (detail) {
-//                 // _bgcolor = Colors.grey.withOpacity(0.5);
-//                 debugPrint("TODO: Long press msg"); // TODO: long press msg
-//                 setState(() {});
-//                 // _showMenu(context, detail);
-//               },
-//               child: Text(
-//                 message,
-//                 style: TextStyle(
-//                   backgroundColor: _bgcolor,
-//                   color: type == 'sent'
-//                       ? Colors.white
-//                       : Colors.black, // TODO: 检查senderID == 当前 userID
-//                   fontSize: 16.0,
-//                 ),
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     // final dynamic userData =
-//     //     ModalRoute.of(context)?.settings.arguments ?? _defaultMsgData;
-//     var languageProvider = Provider.of<LanguageProvider>(context);
-
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text(widget.groupName ?? "未命名的聊天"),
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Column(
-//           children: [
-//             Expanded(
-//               child: ListView.builder(
-//                 itemCount: _messages!.length,
-//                 itemBuilder: (BuildContext context, int index) {
-//                   return _buildMessageBubble(_messages![index]['messageText']!,
-//                       _messages![index]['senderID']!);
-//                 },
-//               ),
-//             ),
-//             Container(
-//               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-//               child: Row(
-//                 children: [
-//                   Expanded(
-//                     child: TextField(
-//                       controller: _textController,
-//                       decoration: InputDecoration(
-//                         hintText: languageProvider.get("msgboxhint"),
-//                         border: OutlineInputBorder(
-//                           borderRadius: BorderRadius.circular(20.0),
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                   const SizedBox(width: 8.0),
-//                   IconButton(
-//                     onPressed: () {
-//                       if (_textController.text.isNotEmpty) {
-//                         // _addMessage(_textController.text, 'sent');
-//                       }
-//                     },
-//                     icon: const Icon(Icons.send),
-//                     iconSize: 36.0,
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//       endDrawer: Drawer(
-//           child: Column(
-//         children: [
-//           ListTile(
-//             leading: const Icon(Icons.delete),
-//             title: Text(languageProvider.get("delfriends")),
-//             onTap: () => debugPrint("TODO: delete friends"),
-//           )
-//         ],
-//       )),
-//     );
-//   }
-// }
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_demo/src/model/order_model.dart';
 import 'package:pin_demo/src/model/users_model.dart';
@@ -160,8 +14,7 @@ class ConversationsPage extends StatefulWidget {
   // final List<chatMessagesModel>? msgs;
 
   const ConversationsPage(
-      {Key? key, required this.groupName, required this.groupID})
-      : super(key: key);
+      {super.key, required this.groupName, required this.groupID});
 
   @override
   _ConversationsPageState createState() => _ConversationsPageState();
@@ -170,7 +23,6 @@ class ConversationsPage extends StatefulWidget {
 class _ConversationsPageState extends State<ConversationsPage> {
   final Color _bgcolor = Colors.transparent;
   final TextEditingController _textController = TextEditingController();
-  late Map<String, dynamic> _defaultMsgData;
   int? userID;
   List<chatMessagesModel> _messages = [];
 
@@ -210,53 +62,105 @@ class _ConversationsPageState extends State<ConversationsPage> {
     }
   }
 
-  Widget _buildMessageBubble(String message, bool isSent, String timestamp) {
+  Widget _buildMessageBubble(String message, String senderName, String? avatar,
+      bool isSent, String timestamp) {
     String formattedTime = formatTimestamp(timestamp);
     if (_messages.isEmpty) {
       return Container();
     } else {
+      Widget _bubble = Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+        decoration: BoxDecoration(
+          color: isSent ? Colors.blue : Colors.grey[300],
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        child: GestureDetector(
+          onLongPressStart: (detail) {
+            debugPrint("TODO: Long press msg"); // TODO: long press msg
+            setState(() {});
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                message,
+                style: TextStyle(
+                  backgroundColor: _bgcolor,
+                  color: isSent ? Colors.white : Colors.black,
+                  fontSize: 16.0,
+                ),
+              ),
+              const SizedBox(height: 5.0),
+            ],
+          ),
+        ),
+      );
+
+      // TODO: 1218 04:35 一个页面的头像都按照同一种方式呈现了
+
+      Widget _avatar = CircleAvatar(
+          child: ClipOval(child: Image.asset("static/images/avatar.jpeg")));
+
+      if ((avatar == "" || avatar == null) &&
+          (senderName != "" && senderName != null))
+        _avatar = generateAvatar(senderName, context);
+      else if (avatar != "" && avatar != null) {
+        _avatar = CircleAvatar(
+          child: ClipOval(
+            child: CachedNetworkImage(
+              imageUrl: avatar,
+              progressIndicatorBuilder: (context, url, progress) {
+                return CircularProgressIndicator(
+                    value: double.parse(progress.toString())); // 添加了 return 语句
+              },
+              errorListener: (value) {
+                debugPrint("ERROR in CachedNetworkImage!");
+                ErrorHint("ERROR in myPage's CachedNetworkImage!");
+              },
+              errorWidget: (context, url, error) =>
+                  const Icon(Icons.error_outline_rounded),
+            ),
+          ),
+        );
+      }
+
+      Widget _timelabel = Padding(
+        padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
+        child: Text(
+          formattedTime,
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
+      );
+
       return Container(
         margin: const EdgeInsets.symmetric(vertical: 10.0),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment:
               isSent ? MainAxisAlignment.end : MainAxisAlignment.start,
-          children: [
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-              decoration: BoxDecoration(
-                color: isSent ? Colors.blue : Colors.grey[300],
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              child: GestureDetector(
-                onLongPressStart: (detail) {
-                  debugPrint("TODO: Long press msg"); // TODO: long press msg
-                  setState(() {});
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      message,
-                      style: TextStyle(
-                        backgroundColor: _bgcolor,
-                        color: isSent ? Colors.white : Colors.black,
-                        fontSize: 16.0,
-                      ),
-                    ),
-                    const SizedBox(height: 5.0),
-                    Text(
-                      formattedTime,
-                      style: TextStyle(
-                        color: isSent ? Colors.white70 : Colors.black54,
-                        fontSize: 12.0,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+          children: isSent
+              ? [
+                  _timelabel,
+                  Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                    _bubble,
+                    Padding(
+                        padding: isSent
+                            ? EdgeInsets.fromLTRB(8.0, 0.0, 0.0, 0.0)
+                            : EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
+                        child: _avatar)
+                  ])
+                ]
+              : [
+                  Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                    Padding(
+                        padding: isSent
+                            ? EdgeInsets.fromLTRB(8.0, 0.0, 0.0, 0.0)
+                            : EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
+                        child: _avatar),
+                    _bubble
+                  ]),
+                  _timelabel
+                ],
         ),
       );
     }
@@ -290,14 +194,16 @@ class _ConversationsPageState extends State<ConversationsPage> {
                   //     ),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: _messages!.length,
+                      itemCount: _messages.length,
                       itemBuilder: (BuildContext context, int index) {
-                        var msg = _messages![index];
+                        var msg = _messages[index];
                         bool isSent = msg.senderID == userID;
                         Widget bubble = _buildMessageBubble(
-                          msg.messageText!,
+                          msg.messageText,
+                          msg.senderName ?? "PinUser",
+                          msg.avatar,
                           isSent,
-                          msg.timestamp!,
+                          msg.timestamp,
                         );
                         return bubble;
                       },

@@ -89,6 +89,32 @@ class orderApi {
     }
   }
 
+  static Future<Map<String, dynamic>> joinOrder(userID, orderID) async {
+    try {
+      final response = await http.post(
+        Uri.parse(Constant.urlWebMap["join_order"]!),
+        body: json.encode({
+          'participantID': userID,
+          'orderID': orderID,
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        // print(responseData);
+        return {
+          "code": response.statusCode,
+          "data": orderModel.fromJson(responseData)
+        };
+      } else {
+        return {"code": response.statusCode, "data": {}};
+      }
+    } catch (error) {
+      throw Exception('Failed to connect to server');
+    }
+  }
+
   static Future<List<orderModel>> getSurroundingOrder(
       distance, currentPosition_x, currentPosition_y) async {
     try {
@@ -364,6 +390,8 @@ class chatMessagesModel {
   final int messageID;
   final int groupID;
   final int senderID;
+  final String? avatar;
+  final String? senderName;
   final String messageText;
   final String timestamp;
   final String? groupName;
@@ -374,6 +402,8 @@ class chatMessagesModel {
       required this.senderID,
       required this.messageText,
       required this.timestamp,
+      this.avatar,
+      this.senderName,
       this.groupName});
 
   factory chatMessagesModel.fromJson(Map<String, dynamic> json) {
@@ -381,6 +411,8 @@ class chatMessagesModel {
         messageID: json["messageID"],
         groupID: json["groupID"],
         senderID: json["senderID"],
+        senderName: json["senderName"] ?? "未知用户",
+        avatar: json["avatar"],
         messageText: json["messageText"],
         timestamp: json["timestamp"],
         groupName: json["groupName"] ?? "未命名的聊天");

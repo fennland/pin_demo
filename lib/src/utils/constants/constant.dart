@@ -20,6 +20,7 @@ class Constant {
     "register": "http://s.pin.fennland.me:5000/user/register",
     "get_user": "http://s.pin.fennland.me:5000/user/get/",
     "new_order": "http://s.pin.fennland.me:5000/orders/new",
+    "join_order": "http://s.pin.fennland.me:5000/orders/join",
     "surrounding_order": "http://s.pin.fennland.me:5000/orders/get",
     "get_order": "http://s.pin.fennland.me:5000/orders/get",
     "msg_get": "http://s.pin.fennland.me:5000/orders/msg/get",

@@ -5,9 +5,9 @@ import 'package:provider/provider.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
-void main() {
-  runApp(const follow_list());
-}
+// void main() {
+//   runApp(const follow_list());
+// }
 
 class follow_list extends StatefulWidget {
   static var body;
@@ -98,7 +98,6 @@ class _follow_listState extends State<follow_list> {
               ),
             ],
           ),
-          
         ],
       ),
     );

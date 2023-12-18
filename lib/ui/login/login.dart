@@ -1,6 +1,6 @@
 // import 'dart:html';
 
-// ignore_for_file: camel_case_types
+// ignore_for_file: camel_case_types, non_constant_identifier_names
 
 import 'dart:convert';
 
@@ -23,13 +23,13 @@ class loginPage extends StatefulWidget {
 
 class _loginPageState extends State<loginPage> {
   final LocationService _locationService = LocationService();
-  TextEditingController _phoneNumberController = TextEditingController();
-  TextEditingController _pwdController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _pwdController = TextEditingController();
   double _currentPosition_x = 0.0;
   double _currentPosition_y = 0.0;
 
   bool _isValidPhoneNumber = false;
-  bool _isCorrectPwd = false;
+  final bool _isCorrectPwd = false;
 
   @override
   void initState() {
@@ -70,12 +70,13 @@ class _loginPageState extends State<loginPage> {
         });
       }
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
     var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
         appBar: AppBar(
@@ -92,6 +93,14 @@ class _loginPageState extends State<loginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 32.0),
+                child: Image.asset(
+                  'static/images/appicon.png',
+                  width: screenSize.width / 10,
+                  height: screenSize.width / 10,
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(languageProvider.get("onekeyLogin"),
@@ -132,73 +141,62 @@ class _loginPageState extends State<loginPage> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: OutlinedButton(
-                          onPressed: () async {
-                            _checkPhoneNumberValidity();
-                            if (_isValidPhoneNumber) {
-                              if (isValidPwd()) {
-                                var loginResult = await postLoginForm(
-                                    _phoneNumberController.text,
-                                    _pwdController.text,
-                                    _currentPosition_x,
-                                    _currentPosition_y);
-                                if (loginResult["code"] == 200 ||
-                                    loginResult["code"] == 201) {
-                                  print(loginResult["result"]);
-                                  saveUserInfo(UserModel(
-                                    userName: loginResult["result"]["data"]
-                                        ["userName"],
-                                    userID: loginResult["result"]["data"]
-                                        ["userID"],
-                                    phone: loginResult["result"]["data"]
-                                        ["phone"],
-                                    avatar: loginResult["result"]["data"]
-                                        ["avatar"],
-                                    sign: loginResult["result"]["data"]["sign"],
-                                    gender: loginResult["result"]["data"]
-                                        ["gender"],
-                                    fav: loginResult["result"]["data"]["fav"],
-                                    position_x: loginResult["result"]["data"]
-                                        ["position_x"],
-                                    position_y: loginResult["result"]["data"]
-                                        ["position_y"],
-                                  ));
-                                  Navigator.of(context).pushNamed("/home");
-                                } else if (loginResult["code"] == 404) {
-                                  SnackBar snackbar = SnackBar(
+                        onPressed: () async {
+                          _checkPhoneNumberValidity();
+                          if (_isValidPhoneNumber) {
+                            if (isValidPwd()) {
+                              final loginScaffoldMessenger =
+                                  ScaffoldMessenger.of(context);
+                              final navigator = Navigator.of(context);
+                              var loginResult = await postLoginForm(
+                                  _phoneNumberController.text,
+                                  _pwdController.text,
+                                  _currentPosition_x,
+                                  _currentPosition_y);
+                              if (loginResult["code"] == 200 ||
+                                  loginResult["code"] == 201) {
+                                debugPrint(loginResult["result"].toString());
+                                saveUserInfo(UserModel(
+                                  userName: loginResult["result"]["data"]
+                                      ["userName"],
+                                  userID: loginResult["result"]["data"]
+                                      ["userID"],
+                                  phone: loginResult["result"]["data"]["phone"],
+                                  avatar: loginResult["result"]["data"]
+                                      ["avatar"],
+                                  sign: loginResult["result"]["data"]["sign"],
+                                  gender: loginResult["result"]["data"]
+                                      ["gender"],
+                                  fav: loginResult["result"]["data"]["fav"],
+                                  position_x: loginResult["result"]["data"]
+                                      ["position_x"],
+                                  position_y: loginResult["result"]["data"]
+                                      ["position_y"],
+                                ));
+                                navigator.pushNamed("/home");
+                              } else if (loginResult["code"] == 404) {
+                                SnackBar snackbar = SnackBar(
+                                  content: Text(
+                                      languageProvider.get("loginNoSuchUser")),
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 255, 109, 109),
+                                  duration: const Duration(seconds: 2),
+                                );
+                                loginScaffoldMessenger.showSnackBar(snackbar);
+                              } else if (loginResult["code"] == 500 ||
+                                  loginResult["code"] == 403) {
+                                SnackBar snackbar = SnackBar(
                                     content: Text(languageProvider
-                                        .get("loginNoSuchUser")),
+                                        .get("loginBadNetwork")),
                                     backgroundColor: const Color.fromARGB(
                                         255, 255, 109, 109),
-                                    duration: const Duration(seconds: 2),
-                                  );
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackbar);
-                                } else if (loginResult["code"] == 500 ||
-                                    loginResult["code"] == 403) {
-                                  SnackBar snackbar = SnackBar(
-                                      content: Text(languageProvider
-                                          .get("loginBadNetwork")),
-                                      backgroundColor: const Color.fromARGB(
-                                          255, 255, 109, 109),
-                                      duration: const Duration(seconds: 5),
-                                      action: SnackBarAction(
-                                          label: languageProvider
-                                              .get("loginBadNetworkTest"),
-                                          onPressed: () => Navigator.of(context)
-                                              .pushNamed("/server/test")));
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackbar);
-                                } else {
-                                  SnackBar snackbar = SnackBar(
-                                    content: Text(languageProvider
-                                        .get("loginFailedIncorrect")),
-                                    backgroundColor: const Color.fromARGB(
-                                        255, 255, 109, 109),
-                                    duration: const Duration(seconds: 2),
-                                  );
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackbar);
-                                }
+                                    duration: const Duration(seconds: 5),
+                                    action: SnackBarAction(
+                                        label: languageProvider
+                                            .get("loginBadNetworkTest"),
+                                        onPressed: () => Navigator.of(context)
+                                            .pushNamed("/server/test")));
+                                loginScaffoldMessenger.showSnackBar(snackbar);
                               } else {
                                 SnackBar snackbar = SnackBar(
                                   content: Text(languageProvider
@@ -207,13 +205,12 @@ class _loginPageState extends State<loginPage> {
                                       const Color.fromARGB(255, 255, 109, 109),
                                   duration: const Duration(seconds: 2),
                                 );
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snackbar);
+                                loginScaffoldMessenger.showSnackBar(snackbar);
                               }
                             } else {
                               SnackBar snackbar = SnackBar(
                                 content: Text(languageProvider
-                                    .get("loginFailedWithoutPhone")),
+                                    .get("loginFailedIncorrect")),
                                 backgroundColor:
                                     const Color.fromARGB(255, 255, 109, 109),
                                 duration: const Duration(seconds: 2),
@@ -221,8 +218,20 @@ class _loginPageState extends State<loginPage> {
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackbar);
                             }
-                          },
-                          child: Text(languageProvider.get("login"))),
+                          } else {
+                            SnackBar snackbar = SnackBar(
+                              content: Text(languageProvider
+                                  .get("loginFailedWithoutPhone")),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 255, 109, 109),
+                              duration: const Duration(seconds: 2),
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackbar);
+                          }
+                        },
+                        child: Text(languageProvider.get("login")),
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),

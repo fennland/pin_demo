@@ -40,7 +40,8 @@ class _msgPageState extends State<msgPage> {
       // print(responseOrders);
       if (mounted) {
         setState(() {
-          if (responseMsgs != []) {
+          // debugPrint(responseMsgs.toString());
+          if (responseMsgs.isNotEmpty) {
             msgs = responseMsgs;
           } else {
             noMsgs = true;
@@ -203,33 +204,59 @@ class _msgPageState extends State<msgPage> {
                                       itemCount: msgs.length,
                                       itemBuilder:
                                           (BuildContext context, int index) {
-                                        return ListTile(
-                                          onTap: () {
-                                            debugPrint(msgs[index].toString());
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ConversationsPage(
-                                                            groupName:
-                                                                msgs[index]
-                                                                    .groupName,
-                                                            groupID: msgs[index]
-                                                                .groupID)));
-                                          },
-                                          leading: generateAvatar(
-                                              msgs[index].groupName ?? "N/A",
-                                              context),
-                                          title: Text(msgs[index].groupName ??
-                                              "未命名的聊天"),
-                                          subtitle: Text(
-                                            msgs[index].messageText,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall,
-                                          ),
-                                          trailing: Text(formatTimestamp(
-                                              msgs[index].timestamp)),
-                                        );
+                                        // debugPrint(msgs.length.toString());
+                                        if (msgs.isNotEmpty) {
+                                          return ListTile(
+                                            onTap: () {
+                                              debugPrint(
+                                                  msgs[index].toString());
+                                              Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ConversationsPage(
+                                                              groupName: msgs[
+                                                                      index]
+                                                                  .groupName,
+                                                              groupID: msgs[
+                                                                      index]
+                                                                  .groupID)));
+                                            },
+                                            leading: generateAvatar(
+                                                msgs[index].groupName ?? "N/A",
+                                                context),
+                                            title: Text(msgs[index].groupName ??
+                                                "未命名的聊天"),
+                                            subtitle: Text(
+                                              msgs[index].messageText,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
+                                            ),
+                                            trailing: Text(formatTimestamp(
+                                                msgs[index].timestamp)),
+                                          );
+                                        } else {
+                                          return Align(
+                                            alignment: Alignment.center,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                const Icon(Icons.more_horiz,
+                                                    size: 36.0),
+                                                const SizedBox(height: 30),
+                                                Text(
+                                                    languageProvider
+                                                        .get("noMsgs"),
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleMedium),
+                                              ],
+                                            ),
+                                          );
+                                        }
                                       },
                                       separatorBuilder: (context, index) {
                                         return Divider(

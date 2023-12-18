@@ -1,6 +1,6 @@
 // import 'dart:html';
 
-// ignore_for_file: camel_case_types
+// ignore_for_file: camel_case_types, non_constant_identifier_names
 
 import 'dart:convert';
 
@@ -23,9 +23,9 @@ class registerPage extends StatefulWidget {
 
 class _registerPageState extends State<registerPage> {
   final LocationService _locationService = LocationService();
-  TextEditingController _userNameController = TextEditingController();
-  TextEditingController _phoneNumberController = TextEditingController();
-  TextEditingController _pwdController = TextEditingController();
+  final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _pwdController = TextEditingController();
   bool? _maleSelected = false;
   bool? _femaleSelected = true;
   int? _gender = 0;
@@ -33,7 +33,7 @@ class _registerPageState extends State<registerPage> {
   double _currentPosition_y = 0.0;
 
   bool _isValidPhoneNumber = false;
-  bool _isValidPwd = false;
+  final bool _isValidPwd = false;
 
   @override
   void initState() {
@@ -74,7 +74,7 @@ class _registerPageState extends State<registerPage> {
         });
       }
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 
@@ -172,6 +172,9 @@ class _registerPageState extends State<registerPage> {
                       _checkPhoneNumberValidity();
                       if (_isValidPhoneNumber) {
                         if (isValidPwd()) {
+                          final registerScaffoldMessenger =
+                              ScaffoldMessenger.of(context);
+                          final navigator = Navigator.of(context);
                           var regResult = await postRegisterForm(
                             _userNameController.text,
                             _phoneNumberController.text,
@@ -180,7 +183,7 @@ class _registerPageState extends State<registerPage> {
                           );
                           if (regResult["code"] == 200 ||
                               regResult["code"] == 201) {
-                            print(regResult["result"]);
+                            debugPrint(regResult["result"].toString());
                             saveUserInfo(UserModel(
                               userName: regResult["result"]["data"]["userName"],
                               userID: regResult["result"]["data"]["userID"],
@@ -199,9 +202,8 @@ class _registerPageState extends State<registerPage> {
                                   Text(languageProvider.get("registerSuccess")),
                               duration: const Duration(seconds: 2),
                             );
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackbar);
-                            Navigator.of(context).pushNamed("/login");
+                            registerScaffoldMessenger.showSnackBar(snackbar);
+                            navigator.pushNamed("/login");
                           } else if (regResult["code"] == 409) {
                             SnackBar snackbar = SnackBar(
                               content: Text(languageProvider
@@ -210,8 +212,7 @@ class _registerPageState extends State<registerPage> {
                                   const Color.fromARGB(255, 255, 109, 109),
                               duration: const Duration(seconds: 2),
                             );
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackbar);
+                            registerScaffoldMessenger.showSnackBar(snackbar);
                           } else if (regResult["code"] == 500 ||
                               regResult["code"] == 403) {
                             SnackBar snackbar = SnackBar(
@@ -225,8 +226,7 @@ class _registerPageState extends State<registerPage> {
                                         .get("loginBadNetworkTest"),
                                     onPressed: () => Navigator.of(context)
                                         .pushNamed("/server/test")));
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackbar);
+                            registerScaffoldMessenger.showSnackBar(snackbar);
                           } else {
                             SnackBar snackbar = SnackBar(
                               content: Text(
@@ -235,8 +235,7 @@ class _registerPageState extends State<registerPage> {
                                   const Color.fromARGB(255, 255, 109, 109),
                               duration: const Duration(seconds: 2),
                             );
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackbar);
+                            registerScaffoldMessenger.showSnackBar(snackbar);
                           }
                         } else {
                           SnackBar snackbar = SnackBar(

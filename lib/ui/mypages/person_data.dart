@@ -11,7 +11,7 @@ import 'package:camera/camera.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 void main() {
-  runApp(person_data());
+  runApp(const person_data());
 }
 
 class person_data extends StatefulWidget {
@@ -62,10 +62,10 @@ class _person_dataState extends State<person_data> {
   void showTimeoutSnackbar(BuildContext context) {
     bool timedOut = false; // 设置超时标记
 
-    Future.delayed(Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 5), () {
       if (!timedOut) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Row(
               children: [
                 Icon(Icons.person),
@@ -126,9 +126,9 @@ class _person_dataState extends State<person_data> {
       future: generateNewChipAsync(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return Text('生成新的Chip时出错');
+          return const Text('生成新的Chip时出错');
         } else {
           String chipText = snapshot.data!;
           ActionChipData newChipData = ActionChipData(
@@ -164,7 +164,7 @@ class _person_dataState extends State<person_data> {
               backgroundColor: _backgroundColor,
               pressElevation: 10,
               tooltip: "点击",
-              labelPadding: EdgeInsets.all(2),
+              labelPadding: const EdgeInsets.all(2),
               label: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -172,7 +172,7 @@ class _person_dataState extends State<person_data> {
                     Icons.sports,
                     color: _backgroundColor,
                   ),
-                  SizedBox(width: 2),
+                  const SizedBox(width: 2),
                   Text(buttonText),
                 ],
               ),
@@ -184,7 +184,7 @@ class _person_dataState extends State<person_data> {
   }
 
   Future<String> generateNewChipAsync() async {
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     String newChipText = "New Chip";
     return newChipText;
   }
@@ -211,14 +211,14 @@ class _person_dataState extends State<person_data> {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: Text("选择头像"),
+                          title: const Text("选择头像"),
                           content: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               if (!Platform.isWindows) // 判断平台为Windows时不显示拍照选项
                                 ListTile(
-                                  leading: Icon(Icons.camera_alt),
-                                  title: Text("拍照"),
+                                  leading: const Icon(Icons.camera_alt),
+                                  title: const Text("拍照"),
                                   onTap: () {
                                     Navigator.of(context).pop();
                                     _pickImage(ImageSource.gallery);
@@ -226,8 +226,8 @@ class _person_dataState extends State<person_data> {
                                 ),
                               // TODO: 拍照功能未实现
                               ListTile(
-                                leading: Icon(Icons.image),
-                                title: Text("从相册选择"),
+                                leading: const Icon(Icons.image),
+                                title: const Text("从相册选择"),
                                 onTap: () {
                                   Navigator.of(context).pop();
                                   _pickImage(ImageSource.gallery);
@@ -246,7 +246,7 @@ class _person_dataState extends State<person_data> {
                             width: 100,
                             height: 100,
                           )
-                        : FadeInImage(
+                        : const FadeInImage(
                             placeholder: AssetImage('assets/placeholder.jpg'),
                             image: NetworkImage(
                                 'https://img2.baidu.com/it/u=3726660842,3936973858&fm=253&fmt=auto&app=138&f=JPEG?w=300&h=300'),
@@ -262,7 +262,7 @@ class _person_dataState extends State<person_data> {
                       hintText:
                           (user?.userName ?? languageProvider.get("curUser")),
                       // hintText: "陈鹏", // TODO: 改成保存当前名字，点选后可以删掉再改，而不是hint作为placeholder getUserInfo(userName)
-                      prefixIcon: Icon(Icons.person)),
+                      prefixIcon: const Icon(Icons.person)),
                 ),
                 _radioRow(),
                 TextField(
@@ -272,9 +272,9 @@ class _person_dataState extends State<person_data> {
                       //     "一句话描述自己", // TODO: 改成保存当前名字，点选后可以删掉再改，而不是hint作为placeholder
                       hintText: (user?.sign ??
                           languageProvider.get("curUserSigning")),
-                      prefixIcon: Icon(Icons.person)),
+                      prefixIcon: const Icon(Icons.person)),
                 ),
-                Row(
+                const Row(
                   children: [
                     Text('兴趣关键词'),
                   ],
@@ -292,7 +292,7 @@ class _person_dataState extends State<person_data> {
                           children: [
                             TextField(
                               controller: textEditingController,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 hintText: "输入按钮文本",
                               ),
                             ),
@@ -326,7 +326,7 @@ class _person_dataState extends State<person_data> {
                                 backgroundColor: _backgroundColor,
                                 pressElevation: 10,
                                 tooltip: "点击",
-                                labelPadding: EdgeInsets.all(2),
+                                labelPadding: const EdgeInsets.all(2),
                                 label: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -334,7 +334,7 @@ class _person_dataState extends State<person_data> {
                                       Icons.sports,
                                       color: _backgroundColor,
                                     ),
-                                    SizedBox(width: 2),
+                                    const SizedBox(width: 2),
                                     Text(buttonText),
                                   ],
                                 ),
@@ -349,7 +349,7 @@ class _person_dataState extends State<person_data> {
                 ),
                 ElevatedButton(
                   onPressed: _handleButtonClick,
-                  child: Text('生成新的标签'),
+                  child: const Text('生成新的标签'),
                   // TODO: 添加标签功能仅生效一次
                 ),
               ],
@@ -377,11 +377,11 @@ class _person_dataState extends State<person_data> {
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text("男"),
+                const Text("男"),
                 _colorfulCheckBox(1),
-                Text("女"),
+                const Text("女"),
                 _colorfulCheckBox(0),
-                Text("保密"),
+                const Text("保密"),
                 _colorfulCheckBox(-1),
               ],
             ))

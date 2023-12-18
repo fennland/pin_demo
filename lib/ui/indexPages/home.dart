@@ -1,9 +1,14 @@
 // import 'dart:html';
 
+// ignore_for_file: camel_case_types, non_constant_identifier_names
+
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
+import 'package:flutter_baidu_mapapi_utils/flutter_baidu_mapapi_utils.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pin_demo/src/model/order_model.dart';
 import 'package:pin_demo/ui/homePages/search.dart';
@@ -29,18 +34,20 @@ class homePage extends StatefulWidget {
 class _homePageState extends State<homePage> {
   List<orderModel> orders = [];
   final LocationService _locationService = LocationService();
-  double _currentPosition_x = 0.0;
-  double _currentPosition_y = 0.0;
+  double _currentPosition_x = 118.085152;
+  double _currentPosition_y = 24.603804;
+  List<BMFMarker>? _markers;
   final double distance = 1.0;
   bool isMatched = false;
   bool badNetwork = false;
 
-  BMFMapController? myMapController;
+  BMFMapController? myMapController = BMFMapController.withId(1);
 
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
+    // _addMarkers();  // TODO： 百度地图SDK无法添加markers
   }
 
   @override
@@ -49,18 +56,43 @@ class _homePageState extends State<homePage> {
   }
 
   // 调用LocationService的getCurrentLocation方法获取当前位置信息
-  Future<bool> _getCurrentLocation() async {
+  Future<void> _getCurrentLocation() async {
     try {
       final Position position = await _locationService.getCurrentLocation();
       _currentPosition_x = position.longitude;
       _currentPosition_y = position.latitude;
-      if (_currentPosition_x != 0.0 && _currentPosition_y != 0.0) {
-        return true;
-      } else {
-        return false;
-      }
     } catch (e) {
       debugPrint(e.toString());
+    }
+  }
+
+  @Deprecated("bMapSDK error")
+  Future<bool> _addMarkers() async {
+    try {
+      if (orders != null) {
+        List<BMFMarker> markers = [];
+        for (var order in orders) {
+          /// 创建BMFMarker
+          ///
+          // print(order.position_x);
+          // print(order.position_y);
+          BMFMarker marker = BMFMarker.icon(
+              position: BMFCoordinate(order.position_y, order.position_x),
+              title: order.orderName,
+              identifier: order.orderID.toString(),
+              icon: "static/images/icon_marker_unselected.png");
+          markers.add(marker);
+
+          /// 添加Marker
+        }
+        bool? result = await myMapController?.addMarkers(markers);
+        return result ?? true;
+      } else {
+        debugPrint("add markers false");
+        return false;
+      }
+    } catch (error) {
+      debugPrint(error.toString());
       return false;
     }
   }
@@ -112,9 +144,6 @@ class _homePageState extends State<homePage> {
   @override
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<LanguageProvider>(context);
-    var mapWidget = MapWidget(
-      onTap: () => Navigator.pushNamed(context, "/order/new"),
-    );
 
     var screenSize = MediaQuery.of(context).size;
 
@@ -129,11 +158,11 @@ class _homePageState extends State<homePage> {
               ? IconButton(
                   icon: const Icon(Icons.search),
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const searchPage(),
-                            maintainState: true));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => const searchPage(),
+                    //         maintainState: true));
                   },
                 )
               : Container(),
@@ -155,11 +184,12 @@ class _homePageState extends State<homePage> {
                       const SizedBox(height: 12),
                       OutlinedButton(
                           onPressed: () async {
+                            final ScaffoldMessengerState scaffoldMessenger =
+                                ScaffoldMessenger.of(context);
                             final connectivityResult =
                                 await Connectivity().checkConnectivity();
                             if (connectivityResult == ConnectivityResult.none) {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
+                              scaffoldMessenger.showSnackBar(SnackBar(
                                 content: const Text("网络未连接"),
                                 action: SnackBarAction(
                                   label: "网络检测",
@@ -168,8 +198,7 @@ class _homePageState extends State<homePage> {
                                 ),
                               ));
                             } else if (await checkConnectivity() == false) {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
+                              scaffoldMessenger.showSnackBar(SnackBar(
                                 content: Text(
                                     languageProvider.get("loginBadNetwork")),
                                 action: SnackBarAction(
@@ -204,6 +233,7 @@ class _homePageState extends State<homePage> {
                 }
               } else {
                 await _getOrders();
+                await _getCurrentLocation();
               }
             },
             child: !badNetwork
@@ -212,7 +242,13 @@ class _homePageState extends State<homePage> {
                         _getOrders), // 调用 _getOrders() 获取订单数据
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Center(
+                            child: Column(
+                          children: [
+                            CircularProgressIndicator(),
+                            Text("Loading...")
+                          ],
+                        ));
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else {
@@ -220,28 +256,19 @@ class _homePageState extends State<homePage> {
                           child: Column(
                             children: [
                               !unSupportedPlatform
-                                  ? FutureBuilder(
-                                      future: _getCurrentLocation(),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData &&
-                                            snapshot.data == true) {
-                                          setState(() {});
-                                        }
-                                        return mapWidget.generateMap(
-                                            flex: 2,
-                                            bgColor: Theme.of(context)
-                                                .dialogBackgroundColor,
-                                            con: myMapController,
-                                            lat: _currentPosition_x,
-                                            lon: _currentPosition_y,
-                                            width: screenSize.width * 0.95,
-                                            zoomLevel: 15,
-                                            isChinese: (languageProvider
-                                                    .currentLanguage ==
-                                                "zh"),
-                                            zoomEnabled: false);
-                                      },
-                                    )
+                                  ? generateMap(
+                                      onTap: () => Navigator.pushNamed(
+                                          context, "/order/new"),
+                                      flex: 2,
+                                      con: myMapController,
+                                      lat: _currentPosition_y,
+                                      lon: _currentPosition_x,
+                                      width: screenSize.width * 0.95,
+                                      zoomLevel: 15,
+                                      isChinese:
+                                          (languageProvider.currentLanguage ==
+                                              "zh"),
+                                      zoomEnabled: false)
                                   : Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -323,7 +350,7 @@ class _homePageState extends State<homePage> {
                         );
                       }
                     })
-                : SizedBox.shrink(),
+                : const SizedBox.shrink(),
           ),
         ],
       ),

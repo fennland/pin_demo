@@ -35,6 +35,9 @@ PODS:
     - BaiduMapKit/Utils (= 6.5.9)
     - Flutter
     - flutter_baidu_mapapi_base
+  - flutter_bmflocation (3.5.0):
+    - BMKLocationKit (~> 2.0.9)
+    - Flutter
   - flutter_share (0.0.1):
     - Flutter
   - fluttertoast (0.0.2):
@@ -74,6 +77,7 @@ DEPENDENCIES:
   - flutter_baidu_mapapi_map (from `.symlinks/plugins/flutter_baidu_mapapi_map/ios`)
   - flutter_baidu_mapapi_search (from `.symlinks/plugins/flutter_baidu_mapapi_search/ios`)
   - flutter_baidu_mapapi_utils (from `.symlinks/plugins/flutter_baidu_mapapi_utils/ios`)
+  - flutter_bmflocation (from `.symlinks/plugins/flutter_bmflocation/ios`)
   - flutter_share (from `.symlinks/plugins/flutter_share/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
@@ -109,6 +113,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_baidu_mapapi_search/ios"
   flutter_baidu_mapapi_utils:
     :path: ".symlinks/plugins/flutter_baidu_mapapi_utils/ios"
+  flutter_bmflocation:
+    :path: ".symlinks/plugins/flutter_bmflocation/ios"
   flutter_share:
     :path: ".symlinks/plugins/flutter_share/ios"
   fluttertoast:
@@ -139,6 +145,7 @@ SPEC CHECKSUMS:
   flutter_baidu_mapapi_map: f522de53b927636e725c68f73d2fbf0f37840ea3
   flutter_baidu_mapapi_search: fc9a79e33e4d16ca04dc316a914b86d7a5de0940
   flutter_baidu_mapapi_utils: 04aa6d573e876a2ec05e260541fa7e4ae4f25338
+  flutter_bmflocation: 7ab7efb92d79715fd3c3217075ad97ad18a748b1
   flutter_share: 4be0208963c60b537e6255ed2ce1faae61cd9ac2
   fluttertoast: 31b00dabfa7fb7bacd9e7dbee580d7a2ff4bf265
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a

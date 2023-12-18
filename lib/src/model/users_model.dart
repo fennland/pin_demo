@@ -2,6 +2,8 @@
 //
 //     final wechatUsersModel = wechatUsersModelFromJson(jsonString);
 
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:convert';
 import 'dart:ffi';
 import 'package:flutter/foundation.dart';
@@ -128,15 +130,13 @@ Future<Map<String, dynamic>> requestUserInfo(int userid) async {
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       debugPrint(response.body);
-      return ({
-        "code": response.statusCode,
-        "result": json.decode(response.body)
-      });
+      return (json.decode(response.body));
     } else {
-      return ({"code": response.statusCode, "result": {}});
+      return {};
     }
   } catch (e) {
-    return ({"code": 500, "error": e.toString()});
+    debugPrint(e.toString());
+    return {};
   }
 }
 
@@ -198,7 +198,7 @@ Future<Map<String, dynamic>> getCurrentLocation(
       return {"x": position.longitude, "y": position.latitude};
     }
   } catch (e) {
-    print(e.toString());
+    debugPrint(e.toString());
   }
   return {"x": 0.0, "y": 0.0};
 }

@@ -1,23 +1,26 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:pin_demo/src/model/users_model.dart';
 import 'package:pin_demo/src/utils/components.dart';
 import 'package:pin_demo/src/utils/map.dart';
 import 'package:pin_demo/src/utils/utils.dart';
+import 'package:pin_demo/ui/msgPages/conversations.dart';
 import 'package:provider/provider.dart';
 import 'package:pin_demo/src/utils/constants/lang.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:pin_demo/src/model/order_model.dart';
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class CountdownTimer extends StatefulWidget {
   final String targetDateTime;
   final TextStyle? style;
 
-  CountdownTimer({required this.targetDateTime, this.style});
+  CountdownTimer({super.key, required this.targetDateTime, this.style});
 
   @override
   _CountdownTimerState createState() => _CountdownTimerState();
@@ -44,7 +47,9 @@ class _CountdownTimerState extends State<CountdownTimer> {
 
   @override
   void dispose() {
-    _timer.cancel();
+    if (!_isExpired) {
+      _timer.cancel();
+    }
     super.dispose();
   }
 
@@ -84,28 +89,63 @@ class _CountdownTimerState extends State<CountdownTimer> {
 class orderInfoPage extends StatefulWidget {
   final orderModel? order; // 传入的订单模型
 
-  const orderInfoPage({Key? key, this.order}) : super(key: key);
+  const orderInfoPage({super.key, this.order});
 
   @override
   State<orderInfoPage> createState() => _orderInfoPageState();
 }
 
 class _orderInfoPageState extends State<orderInfoPage> {
+  final LocationService _locationService = LocationService();
+  orderModel? orderM;
+  // late double _currentPosition_x;
+  // late double _currentPosition_y;
+  BMFMapController? myMapController = BMFMapController.withId(3);
+
+  Future<Position> _getCurrentLocation() async {
+    final Position position = await _locationService.getCurrentLocation();
+    // _currentPosition_x = position.longitude;
+    // _currentPosition_y = position.latitude;
+    return position;
+  }
+
+  Future<int> _joinOrder() async {
+    try {
+      var user = await getUserInfo();
+      if (user != null) {
+        var result =
+            await orderApi.joinOrder(user.userID, widget.order?.orderID);
+        if (result["code"] == 200 || result["code"] == 201) {
+          orderM = result["data"];
+        }
+        return result["code"] ?? 500;
+      } else {
+        throw ErrorHint("Not Loged in");
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      return 400;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _getCurrentLocation();
     if (widget.order == null) {
       debugPrint("empty order");
-      // Navigator.of(context).pop();
+      Navigator.of(context).pop();
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     var languageProvider = Provider.of<LanguageProvider>(context);
-    var mapWidget = MapWidget(
-      onTap: () {},
-    );
     var screenSize = MediaQuery.of(context).size;
 
     Future<Map<String, dynamic>> reqInitiator() async {
@@ -116,7 +156,7 @@ class _orderInfoPageState extends State<orderInfoPage> {
     return Scaffold(
         appBar: AppBar(
           title: Column(children: [
-            Text(widget.order!.orderName ?? "",
+            Text(widget.order!.orderName,
                 style: const TextStyle(
                     fontSize: 18.0, fontWeight: FontWeight.w600)),
             Text("${widget.order!.distance.toString()} km",
@@ -128,130 +168,190 @@ class _orderInfoPageState extends State<orderInfoPage> {
                 icon: const Icon(Icons.share))
           ],
         ),
-        body: Stack(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Padding(
-                      padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 16.0),
-                      child: !unSupportedPlatform
-                          ? mapWidget.generateMap(
+        body: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FutureBuilder<Position>(
+                  future: _getCurrentLocation(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState != ConnectionState.waiting &&
+                        snapshot.hasData) {
+                      // 获取位置信息成功，将其传递给地图组件
+                      final position = snapshot.data!;
+                      return (!unSupportedPlatform
+                          ? generateMap(
+                              onTap: () {},
+                              flex: 3,
                               con: myMapController,
                               width: screenSize.width * 0.95,
                               zoomLevel: 15,
                               isChinese:
-                                  (languageProvider.currentLanguage == "zh-CN"),
-                              zoomEnabled: false)
-                          : Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.error),
-                                const SizedBox(
-                                  height: 10.0,
-                                ),
-                                Text(
-                                  languageProvider
-                                      .get("unsupportedPlatformConfirm"),
-                                  textAlign: TextAlign.center,
-                                )
-                              ],
-                            )),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Row(
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Icon(Icons.alarm),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  CountdownTimer(
-                                    targetDateTime: widget.order!.startTime,
-                                    style:
-                                        Theme.of(context).textTheme.labelMedium,
-                                  ),
-                                  Text(widget.order!.startTime,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelLarge)
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const Expanded(
-                        child: Column(children: []),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Row(
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Icon(Icons.person),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
+                                  (languageProvider.currentLanguage == "zh"),
+                              zoomEnabled: false,
+                              lat: position.latitude,
+                              lon: position.longitude)
+                          : Expanded(
+                              flex: 3,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.error),
+                                    const SizedBox(
+                                      height: 10.0,
+                                    ),
+                                    Text(
                                       languageProvider
-                                          .get("orderInfoInitiator"),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelMedium),
-                                  FutureBuilder(
-                                      future: reqInitiator(),
-                                      builder:
-                                          (BuildContext context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          Map<String, dynamic>?
-                                              initiatorUserInfo = snapshot.data;
-                                          return Text(
-                                              initiatorUserInfo!["userName"],
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .labelLarge);
-                                        } else {
-                                          return const Text("");
-                                        }
-                                      })
-                                ],
+                                          .get("unsupportedPlatformConfirm"),
+                                      textAlign: TextAlign.center,
+                                    )
+                                  ],
+                                ),
                               ),
-                            ],
+                            ));
+                    } else {
+                      return const Expanded(
+                        flex: 3,
+                        child: Card(
+                          child: Center(
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircularProgressIndicator(),
+                                  Text("Loading...")
+                                ]),
                           ),
                         ),
-                      ),
-                      const Expanded(
-                        child: Column(children: []),
-                      )
+                      );
+                    }
+                  }),
+              Expanded(
+                flex: 6,
+                child: Card(
+                  child: Row(
+                    children: [
+                      Column(children: [
+                        Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Icon(Icons.alarm),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                CountdownTimer(
+                                  targetDateTime: widget.order!.startTime,
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
+                                ),
+                                Text(widget.order!.startTime,
+                                    style:
+                                        Theme.of(context).textTheme.labelLarge)
+                              ],
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Icon(Icons.person),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(languageProvider.get("orderInfoInitiator"),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium),
+                                FutureBuilder(
+                                    future: reqInitiator(),
+                                    builder: (BuildContext context, snapshot) {
+                                      if (snapshot.hasData &&
+                                          snapshot.data != {}) {
+                                        Map<String, dynamic>?
+                                            initiatorUserInfo = snapshot.data;
+                                        return Text(
+                                            initiatorUserInfo!["userName"],
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelLarge);
+                                      } else {
+                                        return const Text("");
+                                      }
+                                    })
+                              ],
+                            ),
+                          ],
+                        ),
+                      ]),
                     ],
                   ),
-                )
-              ],
-            )
-          ],
+                ),
+              ),
+              Expanded(
+                  flex: 1,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      var result = await _joinOrder();
+                      if (result == 200 || result == 201) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text("加入成功！"),
+                        ));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ConversationsPage(
+                                groupName: orderM!.orderName,
+                                groupID: orderM!.groupID)));
+                      } else if (result == 404) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text("在去这个需求群的路中迷路了..."),
+                          backgroundColor: Color.fromARGB(255, 255, 109, 109),
+                        ));
+                      } else if (result == 409) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text("你已经在此群聊了..."),
+                          backgroundColor: Color.fromARGB(255, 255, 109, 109),
+                        ));
+                        if (widget.order != null) {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ConversationsPage(
+                                  groupName: widget.order!.orderName,
+                                  groupID: widget.order!.groupID)));
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text("未能加入此需求，换一个试试吧..."),
+                          backgroundColor: Color.fromARGB(255, 255, 109, 109),
+                        ));
+                      }
+                    },
+                    style: ButtonStyle(
+                        maximumSize: MaterialStateProperty.all(
+                            const Size(double.infinity, 60)),
+                        minimumSize: MaterialStateProperty.all(
+                            const Size(double.infinity, 45)), // 设置按钮最小尺寸
+                        // padding: MaterialStateProperty.all(
+                        //     EdgeInsets.zero), // 去除默认内边距
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(16.0))), // 设置按钮圆角
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.blue)),
+                    child: Text("加入此需求",
+                        style: Theme.of(context).textTheme.bodyLarge),
+                  ))
+            ],
+          ),
         ));
   }
 }
