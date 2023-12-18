@@ -89,7 +89,7 @@ class WindowUtil {
   ///初始化参数配置，这里根据自己的模块业务而定，我窗口默认是140,210
   static void setWindowFunctions({bool? isMacOS}) async {
     WindowOptions windowOptions = const WindowOptions(
-      minimumSize: Size(360.0, 480.0),
+      minimumSize: Size(360.0, 540.0),
       center: true,
       // backgroundColor: Colors.transparent,
       //设置窗口是否显示在 任务栏或 Dock 上

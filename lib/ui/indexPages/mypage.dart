@@ -3,8 +3,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_demo/main.dart';
+import 'package:pin_demo/src/utils/constants/constant.dart';
+import 'package:pin_demo/src/utils/shared/shared_preference_util.dart';
 import 'package:pin_demo/ui/mypages/privacy.dart';
-import 'package:pin_demo/src/users/someUserProfile.dart';
+import 'package:pin_demo/ui/users/userProfile.dart';
 import 'package:pin_demo/src/utils/constants/lang.dart';
 import 'package:pin_demo/src/utils/components.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +18,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pin_demo/src/model/users_model.dart';
 import 'dart:io';
 import 'package:pin_demo/src/utils/utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class myPage extends StatefulWidget {
   // static var body;
@@ -50,6 +54,12 @@ class _myPageState extends State<myPage> {
 
     // serviceDisappearingCard
     var service_dcard = DisappearingCard(
+      btnRightBehaviour: () async {
+        final Uri url = Uri.parse(Constant.urlMap["app"]!);
+        if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+          throw Exception('Could not launch $url');
+        }
+      },
       cardContext: ListTile(
         leading: const Icon(Icons.handyman),
         title: Text(languageProvider.get("service2")),
@@ -122,6 +132,7 @@ class _myPageState extends State<myPage> {
       leading: const Icon(Icons.exit_to_app),
       title: Text(languageProvider.get("quit")),
       onTap: () {
+        SharedPreferenceUtil.clear();
         Navigator.of(context).pushReplacementNamed("/login");
         // Navigator.of(context).pushNamed("/login");
         // debugPrint("TODO: quit");

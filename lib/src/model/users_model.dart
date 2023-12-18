@@ -167,14 +167,38 @@ Future<Map<String, dynamic>> postLoginForm(
   }
 }
 
-Future<Map<String, dynamic>> postRegisterForm(
-    username, phone, pwd, gender) async {
+Future<Map<String, dynamic>> postLoginForm_logined(
+    phone, currentPosition_x, currentPosition_y) async {
+  try {
+    var response = await http.post(
+      Uri.parse(Constant.urlWebMap["logined"]!),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'phone': phone,
+        'position_x': currentPosition_x ?? 0.0,
+        'position_y': currentPosition_y ?? 0.0
+      }),
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // debugPrint(response.body);
+      return ({
+        "code": response.statusCode,
+        "result": json.decode(response.body)
+      });
+    } else {
+      return ({"code": response.statusCode, "result": {}});
+    }
+  } catch (e) {
+    return ({"code": 500, "error": e.toString()});
+  }
+}
+
+Future<Map<String, dynamic>> postRegisterForm(username, phone, pwd) async {
   try {
     var response = await http.post(
       Uri.parse(Constant.urlWebMap["register"]!),
       headers: {'Content-Type': 'application/json'},
-      body: json.encode(
-          {'userName': username, 'phone': phone, 'pwd': pwd, 'gender': gender}),
+      body: json.encode({'userName': username, 'phone': phone, 'pwd': pwd}),
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       // debugPrint(response.body);

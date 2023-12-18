@@ -35,6 +35,17 @@ class _loginPageState extends State<loginPage> {
   void initState() {
     super.initState();
     _getCurrentLocation();
+    FutureBuilder(
+      future: _isLogin(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          Navigator.of(context).pushNamed("/home");
+        } else {
+          debugPrint("Not login yet!");
+        }
+        return Container();
+      },
+    );
   }
 
   @override
@@ -42,6 +53,32 @@ class _loginPageState extends State<loginPage> {
     _phoneNumberController.dispose();
     _pwdController.dispose();
     super.dispose();
+  }
+
+  Future<UserModel?> _isLogin() async {
+    UserModel? user = await getUserInfo();
+    if (user != null) {
+      if (user.userID != null && user.lastLoginTime != null) {
+        var loginResult = await postLoginForm_logined(
+            user.phone, _currentPosition_x, _currentPosition_y);
+        if (loginResult["code"] == 200 || loginResult["code"] == 201) {
+          debugPrint(loginResult["result"].toString());
+          saveUserInfo(UserModel(
+              userName: loginResult["result"]["data"]["userName"],
+              userID: loginResult["result"]["data"]["userID"],
+              phone: loginResult["result"]["data"]["phone"],
+              avatar: loginResult["result"]["data"]["avatar"],
+              sign: loginResult["result"]["data"]["sign"],
+              gender: loginResult["result"]["data"]["gender"],
+              fav: loginResult["result"]["data"]["fav"],
+              position_x: loginResult["result"]["data"]["position_x"],
+              position_y: loginResult["result"]["data"]["position_y"],
+              lastLoginTime: loginResult["result"]["data"]["lastLoginTime"]));
+          return user;
+        }
+      }
+    }
+    return null;
   }
 
   bool isValidPwd() {
@@ -157,23 +194,25 @@ class _loginPageState extends State<loginPage> {
                                   loginResult["code"] == 201) {
                                 debugPrint(loginResult["result"].toString());
                                 saveUserInfo(UserModel(
-                                  userName: loginResult["result"]["data"]
-                                      ["userName"],
-                                  userID: loginResult["result"]["data"]
-                                      ["userID"],
-                                  phone: loginResult["result"]["data"]["phone"],
-                                  avatar: loginResult["result"]["data"]
-                                      ["avatar"],
-                                  sign: loginResult["result"]["data"]["sign"],
-                                  gender: loginResult["result"]["data"]
-                                      ["gender"],
-                                  fav: loginResult["result"]["data"]["fav"],
-                                  position_x: loginResult["result"]["data"]
-                                      ["position_x"],
-                                  position_y: loginResult["result"]["data"]
-                                      ["position_y"],
-                                ));
-                                navigator.pushNamed("/home");
+                                    userName: loginResult["result"]["data"]
+                                        ["userName"],
+                                    userID: loginResult["result"]["data"]
+                                        ["userID"],
+                                    phone: loginResult["result"]["data"]
+                                        ["phone"],
+                                    avatar: loginResult["result"]["data"]
+                                        ["avatar"],
+                                    sign: loginResult["result"]["data"]["sign"],
+                                    gender: loginResult["result"]["data"]
+                                        ["gender"],
+                                    fav: loginResult["result"]["data"]["fav"],
+                                    position_x: loginResult["result"]["data"]
+                                        ["position_x"],
+                                    position_y: loginResult["result"]["data"]
+                                        ["position_y"],
+                                    lastLoginTime: loginResult["result"]["data"]
+                                        ["lastLoginTime"]));
+                                navigator.popAndPushNamed("/home");
                               } else if (loginResult["code"] == 404) {
                                 SnackBar snackbar = SnackBar(
                                   content: Text(

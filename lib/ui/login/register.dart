@@ -26,9 +26,9 @@ class _registerPageState extends State<registerPage> {
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _pwdController = TextEditingController();
-  bool? _maleSelected = false;
-  bool? _femaleSelected = true;
-  int? _gender = 0;
+  // bool? _maleSelected = false;
+  // bool? _femaleSelected = true;
+  // int? _gender = 0;
   double _currentPosition_x = 0.0;
   double _currentPosition_y = 0.0;
 
@@ -136,32 +136,32 @@ class _registerPageState extends State<registerPage> {
                   obscureText: true,
                 ),
               ),
-              Column(
-                children: [
-                  CheckboxListTile(
-                    title: Text(languageProvider.get("gender_male")),
-                    value: _maleSelected,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _maleSelected = value!;
-                        _femaleSelected = !value; // 另一个选项的状态与当前选项相反
-                        _gender = 1 - _gender!;
-                      });
-                    },
-                  ),
-                  CheckboxListTile(
-                    title: Text(languageProvider.get("gender_female")),
-                    value: _femaleSelected,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _femaleSelected = value!;
-                        _maleSelected = !value; // 另一个选项的状态与当前选项相反
-                        _gender = 1 - _gender!;
-                      });
-                    },
-                  ),
-                ],
-              ),
+              // Column(
+              //   children: [
+              //     CheckboxListTile(
+              //       title: Text(languageProvider.get("gender_male")),
+              //       value: _maleSelected,
+              //       onChanged: (bool? value) {
+              //         setState(() {
+              //           _maleSelected = value!;
+              //           _femaleSelected = !value; // 另一个选项的状态与当前选项相反
+              //           _gender = 1 - _gender!;
+              //         });
+              //       },
+              //     ),
+              //     CheckboxListTile(
+              //       title: Text(languageProvider.get("gender_female")),
+              //       value: _femaleSelected,
+              //       onChanged: (bool? value) {
+              //         setState(() {
+              //           _femaleSelected = value!;
+              //           _maleSelected = !value; // 另一个选项的状态与当前选项相反
+              //           _gender = 1 - _gender!;
+              //         });
+              //       },
+              //     ),
+              //   ],
+              // ),
               const SizedBox(
                 height: 20.0,
               ),
@@ -176,11 +176,9 @@ class _registerPageState extends State<registerPage> {
                               ScaffoldMessenger.of(context);
                           final navigator = Navigator.of(context);
                           var regResult = await postRegisterForm(
-                            _userNameController.text,
-                            _phoneNumberController.text,
-                            _pwdController.text,
-                            _gender,
-                          );
+                              _userNameController.text,
+                              _phoneNumberController.text,
+                              _pwdController.text);
                           if (regResult["code"] == 200 ||
                               regResult["code"] == 201) {
                             debugPrint(regResult["result"].toString());
@@ -197,13 +195,77 @@ class _registerPageState extends State<registerPage> {
                               position_y: regResult["result"]["data"]
                                   ["position_y"],
                             ));
-                            SnackBar snackbar = SnackBar(
-                              content:
-                                  Text(languageProvider.get("registerSuccess")),
-                              duration: const Duration(seconds: 2),
-                            );
-                            registerScaffoldMessenger.showSnackBar(snackbar);
-                            navigator.pushNamed("/login");
+                            final loginScaffoldMessenger =
+                                ScaffoldMessenger.of(context);
+                            final navigator = Navigator.of(context);
+                            var loginResult = await postLoginForm(
+                                _phoneNumberController.text,
+                                _pwdController.text,
+                                _currentPosition_x,
+                                _currentPosition_y);
+                            if (loginResult["code"] == 200 ||
+                                loginResult["code"] == 201) {
+                              debugPrint(loginResult["result"].toString());
+                              saveUserInfo(UserModel(
+                                  userName: loginResult["result"]["data"]
+                                      ["userName"],
+                                  userID: loginResult["result"]["data"]
+                                      ["userID"],
+                                  phone: loginResult["result"]["data"]["phone"],
+                                  avatar: loginResult["result"]["data"]
+                                      ["avatar"],
+                                  sign: loginResult["result"]["data"]["sign"],
+                                  gender: loginResult["result"]["data"]
+                                      ["gender"],
+                                  fav: loginResult["result"]["data"]["fav"],
+                                  position_x: loginResult["result"]["data"]
+                                      ["position_x"],
+                                  position_y: loginResult["result"]["data"]
+                                      ["position_y"],
+                                  lastLoginTime: loginResult["result"]["data"]
+                                      ["lastLoginTime"]));
+                              SnackBar snackbar = SnackBar(
+                                content: Text(
+                                    languageProvider.get("registerSuccess")),
+                                duration: const Duration(seconds: 2),
+                              );
+                              registerScaffoldMessenger.showSnackBar(snackbar);
+                              await navigator.pushNamed("/my/profile");
+                              await navigator.popAndPushNamed("/home");
+                            } else if (loginResult["code"] == 404) {
+                              SnackBar snackbar = SnackBar(
+                                content: Text(
+                                    languageProvider.get("loginNoSuchUser")),
+                                backgroundColor:
+                                    const Color.fromARGB(255, 255, 109, 109),
+                                duration: const Duration(seconds: 2),
+                              );
+                              loginScaffoldMessenger.showSnackBar(snackbar);
+                            } else if (loginResult["code"] == 500 ||
+                                loginResult["code"] == 403) {
+                              SnackBar snackbar = SnackBar(
+                                  content: Text(
+                                      languageProvider.get("loginBadNetwork")),
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 255, 109, 109),
+                                  duration: const Duration(seconds: 5),
+                                  action: SnackBarAction(
+                                      label: languageProvider
+                                          .get("loginBadNetworkTest"),
+                                      onPressed: () => Navigator.of(context)
+                                          .pushNamed("/server/test")));
+                              loginScaffoldMessenger.showSnackBar(snackbar);
+                            } else {
+                              SnackBar snackbar = SnackBar(
+                                content: Text(languageProvider
+                                    .get("loginFailedIncorrect")),
+                                backgroundColor:
+                                    const Color.fromARGB(255, 255, 109, 109),
+                                duration: const Duration(seconds: 2),
+                              );
+                              loginScaffoldMessenger.showSnackBar(snackbar);
+                            }
+                            // navigator.pushNamed("/login");
                           } else if (regResult["code"] == 409) {
                             SnackBar snackbar = SnackBar(
                               content: Text(languageProvider

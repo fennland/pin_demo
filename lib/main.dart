@@ -14,7 +14,7 @@ import 'package:pin_demo/ui/login/platform_alert.dart';
 import 'package:pin_demo/ui/orderPages/orderinfo.dart';
 import 'package:pin_demo/ui/orderPages/ordering.dart';
 import 'package:pin_demo/ui/orderPages/new.dart';
-import 'package:pin_demo/src/users/someUserProfile.dart';
+import 'package:pin_demo/ui/users/userProfile.dart';
 import 'package:pin_demo/src/utils/constants/lang.dart';
 import 'package:pin_demo/src/utils/utils.dart';
 import 'package:window_manager/window_manager.dart';
@@ -129,8 +129,8 @@ class MyApp extends StatelessWidget {
           '/msg': (BuildContext context) => const msgPage(),
           '/my': (BuildContext context) => const myPage(),
           '/': (BuildContext context) => const platformAlert(),
-          '/users/some/profile': (BuildContext context) =>
-              const someUserProfile(),
+          // '/users/profile': (BuildContext context) =>
+          //     someUserProfile(),
           '/order/new': (BuildContext context) => const newOrderPage(),
           // '/order/info': (BuildContext context) => const orderInfoPage(),
           // '/order/ing': (BuildContext context) => const orderingPage(),
@@ -210,7 +210,7 @@ class _MyHomePageState extends State<MyHomePage> with WindowListener {
             ),
           ],
           selectedIndex: _currentIndex,
-          onDestinationSelected: (int index) {
+          onDestinationSelected: (int index) async {
             setState(() {
               _currentIndex = index;
             });

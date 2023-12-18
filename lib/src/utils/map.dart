@@ -1,5 +1,6 @@
 // ignore_for_file: unused_import
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_baidu_mapapi_search/flutter_baidu_mapapi_search.dart';
@@ -111,9 +112,10 @@ class BaiduMapLocation {
 Expanded generateMap(
     // TODO: onTap
     {BMFMapController? con,
+    // required Widget Function() locationSelection,
     double? width = 350.0,
     double borderRadius = 15.0,
-    required double lat,
+    required double lat, // double? lat
     required double lon,
     int zoomLevel = 12,
     bool isChinese = true,
@@ -122,6 +124,16 @@ Expanded generateMap(
     bool isWeb = false,
     int flex = 2}) {
   myMapController = con;
+  // final LocationService _locationService = LocationService();
+  // if (lat == null || lon == null) {
+  //   Position position = await _locationService.getCurrentLocation();
+  //   lat = position.latitude;
+  //   lon = position.longitude;
+  //   debugPrint("generateMap: CURRENT lat $lat, lon $lon");
+  // } else {
+  //   debugPrint("generateMap: lat $lat, lon $lon");
+  // }
+
   return Expanded(
     flex: flex,
     child: Center(
@@ -132,7 +144,12 @@ Expanded generateMap(
           borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
           child: InkWell(
             onTap: onTap,
-            child: BMFMapWidget(
+            child:
+                // Column(
+                // mainAxisAlignment: MainAxisAlignment.center,
+                // crossAxisAlignment: CrossAxisAlignment.center,
+                // children: [
+                BMFMapWidget(
               onBMFMapCreated: onBMFMapCreated,
               hitTestBehavior: (zoomEnabled)
                   ? PlatformViewHitTestBehavior.opaque
@@ -145,6 +162,9 @@ Expanded generateMap(
                 zoomEnabled,
               ),
             ),
+            //     locationSelection(),
+            //   ],
+            // ),
           ),
         ),
       ),
@@ -152,24 +172,43 @@ Expanded generateMap(
   );
 }
 
-Future<bool> searchMapPoi(keywords, location, radius) async {
+Future<Map<String, double?>?> searchMapPoi(keywords, location, radius) async {
+  Completer<Map<String, double?>?> completer = Completer();
+
   // 构造检索参数
   BMFPoiNearbySearchOption poiNearbySearchOption = BMFPoiNearbySearchOption(
-      keywords: <String>['小吃', '酒店'],
-      location: BMFCoordinate(40.049557, 116.279295),
-      radius: 1000,
-      isRadiusLimit: true);
+    keywords: keywords,
+    location: location,
+    radius: radius,
+    isRadiusLimit: true,
+  );
+
   // 检索实例
   BMFPoiNearbySearch nearbySearch = BMFPoiNearbySearch();
+
   // 检索回调
   nearbySearch.onGetPoiNearbySearchResult(
-      callback: (BMFPoiSearchResult result, BMFSearchErrorCode errorCode) {
-    print('poi周边检索回调 errorCode = ${errorCode}, result = ${result?.toMap()}');
-    // 解析reslut，具体参考demo
-  });
+    callback: (BMFPoiSearchResult result, BMFSearchErrorCode errorCode) {
+      if (errorCode == BMFSearchErrorCode.NO_ERROR &&
+          result?.poiInfoList?.isNotEmpty == true) {
+        Map<String, double?> resLocations = {
+          "lat": result!.poiInfoList![0].pt?.latitude,
+          "lon": result.poiInfoList![0].pt?.longitude
+        };
+        completer.complete(resLocations);
+      } else {
+        completer.complete(null);
+      }
+    },
+  );
+
   // 发起检索
   bool flag = await nearbySearch.poiNearbySearch(poiNearbySearchOption);
-  return flag;
+  if (!flag) {
+    completer.complete(null);
+  }
+
+  return completer.future;
 }
 
 BMFMapOptions initMapOptions(

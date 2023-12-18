@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:pin_demo/src/model/users_model.dart';
 import 'package:pin_demo/src/utils/constants/lang.dart';
 import 'package:provider/provider.dart';
 
 class someUserProfile extends StatefulWidget {
-  const someUserProfile({super.key});
+  // TODO: developing userprofile 1219
+  UserModel user;
+  someUserProfile({super.key, required this.user});
 
   @override
   State<someUserProfile> createState() => _someUserProfileState();

@@ -1,6 +1,7 @@
 // 订单模型
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:pin_demo/src/model/users_model.dart';
 import 'package:pin_demo/src/utils/constants/constant.dart';
 import 'package:http/http.dart' as http;
@@ -142,7 +143,27 @@ class orderApi {
             'Failed to create order with status: ${response.statusCode}.');
       }
     } catch (error) {
-      throw Exception('Failed to connect to server ');
+      throw Exception(error.toString());
+    }
+  }
+
+  static Future<List<dynamic>> requestOrderParticipants(int orderID) async {
+    try {
+      var response = await http.get(
+        Uri.parse(Constant.urlWebMap["get_order"]! +
+            "?type=participants&orderID=" +
+            orderID.toString()),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        debugPrint(response.body);
+        return (json.decode(response.body));
+      } else {
+        return [];
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      return [];
     }
   }
 
@@ -168,7 +189,7 @@ class orderApi {
             'Failed to get order with status: ${response.statusCode}.');
       }
     } catch (error) {
-      throw Exception('Failed to connect to server ');
+      throw Exception(error.toString());
     }
   }
 
@@ -195,7 +216,7 @@ class orderApi {
             'Failed to get user msgs with status: ${response.statusCode}.');
       }
     } catch (error) {
-      throw Exception('Failed to connect to server ');
+      throw Exception(error.toString());
     }
   }
 
@@ -238,7 +259,7 @@ class orderApi {
             'Failed to get user msgs with status: ${response.statusCode}.');
       }
     } catch (error) {
-      throw Exception('Failed to connect to server ');
+      throw Exception(error.toString());
     }
   }
 
@@ -256,6 +277,7 @@ class orderApi {
         // print(responseData);
         List<chatMessagesModel> msgs = [];
         for (var msgData in responseData) {
+          // debugPrint(msgData.toString());
           msgs.add(chatMessagesModel.fromJson(msgData));
         }
         return msgs;
@@ -264,7 +286,33 @@ class orderApi {
             'Failed to get user msgs with status: ${response.statusCode}.');
       }
     } catch (error) {
-      throw Exception('Failed to connect to server ');
+      throw Exception(error.toString());
+    }
+  }
+
+  static Future<List<orderModel>> getUserOrders(userID) async {
+    try {
+      final response = await http.get(
+        Uri.parse(Constant.urlWebMap["get_order"]! +
+            "?type=participant&participantID=" +
+            userID.toString()),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        // print(responseData);
+        List<orderModel> orders = [];
+        for (var orderData in responseData) {
+          orders.add(orderModel.fromJson(orderData));
+        }
+        return orders;
+      } else {
+        throw Exception(
+            'Failed to get order with status: ${response.statusCode}.');
+      }
+    } catch (error) {
+      throw Exception(error.toString());
     }
   }
 
@@ -316,7 +364,7 @@ class orderApi {
             'Failed to get user msgs with status: ${response.statusCode}.');
       }
     } catch (error) {
-      throw Exception('Failed to connect to server ');
+      throw Exception(error.toString());
     }
   }
 
@@ -391,6 +439,7 @@ class chatMessagesModel {
   final int groupID;
   final int senderID;
   final String? avatar;
+  final int? orderID;
   final String? senderName;
   final String messageText;
   final String timestamp;
@@ -402,6 +451,7 @@ class chatMessagesModel {
       required this.senderID,
       required this.messageText,
       required this.timestamp,
+      this.orderID,
       this.avatar,
       this.senderName,
       this.groupName});
@@ -410,6 +460,7 @@ class chatMessagesModel {
     return chatMessagesModel(
         messageID: json["messageID"],
         groupID: json["groupID"],
+        orderID: json["orderID"],
         senderID: json["senderID"],
         senderName: json["senderName"] ?? "未知用户",
         avatar: json["avatar"],

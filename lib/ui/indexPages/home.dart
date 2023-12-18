@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:flutter_baidu_mapapi_utils/flutter_baidu_mapapi_utils.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pin_demo/src/model/order_model.dart';
 import 'package:pin_demo/ui/homePages/search.dart';
@@ -36,8 +37,10 @@ class _homePageState extends State<homePage> {
   final LocationService _locationService = LocationService();
   double _currentPosition_x = 118.085152;
   double _currentPosition_y = 24.603804;
+  int delaySecs = 0;
+  late Future<List<orderModel>> _orders;
   List<BMFMarker>? _markers;
-  final double distance = 1.0;
+  double distance = 2.0;
   bool isMatched = false;
   bool badNetwork = false;
 
@@ -47,7 +50,8 @@ class _homePageState extends State<homePage> {
   void initState() {
     super.initState();
     _getCurrentLocation();
-    // _addMarkers();  // TODO： 百度地图SDK无法添加markers
+    _orders = _getOrders();
+    // _addMarkers(); // TODO： 百度地图SDK无法添加markers
   }
 
   @override
@@ -101,6 +105,7 @@ class _homePageState extends State<homePage> {
     try {
       // print(responseOrders);
       _getCurrentLocation();
+      delaySecs = 500;
       List<orderModel> responseOrders = await orderApi.getSurroundingOrder(
           distance, _currentPosition_x, _currentPosition_y);
       if (mounted) {
@@ -220,7 +225,16 @@ class _homePageState extends State<homePage> {
                 )
               : Container(),
           RefreshIndicator(
+            triggerMode: RefreshIndicatorTriggerMode.anywhere,
             onRefresh: () async {
+              if (distance < 30.0) {
+                distance += 1;
+                debugPrint("Now distance: ${distance.toString()}");
+              }
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("Loading..."),
+                duration: Duration(seconds: 2),
+              ));
               if (badNetwork) {
                 final connectivityResult =
                     await Connectivity().checkConnectivity();
@@ -238,8 +252,7 @@ class _homePageState extends State<homePage> {
             },
             child: !badNetwork
                 ? FutureBuilder<List<orderModel>>(
-                    future: Future.delayed(const Duration(milliseconds: 500),
-                        _getOrders), // 调用 _getOrders() 获取订单数据
+                    future: _orders, // 调用 _getOrders() 获取订单数据
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
                         return const Center(
@@ -252,6 +265,23 @@ class _homePageState extends State<homePage> {
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else {
+                        if (snapshot.data!.isEmpty) {
+                          return Align(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.more_horiz, size: 36.0),
+                                const SizedBox(height: 30),
+                                Text(languageProvider.get("noOrders"),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium),
+                              ],
+                            ),
+                          );
+                        }
                         return Center(
                           child: Column(
                             children: [
@@ -260,6 +290,7 @@ class _homePageState extends State<homePage> {
                                       onTap: () => Navigator.pushNamed(
                                           context, "/order/new"),
                                       flex: 2,
+                                      // locationSelection: () => Container(),
                                       con: myMapController,
                                       lat: _currentPosition_y,
                                       lon: _currentPosition_x,
@@ -269,23 +300,55 @@ class _homePageState extends State<homePage> {
                                           (languageProvider.currentLanguage ==
                                               "zh"),
                                       zoomEnabled: false)
-                                  : Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(Icons.error),
-                                        const SizedBox(
-                                          height: 10.0,
-                                        ),
-                                        Text(
-                                          languageProvider.get(
-                                              "unsupportedPlatformConfirm"),
-                                          textAlign: TextAlign.center,
-                                        )
-                                      ],
-                                    ),
-                              const SizedBox(
-                                height: 30.0,
+                                  : Container(),
+                              // : Column(
+                              //     mainAxisAlignment:
+                              //         MainAxisAlignment.center,
+                              //     children: [
+                              //       const Icon(Icons.error),
+                              //       const SizedBox(
+                              //         height: 10.0,
+                              //       ),
+                              //       Text(
+                              //         languageProvider.get(
+                              //             "unsupportedPlatformConfirm"),
+                              //         textAlign: TextAlign.center,
+                              //       )
+                              //     ],
+                              //   ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 16.0, left: 16.0, bottom: 16.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(languageProvider.get("nearby_orders"),
+                                        style: const TextStyle(
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.w900)),
+                                    unSupportedPlatform
+                                        ? IconButton(
+                                            icon: const Icon(Icons.refresh),
+                                            onPressed: () async {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(const SnackBar(
+                                                content: Text("Loading..."),
+                                                duration: Duration(seconds: 2),
+                                              ));
+                                              await _getOrders();
+                                              await _getCurrentLocation();
+                                              setState(() {
+                                                if (distance < 30.0) {
+                                                  distance += 1;
+                                                  debugPrint(
+                                                      "Now distance: ${distance.toString()}");
+                                                }
+                                              });
+                                            },
+                                          )
+                                        : Container()
+                                  ],
+                                ),
                               ),
                               Expanded(
                                 flex: 4,
@@ -305,7 +368,10 @@ class _homePageState extends State<homePage> {
                                           orders[index].orderName ?? "N/A",
                                           context),
                                       title: Text(
-                                          orders[index].orderName ?? "N/A"),
+                                        orders[index].orderName ?? "N/A",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                       subtitle: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
