@@ -77,7 +77,7 @@ class UserModel {
 }
 
 // 在登录/注册成功后保存用户信息
-void saveUserInfo(UserModel user) async {
+void saveCurUserInfo(UserModel user) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   try {
     prefs.setInt('userID', user.userID!);
@@ -95,7 +95,7 @@ void saveUserInfo(UserModel user) async {
 }
 
 // 在需要获取用户信息时从本地读取
-Future<UserModel?> getUserInfo() async {
+Future<UserModel?> getCurUserInfo() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   int? userId = prefs.getInt('userID');
   String? userName = prefs.getString('userName');

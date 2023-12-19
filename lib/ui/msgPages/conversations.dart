@@ -7,6 +7,7 @@ import 'package:pin_demo/src/model/users_model.dart';
 import 'package:pin_demo/src/utils/constants/lang.dart';
 import 'package:pin_demo/src/utils/utils.dart';
 import 'package:pin_demo/ui/orderPages/orderinfo.dart';
+import 'package:pin_demo/ui/users/userProfile.dart';
 import 'package:provider/provider.dart';
 
 class ConversationsPage extends StatefulWidget {
@@ -26,6 +27,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
   final TextEditingController _textController = TextEditingController();
   int? orderID;
   int? userID;
+  orderModel? orderM;
   List<chatMessagesModel> _messages = [];
 
   @override
@@ -34,13 +36,29 @@ class _ConversationsPageState extends State<ConversationsPage> {
     setState(() {
       _getUserID();
       _getGPMsgs();
+      _getOrderInfo();
     });
   }
 
   Future<void> _getUserID() async {
-    var user = await getUserInfo();
+    var user = await getCurUserInfo();
     if (user != null) {
       userID = user.userID;
+    }
+  }
+
+  Future<UserModel?> _getUserInfo(userID) async {
+    var userJson = await requestUserInfo(userID) as Map<String, dynamic>;
+    if (userJson != null) {
+      var user = UserModel.fromJson(userJson);
+      return user;
+    }
+  }
+
+  Future<void> _getOrderInfo() async {
+    if (_messages.isNotEmpty) {
+      var tmp = _messages[0] as chatMessagesModel;
+      orderM = await orderApi.getOrderInfo(_messages[0].orderID!);
     }
   }
 
@@ -49,7 +67,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
       if (widget.groupID != null) {
         _messages = await orderApi.getGroupMessages(widget.groupID);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("没有找到对应群聊..."),
           duration: Duration(seconds: 2),
           backgroundColor: Color.fromARGB(255, 255, 109, 109),
@@ -79,7 +97,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
     var languageProvider = Provider.of<LanguageProvider>(context);
 
     Widget _buildMessageBubble(String message, String senderName,
-        String? avatar, bool isSent, String timestamp) {
+        String? avatar, bool isSent, String timestamp, int userID) {
       // debugPrint("$senderName : $avatar");
       String formattedTime = formatTimestamp(timestamp);
       if (_messages.isEmpty) {
@@ -157,7 +175,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
           padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
           child: Text(
             formattedTime,
-            style: TextStyle(color: Colors.grey, fontSize: 10.0),
+            style: const TextStyle(color: Colors.grey, fontSize: 10.0),
           ),
         );
 
@@ -179,8 +197,19 @@ class _ConversationsPageState extends State<ConversationsPage> {
                             child: GestureDetector(
                                 child: _avatar,
                                 onTap: () {
-                                  debugPrint(
-                                      "TODO: avatar->someUserProfile"); // TODO: avatar->someUserProfile
+                                  // var user = await _getUserInfo(userID);
+                                  // if (user != null) {
+                                  //   Navigator.of(context).push(
+                                  //       MaterialPageRoute(
+                                  //           builder: (context) =>
+                                  //               someUserProfile(user: user)));
+                                  // } else {
+                                  //   debugPrint("未获取到用户数据");
+                                  // }
+                                  Navigator.of(context)
+                                      .pushNamed("/my/profile");
+                                  // debugPrint(
+                                  //     "TODO: avatar->someUserProfile"); // TODO: avatar->someUserProfile
                                 }),
                           )
                         ])
@@ -191,9 +220,15 @@ class _ConversationsPageState extends State<ConversationsPage> {
                         padding: const EdgeInsets.only(right: 8.0, bottom: 4.0),
                         child: GestureDetector(
                             child: _avatar,
-                            onTap: () {
-                              debugPrint(
-                                  "TODO: avatar->someUserProfile"); // TODO: avatar->someUserProfile
+                            onTap: () async {
+                              var user = await _getUserInfo(userID);
+                              if (user != null) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        someUserProfile(user: user)));
+                              } else {
+                                debugPrint("未获取到用户数据");
+                              } // TODO: avatar->someUserProfile
                             }),
                       ),
                       Column(
@@ -225,11 +260,23 @@ class _ConversationsPageState extends State<ConversationsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.groupName ?? "未命名的聊天"),
+        title: Column(
+          children: [
+            Text(widget.groupName ?? "未命名的聊天",
+                style: (orderM == null || orderM?.distance == null)
+                    ? Theme.of(context).textTheme.titleLarge
+                    : Theme.of(context).textTheme.titleMedium),
+            (orderM == null || orderM?.distance == null)
+                ? Container()
+                : Text("${orderM?.distance} km",
+                    style: Theme.of(context).textTheme.labelSmall),
+          ],
+        ),
       ),
       body: SafeArea(
         child: FutureBuilder(
-            future: Future.delayed(Duration(milliseconds: 500), _getGPMsgs),
+            future:
+                Future.delayed(const Duration(milliseconds: 500), _getGPMsgs),
             builder: (BuildContext context, snapshot) {
               if (snapshot.hasData) {
                 setState(() {
@@ -253,12 +300,12 @@ class _ConversationsPageState extends State<ConversationsPage> {
                           var msg = _messages[index];
                           bool isSent = msg.senderID == userID;
                           Widget bubble = _buildMessageBubble(
-                            msg.messageText,
-                            msg.senderName ?? "PinUser",
-                            msg.avatar,
-                            isSent,
-                            msg.timestamp,
-                          );
+                              msg.messageText,
+                              msg.senderName ?? "PinUser",
+                              msg.avatar,
+                              isSent,
+                              msg.timestamp,
+                              msg.senderID);
                           return bubble;
                         },
                       ),
@@ -311,12 +358,12 @@ class _ConversationsPageState extends State<ConversationsPage> {
                   title: Text(languageProvider.get("conversations_info")),
                   onTap: () async {
                     try {
-                      var tmp = _messages[0] as chatMessagesModel;
+                      var tmp = _messages[0];
                       // debugPrint(tmp.orderID.toString());
-                      orderModel order =
+                      orderM =
                           await orderApi.getOrderInfo(_messages[0].orderID!);
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => orderInfoPage(order: order),
+                        builder: (context) => orderInfoPage(order: orderM),
                       ));
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

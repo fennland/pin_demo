@@ -182,7 +182,7 @@ class _registerPageState extends State<registerPage> {
                           if (regResult["code"] == 200 ||
                               regResult["code"] == 201) {
                             debugPrint(regResult["result"].toString());
-                            saveUserInfo(UserModel(
+                            saveCurUserInfo(UserModel(
                               userName: regResult["result"]["data"]["userName"],
                               userID: regResult["result"]["data"]["userID"],
                               phone: regResult["result"]["data"]["phone"],
@@ -206,7 +206,7 @@ class _registerPageState extends State<registerPage> {
                             if (loginResult["code"] == 200 ||
                                 loginResult["code"] == 201) {
                               debugPrint(loginResult["result"].toString());
-                              saveUserInfo(UserModel(
+                              saveCurUserInfo(UserModel(
                                   userName: loginResult["result"]["data"]
                                       ["userName"],
                                   userID: loginResult["result"]["data"]

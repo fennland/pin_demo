@@ -79,7 +79,7 @@ class _newOrderPageState extends State<newOrderPage> {
   }
 
   Future<void> _getUserID() async {
-    var user = await getUserInfo();
+    var user = await getCurUserInfo();
     if (user != null) {
       userID = user.userID;
     }
@@ -87,7 +87,7 @@ class _newOrderPageState extends State<newOrderPage> {
 
   Future<bool> _createOrder() async {
     try {
-      var user = await getUserInfo();
+      var user = await getCurUserInfo();
       if (user != null) {
         orderM = await orderApi.createOrder(
             _orderNameController.text,
@@ -199,7 +199,7 @@ class _newOrderPageState extends State<newOrderPage> {
                                 controller: _locationController,
                                 onSubmitted: (value) async {
                                   poiKeywords = [value];
-                                  // debugPrint("185:${poiKeywords.toString()}");
+                                  debugPrint("202:${poiKeywords.toString()}");
                                   var searchResult = await searchMapPoi(
                                     poiKeywords,
                                     BMFCoordinate(_position_y, _position_x),
@@ -240,7 +240,17 @@ class _newOrderPageState extends State<newOrderPage> {
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text("点击地图以选择位置..."),
+                                Text("点击地图以选择位置...",
+                                    style: TextStyle(
+                                        fontWeight: poiKeywords.isEmpty
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                        color: poiKeywords.isEmpty
+                                            ? Theme.of(context)
+                                                .textTheme
+                                                .labelMedium
+                                                ?.color
+                                            : Colors.green)),
                                 !unSupportedPlatform
                                     ? Container()
                                     : TextButton(
@@ -251,6 +261,8 @@ class _newOrderPageState extends State<newOrderPage> {
                                           if (_hasCurLocation) {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(SnackBar(
+                                              duration:
+                                                  const Duration(seconds: 2),
                                               content: Text(
                                                   "当前经度:${_position_x ?? "未获取到"}, 纬度: ${_position_y ?? "未获取到"}"),
                                             ));
@@ -258,6 +270,10 @@ class _newOrderPageState extends State<newOrderPage> {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(const SnackBar(
                                               content: Text("无法获取位置信息"),
+                                              backgroundColor: Color.fromARGB(
+                                                  255, 255, 109, 109),
+                                              duration:
+                                                  Duration(milliseconds: 1500),
                                             ));
                                           }
                                         },
@@ -388,6 +404,7 @@ class _newOrderPageState extends State<newOrderPage> {
                                 content: Text("信息未填写完整"),
                                 backgroundColor:
                                     Color.fromARGB(255, 255, 109, 109),
+                                duration: Duration(milliseconds: 1500),
                               ));
                             } else {
                               var result = await _createOrder();
@@ -402,6 +419,9 @@ class _newOrderPageState extends State<newOrderPage> {
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(SnackBar(
                                   content: const Text("创建需求时存在问题，请重试。"),
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 255, 109, 109),
+                                  duration: const Duration(milliseconds: 1500),
                                   action: SnackBarAction(
                                     label: "重试",
                                     onPressed: () {

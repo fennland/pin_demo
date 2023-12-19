@@ -43,7 +43,9 @@ class Constant {
     "order": "http://124.223.116.195:5000/orders",
     "order_match_distances": "http://124.223.116.195:5000/orders/distance",
     "database": "http://124.223.116.195:5000/database",
-    "hello": "http://124.223.116.195:5000/hello"
+    "hello": "http://124.223.116.195:5000/hello",
+
+    "defaultAvatar": "http://s.pin.fennland.me:5000/static/avatar.jpeg",
     // "search": "http://127.0.0.1:8002",
     // "app": "http://127.0.0.1:8003",
   };

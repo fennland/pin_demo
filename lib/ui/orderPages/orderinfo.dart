@@ -1,8 +1,6 @@
 // ignore_for_file: non_constant_identifier_names, camel_case_types
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pin_demo/src/model/users_model.dart';
 import 'package:pin_demo/src/utils/components.dart';
@@ -113,7 +111,7 @@ class _orderInfoPageState extends State<orderInfoPage> {
 
   Future<int> _joinOrder() async {
     try {
-      var user = await getUserInfo();
+      var user = await getCurUserInfo();
       if (user != null) {
         var result =
             await orderApi.joinOrder(user.userID, widget.order?.orderID);
@@ -132,7 +130,7 @@ class _orderInfoPageState extends State<orderInfoPage> {
 
   Future<bool> _isJoined() async {
     try {
-      var user = await getUserInfo();
+      var user = await getCurUserInfo();
       if (user != null) {
         // debugPrint("userID: ${user.userID}, 137");
         var orders = await orderApi.getUserOrders(user.userID);
@@ -229,8 +227,12 @@ class _orderInfoPageState extends State<orderInfoPage> {
                               isChinese:
                                   (languageProvider.currentLanguage == "zh"),
                               zoomEnabled: false,
-                              lat: position.latitude,
-                              lon: position.longitude));
+                              lat: (widget.order?.position_x != null)
+                                  ? widget.order!.position_x
+                                  : position.latitude,
+                              lon: (widget.order?.position_y != null)
+                                  ? widget.order!.position_y
+                                  : position.longitude));
                         } else {
                           return const Expanded(
                             flex: 3,

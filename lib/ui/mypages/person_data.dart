@@ -199,7 +199,7 @@ class _person_dataState extends State<person_data> {
     return Scaffold(
       appBar: AppBar(title: Text(languageProvider.get("person_data"))),
       body: FutureBuilder(
-        future: getUserInfo(),
+        future: getCurUserInfo(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final user = snapshot.data;

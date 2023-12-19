@@ -195,7 +195,7 @@ class orderApi {
 
   static Future<List<chatMessagesModel>> getUserMessages() async {
     try {
-      UserModel? user = await getUserInfo();
+      UserModel? user = await getCurUserInfo();
       final response = await http.get(
         Uri.parse(Constant.urlWebMap["surrounding_order"]! +
             "?type=participant&participantID=" +
@@ -222,7 +222,7 @@ class orderApi {
 
   static Future<List<chatMessagesModel>> getUserLatestMessages() async {
     try {
-      UserModel? user = await getUserInfo();
+      UserModel? user = await getCurUserInfo();
       final response = await http.get(
         Uri.parse(Constant.urlWebMap["msg_get"]! +
             "?type=participant&participantID=" +

@@ -18,27 +18,42 @@ class _someUserProfileState extends State<someUserProfile> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     var languageProvider = Provider.of<LanguageProvider>(context);
-    var headBGImage = CachedNetworkImage(
-        width: double.infinity,
-        height: screenSize.height / 3,
-        placeholder: (context, url) => Container(color: Colors.blueGrey),
-        imageUrl: "https://picsum.photos/250?image=20",
-        fit: BoxFit.fitWidth);
+    var headBGImage = widget.user.avatar != null
+        ? CachedNetworkImage(
+            width: double.infinity,
+            height: screenSize.height / 3,
+            placeholder: (context, url) => Container(color: Colors.blueGrey),
+            imageUrl: widget.user.avatar!,
+            fit: BoxFit.fitWidth)
+        : Image.asset("static/images/avatar.jpeg",
+            width: double.infinity,
+            height: screenSize.height / 3,
+            fit: BoxFit.fitWidth);
     var headAvatar = ClipOval(
       child: Container(
-        width: screenSize.height / 9,
-        height: screenSize.height / 9,
-        child: CachedNetworkImage(
-          imageUrl: "https://picsum.photos/250?image=9",
-          placeholder: (context, url) => const CircularProgressIndicator(),
-          errorListener: (value) {
-            debugPrint(
-                "ERROR in someUserProfile's Avatar(CachedNetworkImage)!");
-            ErrorHint("ERROR in someUserProfile's Avatar(CachedNetworkImage)!");
-          },
-          errorWidget: (context, url, error) => const Icon(Icons.error),
-        ),
-      ),
+          width: screenSize.height / 9,
+          height: screenSize.height / 9,
+          child: widget.user.avatar != null
+              ? CachedNetworkImage(
+                  placeholder: (context, url) =>
+                      const CircularProgressIndicator(),
+                  imageUrl: widget.user.avatar!,
+                  errorListener: (value) {
+                    debugPrint(
+                        "ERROR in someUserProfile's Avatar(CachedNetworkImage)!");
+                    ErrorHint(
+                        "ERROR in someUserProfile's Avatar(CachedNetworkImage)!");
+                  },
+                  errorWidget: (context, url, error) => Image.asset(
+                      "static/images/avatar.jpeg",
+                      width: double.infinity,
+                      height: screenSize.height / 3,
+                      fit: BoxFit.fitWidth),
+                )
+              : Image.asset("static/images/avatar.jpeg",
+                  width: double.infinity,
+                  height: screenSize.height / 3,
+                  fit: BoxFit.fitWidth)),
     );
 
     /**
@@ -80,7 +95,7 @@ class _someUserProfileState extends State<someUserProfile> {
                         Padding(
                           padding:
                               const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 0.0),
-                          child: Text(languageProvider.get("curUser"),
+                          child: Text(widget.user.userName ?? "未知用户",
                               style: const TextStyle(
                                   fontSize: 16.0,
                                   color: Colors.white,
@@ -89,11 +104,16 @@ class _someUserProfileState extends State<someUserProfile> {
                         Padding(
                           padding:
                               const EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 24.0),
-                          child: Text(languageProvider.get("curUserSigning"),
-                              style: const TextStyle(
-                                  fontSize: 11.0,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold)),
+                          child: Container(
+                            constraints: BoxConstraints(
+                                maxWidth: screenSize.width * 0.6),
+                            child: Text(widget.user.sign ?? "还没有签名呢...",
+                                style: const TextStyle(
+                                    fontSize: 11.0,
+                                    overflow: TextOverflow.ellipsis,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
+                          ),
                         )
                       ]),
                 ),
@@ -122,6 +142,10 @@ class _someUserProfileState extends State<someUserProfile> {
                 title: Text(languageProvider.get("someUserProfileFunc_Tag")),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("功能尚未开放"),
+                    duration: Duration(milliseconds: 1500),
+                  ));
                   debugPrint(
                       "TODO: someUserProFunc_Tag"); // TODO: someUserProfileTag
                 },
@@ -134,6 +158,10 @@ class _someUserProfileState extends State<someUserProfile> {
                 title: Text(languageProvider.get("someUserProfileFunc_Needs")),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("功能尚未开放"),
+                    duration: Duration(milliseconds: 1500),
+                  ));
                   debugPrint(
                       "TODO: someUserProFunc_Needs"); // TODO: someUserProfileTag
                 },

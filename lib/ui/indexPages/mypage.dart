@@ -149,7 +149,7 @@ class _myPageState extends State<myPage> {
         ),
       ),
       body: FutureBuilder(
-        future: getUserInfo(),
+        future: getCurUserInfo(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final user = snapshot.data;
@@ -176,14 +176,23 @@ class _myPageState extends State<myPage> {
                                     child: ClipOval(
                                       child: CachedNetworkImage(
                                         imageUrl: user?.avatar ??
-                                            "https://picsum.photos/250?image=8",
+                                            Constant
+                                                .urlWebMap["defaultAvatar"]!,
                                         placeholder: (context, url) =>
                                             const CircularProgressIndicator(),
                                         errorListener: (value) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                            content: Text("获取头像时出错"),
+                                            duration:
+                                                Duration(microseconds: 2000),
+                                            backgroundColor: Color.fromARGB(
+                                                255, 255, 109, 109),
+                                          ));
                                           debugPrint(
-                                              "ERROR in myPage's CachedNetworkImage!");
+                                              "ERROR in AvatarRequesting: $value");
                                           ErrorHint(
-                                              "ERROR in myPage's CachedNetworkImage!");
+                                              "ERROR in AvatarRequesting: $value");
                                         },
                                         errorWidget: (context, url, error) =>
                                             const Icon(Icons.error),
@@ -191,8 +200,12 @@ class _myPageState extends State<myPage> {
                                     ),
                                   ),
                                 ),
-                                title: Text(user?.userName ??
-                                    languageProvider.get("curUser")),
+                                title: Text(
+                                  user?.userName ??
+                                      languageProvider.get("curUser"),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -216,6 +229,8 @@ class _myPageState extends State<myPage> {
                                     // ),
                                     Text(
                                       user?.sign ?? "还没有签名...",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                       textAlign: TextAlign.left,
                                       style: const TextStyle(fontSize: 12.0),
                                     )

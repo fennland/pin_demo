@@ -24,7 +24,7 @@ class _msgPageState extends State<msgPage> {
   List<chatMessagesModel> msgs = [];
   bool badNetwork = false;
   bool noMsgs = false;
-  int refreshSpeed = 1;
+  int refreshSpeed = 1000;
   int refreshCount = 0;
   bool firstRefresh = true;
   int? userID = -1;
@@ -40,7 +40,7 @@ class _msgPageState extends State<msgPage> {
 
   Future<void> _getUserID() async {
     try {
-      UserModel? user = await getUserInfo();
+      UserModel? user = await getCurUserInfo();
       userID = user!.userID;
     } catch (error) {
       debugPrint(error.toString());
@@ -48,13 +48,6 @@ class _msgPageState extends State<msgPage> {
   }
 
   Future<List<chatMessagesModel>> _getMsgs() async {
-    if (firstRefresh) {
-      setState(() {
-        debugPrint("firstRefreshed");
-        refreshSpeed = 5;
-        firstRefresh = false;
-      });
-    }
     try {
       List<chatMessagesModel> responseMsgs =
           await orderApi.getUserLatestMessages();
@@ -63,9 +56,18 @@ class _msgPageState extends State<msgPage> {
         setState(() {
           // debugPrint(responseMsgs.toString());
           if (responseMsgs.isNotEmpty) {
+            // debugPrint("hasMsgs");
+            noMsgs = false;
             msgs = responseMsgs;
           } else {
+            // debugPrint("noMsgs");
             noMsgs = true;
+          }
+
+          if (firstRefresh) {
+            debugPrint("firstRefreshed");
+            refreshSpeed = 5000;
+            firstRefresh = false;
           }
         });
         return responseMsgs;
@@ -93,7 +95,7 @@ class _msgPageState extends State<msgPage> {
       setState(() {
         debugPrint("refresh slower");
         refreshCount = 0;
-        refreshSpeed = 5;
+        refreshSpeed = 5000;
       });
     });
   }
@@ -129,42 +131,42 @@ class _msgPageState extends State<msgPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        leading: unSupportedPlatform
-            ? IconButton(
+        leading:
+            // unSupportedPlatform
+            IconButton(
                 icon: const Icon(Icons.refresh),
                 onPressed: () async {
-                  // refreshCount += 1;
-                  // if (refreshCount >= 3) {
-                  //   if (refreshSpeed > 2)
-                  //     refreshSpeed -= 2;
-                  //   else if (refreshSpeed > 1) refreshSpeed -= 1;
-                  // }
                   setState(() {
                     refreshCount++;
                     if (refreshCount >= 3) {
-                      if (refreshSpeed > 1)
+                      if (refreshSpeed > 1000)
                         refreshSpeed =
-                            (refreshSpeed * 3 / 4).ceil(); // 刷新速度减少1/3
+                            (refreshSpeed * 3 / 4).ceil(); // 刷新速度减少1/4
                     }
                     debugPrint(
                         "refresh faster: count=$refreshCount, speed=$refreshSpeed");
                   });
                   startTimer();
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Loading..."),
-                    duration: Duration(seconds: 2),
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: const Text("Loading..."),
+                    duration: Duration(seconds: refreshSpeed ~/ 5000),
                   ));
                   await _getMsgs();
-                  setState(() {});
-                })
-            : Container(),
+                  // setState(() {});
+                }),
+        // : Container(),
         title: Text(languageProvider.get("msg"),
             style:
                 const TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
         actions: [
           IconButton(
             icon: const Icon(Icons.people_outlined),
-            onPressed: () => Navigator.pushNamed(context, "/msg/following"),
+            // onPressed: () => Navigator.pushNamed(context, "/msg/following"),
+            onPressed: () =>
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("功能尚未开放"),
+              duration: Duration(milliseconds: 1500),
+            )),
           )
         ],
       ),
@@ -228,22 +230,6 @@ class _msgPageState extends State<msgPage> {
               : Container(),
           RefreshIndicator(
             onRefresh: () async {
-              // refreshCount += 1;
-              // if (refreshCount >= 3) {
-              //   if (refreshSpeed > 2)
-              //     refreshSpeed -= 2;
-              //   else if (refreshSpeed > 1) refreshSpeed -= 1;
-              // }
-              setState(() {
-                refreshCount++;
-                if (refreshCount >= 3) {
-                  if (refreshSpeed > 1)
-                    refreshSpeed = (refreshSpeed * 3 / 4).ceil(); // 刷新速度减少1/3
-                }
-                debugPrint(
-                    "refresh faster: count=$refreshCount, speed=$refreshSpeed");
-              });
-              startTimer();
               if (badNetwork) {
                 final connectivityResult =
                     await Connectivity().checkConnectivity();
@@ -251,122 +237,161 @@ class _msgPageState extends State<msgPage> {
                   throw Exception("no network");
                 } else {
                   setState(() {
-                    badNetwork = false;
+                    refreshCount++;
+                    if (refreshCount >= 3) {
+                      if (refreshSpeed > 1000)
+                        refreshSpeed =
+                            (refreshSpeed * 3 / 4).ceil(); // 刷新速度减少1/4
+                    }
+                    debugPrint(
+                        "refresh faster: count=$refreshCount, speed=$refreshSpeed");
                   });
+                  startTimer();
+                  badNetwork = false;
                 }
               } else {
+                setState(() {
+                  refreshCount++;
+                  if (refreshCount >= 3) {
+                    if (refreshSpeed > 1000)
+                      refreshSpeed = (refreshSpeed * 3 / 4).ceil(); // 刷新速度减少1/4
+                  }
+                  debugPrint(
+                      "refresh faster: count=$refreshCount, speed=$refreshSpeed");
+                });
+                startTimer();
                 await _getMsgs();
               }
             },
             child: !badNetwork
-                ? !noMsgs
-                    ? FutureBuilder(
-                        future: Future.delayed(
-                            Duration(seconds: refreshSpeed), _getMsgs),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (snapshot.hasError)
-                            return Center(
-                                child: Text('Error: ${snapshot.error}'));
-                          else
-                            return Center(
-                              child: Column(
-                                children: [
-                                  serviceCard1,
-                                  Expanded(
-                                    child: ListView.separated(
-                                      itemCount: msgs.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        // debugPrint(msgs.length.toString());
-                                        if (msgs.isNotEmpty) {
-                                          return ListTile(
-                                            onTap: () {
-                                              debugPrint(
-                                                  msgs[index].toString());
-                                              Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ConversationsPage(
-                                                              groupName: msgs[
-                                                                      index]
-                                                                  .groupName,
-                                                              groupID: msgs[
-                                                                      index]
-                                                                  .groupID)));
-                                            },
-                                            leading: generateAvatar(
-                                                msgs[index].groupName ?? "N/A",
-                                                context),
-                                            title: Text(
-                                              msgs[index].groupName ?? "未命名的聊天",
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            subtitle: Text(
-                                              msgs[index].messageText,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall,
-                                            ),
-                                            trailing: Text(formatTimestamp(
-                                                msgs[index].timestamp)),
+                ? Center(
+                    child: !noMsgs
+                        ? FutureBuilder(
+                            future: Future.delayed(
+                                Duration(milliseconds: refreshSpeed), _getMsgs),
+                            builder: (context, snapshot) {
+                              // if (snapshot.hasData) {
+                              //   debugPrint("hasData");
+                              // }
+                              if (!snapshot.hasData &&
+                                  snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                // debugPrint("waiting");
+                                return const Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CircularProgressIndicator(),
+                                      Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Text("Loading"))
+                                    ]);
+                              } else if (snapshot.hasError) {
+                                return Column(
+                                  children: [
+                                    Text('Error: ${snapshot.error}'),
+                                  ],
+                                );
+                              } else {
+                                return Column(
+                                  children: [
+                                    serviceCard1,
+                                    Expanded(
+                                      child: ListView.separated(
+                                        itemCount: msgs.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          // debugPrint(msgs.length.toString());
+                                          if (msgs.isNotEmpty) {
+                                            return ListTile(
+                                              onTap: () {
+                                                debugPrint(
+                                                    msgs[index].toString());
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ConversationsPage(
+                                                                groupName: msgs[
+                                                                        index]
+                                                                    .groupName,
+                                                                groupID: msgs[
+                                                                        index]
+                                                                    .groupID)));
+                                              },
+                                              leading: generateAvatar(
+                                                  msgs[index].groupName ??
+                                                      "N/A",
+                                                  context),
+                                              title: Text(
+                                                msgs[index].groupName ??
+                                                    "未命名的聊天",
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              subtitle: Text(
+                                                msgs[index].messageText,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall,
+                                              ),
+                                              trailing: Text(formatTimestamp(
+                                                  msgs[index].timestamp)),
+                                            );
+                                          } else {
+                                            return Align(
+                                              alignment: Alignment.center,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  const Icon(Icons.more_horiz,
+                                                      size: 36.0),
+                                                  const SizedBox(height: 30),
+                                                  Text(
+                                                      languageProvider
+                                                          .get("noMsgs"),
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleMedium),
+                                                ],
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        separatorBuilder: (context, index) {
+                                          return Divider(
+                                            height: 0.0,
+                                            color:
+                                                Theme.of(context).dividerColor,
+                                            thickness: 0.5,
+                                            indent: 20.0,
+                                            endIndent: 20.0,
                                           );
-                                        } else {
-                                          return Align(
-                                            alignment: Alignment.center,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                const Icon(Icons.more_horiz,
-                                                    size: 36.0),
-                                                const SizedBox(height: 30),
-                                                Text(
-                                                    languageProvider
-                                                        .get("noMsgs"),
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .titleMedium),
-                                              ],
-                                            ),
-                                          );
-                                        }
-                                      },
-                                      separatorBuilder: (context, index) {
-                                        return Divider(
-                                          height: 0.0,
-                                          color: Theme.of(context).dividerColor,
-                                          thickness: 0.5,
-                                          indent: 20.0,
-                                          endIndent: 20.0,
-                                        );
-                                      },
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                        })
-                    : Align(
-                        alignment: Alignment.center,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.more_horiz, size: 36.0),
-                            const SizedBox(height: 30),
-                            Text(languageProvider.get("noMsgs"),
-                                style: Theme.of(context).textTheme.titleMedium),
-                          ],
-                        ),
-                      )
+                                  ],
+                                );
+                              }
+                            })
+                        : Align(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.more_horiz, size: 36.0),
+                                const SizedBox(height: 30),
+                                Text(languageProvider.get("noMsgs"),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium),
+                              ],
+                            ),
+                          ))
                 : SizedBox.shrink(),
           ),
         ],
