@@ -190,8 +190,10 @@ class _orderInfoPageState extends State<orderInfoPage> {
         appBar: AppBar(
           title: Column(children: [
             Text(widget.order!.orderName,
-                style: const TextStyle(
-                    fontSize: 18.0, fontWeight: FontWeight.w600)),
+                style: widget.order!.distance != null
+                    ? const TextStyle(
+                        fontSize: 17.0, fontWeight: FontWeight.w600)
+                    : null),
             widget.order!.distance != null
                 ? Text("${(widget.order!.distance).toString()} km",
                     style: Theme.of(context).textTheme.labelSmall)
@@ -217,22 +219,21 @@ class _orderInfoPageState extends State<orderInfoPage> {
                             snapshot.hasData) {
                           // 获取位置信息成功，将其传递给地图组件
                           final position = snapshot.data!;
-                          // TODO: 1219 14:00留——根据order坐标绘制地图存在问题，当前默认显示北京天安门
                           return (generateMap(
                               onTap: () {},
                               flex: 3,
                               // locationSelection: () => Container(),
                               con: myMapController,
                               width: screenSize.width * 0.95,
-                              zoomLevel: 15,
+                              zoomLevel: 17,
                               isChinese:
                                   (languageProvider.currentLanguage == "zh"),
                               zoomEnabled: false,
-                              lat: (widget.order?.position_x != null)
-                                  ? widget.order!.position_x
-                                  : position.latitude,
-                              lon: (widget.order?.position_y != null)
+                              lat: (widget.order?.position_y != null)
                                   ? widget.order!.position_y
+                                  : position.latitude,
+                              lon: (widget.order?.position_x != null)
+                                  ? widget.order!.position_x
                                   : position.longitude));
                         } else {
                           return const Expanded(
@@ -283,11 +284,12 @@ class _orderInfoPageState extends State<orderInfoPage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(
-                                  top: 12.0, bottom: 16.0),
+                                  top: 12.0, bottom: 24.0),
                               child: Row(
                                 children: [
                                   const Padding(
-                                    padding: EdgeInsets.all(8.0),
+                                    padding: EdgeInsets.fromLTRB(
+                                        8.0, 8.0, 16.0, 8.0),
                                     child: Icon(Icons.alarm),
                                   ),
                                   Column(
@@ -299,17 +301,17 @@ class _orderInfoPageState extends State<orderInfoPage> {
                                         targetDateTime: widget.order!.startTime,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .labelMedium,
+                                            .labelLarge,
                                       ),
                                       Container(
-                                        constraints:
-                                            BoxConstraints(maxWidth: 150.0),
+                                        constraints: BoxConstraints(
+                                            maxWidth: screenSize.width * 0.5),
                                         child: Text(widget.order!.startTime,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .bodyMedium),
+                                                .bodyLarge),
                                       )
                                     ],
                                   ),
@@ -317,11 +319,12 @@ class _orderInfoPageState extends State<orderInfoPage> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 16.0),
+                              padding: const EdgeInsets.only(bottom: 24.0),
                               child: Row(
                                 children: [
                                   const Padding(
-                                    padding: EdgeInsets.all(8.0),
+                                    padding: EdgeInsets.fromLTRB(
+                                        8.0, 8.0, 16.0, 8.0),
                                     child: Icon(Icons.person),
                                   ),
                                   Column(
@@ -333,7 +336,7 @@ class _orderInfoPageState extends State<orderInfoPage> {
                                           languageProvider
                                               .get("orderInfoInitiator"),
                                           style: const TextStyle(
-                                              fontSize: 12.0,
+                                              fontSize: 14.0,
                                               fontWeight: FontWeight.bold)),
                                       FutureBuilder(
                                           future: reqInitiator(),
@@ -350,7 +353,7 @@ class _orderInfoPageState extends State<orderInfoPage> {
                                                       TextOverflow.ellipsis,
                                                   style: Theme.of(context)
                                                       .textTheme
-                                                      .labelLarge);
+                                                      .bodyLarge);
                                             } else {
                                               return const Text("");
                                             }
@@ -361,11 +364,12 @@ class _orderInfoPageState extends State<orderInfoPage> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 16.0),
+                              padding: const EdgeInsets.only(bottom: 24.0),
                               child: Row(
                                 children: [
                                   const Padding(
-                                    padding: EdgeInsets.all(8.0),
+                                    padding: EdgeInsets.fromLTRB(
+                                        8.0, 8.0, 16.0, 8.0),
                                     child: Icon(Icons.people),
                                   ),
                                   Column(
@@ -377,7 +381,7 @@ class _orderInfoPageState extends State<orderInfoPage> {
                                           languageProvider
                                               .get("orderInfoParticipants"),
                                           style: const TextStyle(
-                                              fontSize: 12.0,
+                                              fontSize: 14.0,
                                               fontWeight: FontWeight.bold)),
                                       Container(
                                         constraints:
@@ -395,8 +399,7 @@ class _orderInfoPageState extends State<orderInfoPage> {
                                                                 .data!.isEmpty)
                                                         ? "未获取到信息"
                                                         : (snapshot.data!
-                                                                    .length >=
-                                                                1)
+                                                                .isNotEmpty)
                                                             ? "${initiatorUserInfo!["userName"]}"
                                                             : "${initiatorUserInfo!["userName"]}...等 ${snapshot.data!.length} 人",
                                                     maxLines: 1,
@@ -412,7 +415,7 @@ class _orderInfoPageState extends State<orderInfoPage> {
                                                         TextOverflow.ellipsis,
                                                     style: Theme.of(context)
                                                         .textTheme
-                                                        .labelLarge);
+                                                        .bodyLarge);
                                               }
                                             }),
                                       )
@@ -422,11 +425,12 @@ class _orderInfoPageState extends State<orderInfoPage> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 16.0),
+                              padding: const EdgeInsets.only(bottom: 24.0),
                               child: Row(
                                 children: [
                                   const Padding(
-                                    padding: EdgeInsets.all(8.0),
+                                    padding: EdgeInsets.fromLTRB(
+                                        8.0, 8.0, 16.0, 8.0),
                                     child: Icon(Icons.edit),
                                   ),
                                   Column(
@@ -441,7 +445,7 @@ class _orderInfoPageState extends State<orderInfoPage> {
                                             languageProvider
                                                 .get("newOrder_description"),
                                             style: const TextStyle(
-                                                fontSize: 12.0,
+                                                fontSize: 14.0,
                                                 fontWeight: FontWeight.bold)),
                                       ),
                                       Container(
@@ -455,7 +459,7 @@ class _orderInfoPageState extends State<orderInfoPage> {
                                             overflow: TextOverflow.ellipsis,
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .bodyMedium),
+                                                .bodyLarge),
                                       ),
                                     ],
                                   ),
@@ -500,6 +504,7 @@ class _orderInfoPageState extends State<orderInfoPage> {
                             child: Text(
                               "需求已结束",
                               style: TextStyle(
+                                  fontSize: 16,
                                   color: Theme.of(context)
                                       .colorScheme
                                       .onSecondary),

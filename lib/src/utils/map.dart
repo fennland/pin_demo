@@ -110,7 +110,6 @@ class BaiduMapLocation {
 //       {required this.onTap, this.width = _defaultWidth, this.isWeb = false});
 
 Expanded generateMap(
-    // TODO: onTap
     {BMFMapController? con,
     // required Widget Function() locationSelection,
     double? width = 350.0,

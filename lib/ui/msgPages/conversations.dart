@@ -2,10 +2,12 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:pin_demo/src/model/order_model.dart';
 import 'package:pin_demo/src/model/users_model.dart';
 import 'package:pin_demo/src/utils/constants/lang.dart';
 import 'package:pin_demo/src/utils/utils.dart';
+import 'package:pin_demo/src/utils/map.dart';
 import 'package:pin_demo/ui/orderPages/orderinfo.dart';
 import 'package:pin_demo/ui/users/userProfile.dart';
 import 'package:provider/provider.dart';
@@ -23,21 +25,49 @@ class ConversationsPage extends StatefulWidget {
 }
 
 class _ConversationsPageState extends State<ConversationsPage> {
+  final LocationService _locationService = LocationService();
   final Color _bgcolor = Colors.transparent;
   final TextEditingController _textController = TextEditingController();
-  int? orderID;
   int? userID;
+  double _currentPosition_x = 118.085152;
+  double _currentPosition_y = 24.603804;
   orderModel? orderM;
+  double? distance;
   List<chatMessagesModel> _messages = [];
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _getUserID();
-      _getGPMsgs();
-      _getOrderInfo();
-    });
+    // setState(() {
+    _getCurrentLocation();
+    _getUserID();
+    _getGPMsgs();
+    _getOrderInfo();
+    _getUserGroupDistance();
+    // });
+  }
+
+  String? getFormatterDatetime(String dateTimeString) {
+    DateTime dateTime = DateTime.parse(dateTimeString);
+    if (dateTime.isBefore(DateTime.now())) {
+      return '已结束';
+    } else if (dateTime.difference(DateTime.now()).inDays >= 1) {
+      return '${dateTime.difference(DateTime.now()).inDays}天后';
+    } else {
+      return '今天 ${dateTime.hour}:${dateTime.minute}';
+    }
+  }
+
+  // 调用LocationService的getCurrentLocation方法获取当前位置信息
+  Future<void> _getCurrentLocation() async {
+    try {
+      final Position position = await _locationService.getCurrentLocation();
+      _currentPosition_x = position.longitude;
+      _currentPosition_y = position.latitude;
+      debugPrint("_currentPosition_x: $_currentPosition_x");
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   Future<void> _getUserID() async {
@@ -48,17 +78,33 @@ class _ConversationsPageState extends State<ConversationsPage> {
   }
 
   Future<UserModel?> _getUserInfo(userID) async {
-    var userJson = await requestUserInfo(userID) as Map<String, dynamic>;
+    var userJson = await requestUserInfo(userID);
     if (userJson != null) {
       var user = UserModel.fromJson(userJson);
       return user;
     }
+    return null;
   }
 
-  Future<void> _getOrderInfo() async {
-    if (_messages.isNotEmpty) {
-      var tmp = _messages[0] as chatMessagesModel;
-      orderM = await orderApi.getOrderInfo(_messages[0].orderID!);
+  Future<bool> _getOrderInfo() async {
+    orderM = await orderApi.getOrderInfoByGroupID(widget.groupID);
+    if (orderM != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> _getUserGroupDistance() async {
+    var result = await orderApi.getUserGroupDistance(
+        _currentPosition_y, _currentPosition_x, widget.groupID);
+    if (result != null) {
+      setState(() {
+        distance = result;
+      });
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -122,25 +168,25 @@ class _ConversationsPageState extends State<ConversationsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  message,
-                  softWrap: true,
-                  style: TextStyle(
-                    backgroundColor: _bgcolor,
-                    color: isSent
-                        ? Theme.of(context).colorScheme.onPrimary
-                        : Theme.of(context).colorScheme.onSecondaryContainer,
-                    fontSize: 16.0,
+                Wrap(children: [
+                  SelectableText(
+                    message,
+                    // softWrap: true,
+                    style: TextStyle(
+                      backgroundColor: _bgcolor,
+                      color: isSent
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : Theme.of(context).colorScheme.onSecondaryContainer,
+                      fontSize: 16.0,
+                    ),
+                    // maxLines: null,
                   ),
-                  // maxLines: null,
-                ),
+                ]),
                 const SizedBox(height: 5.0),
               ],
             ),
           ),
         );
-
-        // TODO: 1218 04:35 一个页面的头像都按照同一种方式呈现了
 
         Widget _avatar = CircleAvatar(
             child: ClipOval(child: Image.asset("static/images/avatar.jpeg")));
@@ -161,8 +207,9 @@ class _ConversationsPageState extends State<ConversationsPage> {
                           progress.toString())); // 添加了 return 语句
                 },
                 errorListener: (value) {
-                  debugPrint("ERROR in CachedNetworkImage!");
-                  ErrorHint("ERROR in myPage's CachedNetworkImage!");
+                  debugPrint(
+                      "ERROR in CachedNetworkImage: ${value.toString()}");
+                  ErrorHint("ERROR in CachedNetworkImage: ${value.toString()}");
                 },
                 errorWidget: (context, url, error) =>
                     const Icon(Icons.error_outline_rounded),
@@ -209,7 +256,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
                                   Navigator.of(context)
                                       .pushNamed("/my/profile");
                                   // debugPrint(
-                                  //     "TODO: avatar->someUserProfile"); // TODO: avatar->someUserProfile
+                                  //     "TODO: avatar->someUserProfile");
                                 }),
                           )
                         ])
@@ -228,7 +275,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
                                         someUserProfile(user: user)));
                               } else {
                                 debugPrint("未获取到用户数据");
-                              } // TODO: avatar->someUserProfile
+                              }
                             }),
                       ),
                       Column(
@@ -263,14 +310,23 @@ class _ConversationsPageState extends State<ConversationsPage> {
         title: Column(
           children: [
             Text(widget.groupName ?? "未命名的聊天",
-                style: (orderM == null || orderM?.distance == null)
-                    ? Theme.of(context).textTheme.titleLarge
-                    : Theme.of(context).textTheme.titleMedium),
-            // TODO: 1219 14:00留——地理位置距离和时间信息显示还存在问题
-            (orderM == null || orderM?.distance == null)
+                style: (orderM == null ||
+                        orderM?.startTime == null ||
+                        distance == null)
+                    ? null
+                    : const TextStyle(
+                        fontSize: 17.0, fontWeight: FontWeight.w600)),
+            (orderM == null || orderM?.startTime == null || distance == null)
                 ? Container()
-                : Text("${orderM?.distance} km",
-                    style: Theme.of(context).textTheme.labelSmall),
+                : Container(
+                    constraints:
+                        BoxConstraints(maxWidth: screenSize.width * 0.5),
+                    child: Text(
+                        "${getFormatterDatetime(orderM!.startTime)}, $distance km",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.labelSmall),
+                  ),
           ],
         ),
       ),
@@ -359,10 +415,8 @@ class _ConversationsPageState extends State<ConversationsPage> {
                   title: Text(languageProvider.get("conversations_info")),
                   onTap: () async {
                     try {
-                      var tmp = _messages[0];
-                      // debugPrint(tmp.orderID.toString());
                       orderM =
-                          await orderApi.getOrderInfo(_messages[0].orderID!);
+                          await orderApi.getOrderInfoByGroupID(widget.groupID);
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => orderInfoPage(order: orderM),
                       ));

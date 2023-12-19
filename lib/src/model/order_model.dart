@@ -116,17 +116,36 @@ class orderApi {
     }
   }
 
+  static Future<double?> getUserGroupDistance(lat, lon, groupID) async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            "${Constant.urlWebMap["order_distance"]!}?groupID=$groupID&lat=$lat&lon=$lon"),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        if (responseData["groupID"] == groupID) {
+          // debugPrint("distance: ${responseData["distance"]}");
+          return responseData["distance"];
+        } else {
+          debugPrint("wrong GroupID");
+        }
+      } else {
+        throw Exception('Failed with status: ${response.statusCode}.');
+      }
+    } catch (error) {
+      throw Exception(error.toString());
+    }
+  }
+
   static Future<List<orderModel>> getSurroundingOrder(
       distance, currentPosition_x, currentPosition_y) async {
     try {
       final response = await http.get(
-        Uri.parse(Constant.urlWebMap["surrounding_order"]! +
-            "?type=distance&distance=" +
-            distance.toString() +
-            "&lat=" +
-            currentPosition_x.toString() +
-            "&lon=" +
-            currentPosition_y.toString()),
+        Uri.parse(
+            "${Constant.urlWebMap["surrounding_order"]!}?type=distance&distance=$distance&lat=$currentPosition_x&lon=$currentPosition_y"),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -150,13 +169,12 @@ class orderApi {
   static Future<List<dynamic>> requestOrderParticipants(int orderID) async {
     try {
       var response = await http.get(
-        Uri.parse(Constant.urlWebMap["get_order"]! +
-            "?type=participants&orderID=" +
-            orderID.toString()),
+        Uri.parse(
+            "${Constant.urlWebMap["get_order"]!}?type=participants&orderID=$orderID"),
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
-        debugPrint(response.body);
+        // debugPrint(response.body);
         return (json.decode(response.body));
       } else {
         return [];
@@ -167,12 +185,36 @@ class orderApi {
     }
   }
 
+  static Future<orderModel> getOrderInfoByGroupID(groupID) async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            "${Constant.urlWebMap["get_order"]!}?type=groupID&groupID=$groupID"),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        // print(responseData);
+        List<orderModel> orders = [];
+        for (var orderData in responseData) {
+          orders.add(orderModel.fromJson(orderData));
+        }
+        return orders[0];
+      } else {
+        throw Exception(
+            'Failed to get order with status: ${response.statusCode}.');
+      }
+    } catch (error) {
+      throw Exception(error.toString());
+    }
+  }
+
   static Future<orderModel> getOrderInfo(orderID) async {
     try {
       final response = await http.get(
-        Uri.parse(Constant.urlWebMap["get_order"]! +
-            "?type=id&orderID=" +
-            orderID.toString()),
+        Uri.parse(
+            "${Constant.urlWebMap["get_order"]!}?type=id&orderID=$orderID"),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -197,9 +239,8 @@ class orderApi {
     try {
       UserModel? user = await getCurUserInfo();
       final response = await http.get(
-        Uri.parse(Constant.urlWebMap["surrounding_order"]! +
-            "?type=participant&participantID=" +
-            (user?.userID?.toString() ?? "-1")),
+        Uri.parse(
+            "${Constant.urlWebMap["surrounding_order"]!}?type=participant&participantID=${user?.userID?.toString() ?? "-1"}"),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -224,9 +265,8 @@ class orderApi {
     try {
       UserModel? user = await getCurUserInfo();
       final response = await http.get(
-        Uri.parse(Constant.urlWebMap["msg_get"]! +
-            "?type=participant&participantID=" +
-            (user?.userID?.toString() ?? "-1")),
+        Uri.parse(
+            "${Constant.urlWebMap["msg_get"]!}?type=participant&participantID=${user?.userID?.toString() ?? "-1"}"),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -266,9 +306,8 @@ class orderApi {
   static Future<List<chatMessagesModel>> getGroupMessages(groupID) async {
     try {
       final response = await http.get(
-        Uri.parse(Constant.urlWebMap["msg_get"]! +
-            "?type=group&groupID=" +
-            groupID.toString()),
+        Uri.parse(
+            "${Constant.urlWebMap["msg_get"]!}?type=group&groupID=$groupID"),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -293,9 +332,8 @@ class orderApi {
   static Future<List<orderModel>> getUserOrders(userID) async {
     try {
       final response = await http.get(
-        Uri.parse(Constant.urlWebMap["get_order"]! +
-            "?type=participant&participantID=" +
-            userID.toString()),
+        Uri.parse(
+            "${Constant.urlWebMap["get_order"]!}?type=participant&participantID=$userID"),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -345,9 +383,8 @@ class orderApi {
   static Future<List<chatMessagesModel>> getOrderMessages(orderID) async {
     try {
       final response = await http.get(
-        Uri.parse(Constant.urlWebMap["msg_get"]! +
-            "?type=order&orderID=" +
-            orderID.toString()),
+        Uri.parse(
+            "${Constant.urlWebMap["msg_get"]!}?type=order&orderID=$orderID"),
         headers: {'Content-Type': 'application/json'},
       );
 

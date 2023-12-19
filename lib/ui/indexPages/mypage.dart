@@ -125,7 +125,6 @@ class _myPageState extends State<myPage> {
     );
 
     ListTile item_quit = ListTile(
-      // TODO: quit, move to settings
       leading: const Icon(Icons.exit_to_app),
       title: Text(languageProvider.get("quit")),
       onTap: () {

@@ -52,7 +52,7 @@ class _orderTestServerState extends State<orderTestServerPage> {
       List<orderModel> responseOrders = await orderApi.getSurroundingOrder(
           double.tryParse(_distanceController.text),
           _currentPosition_x,
-          _currentPosition_y); // TODO： 根据实际情况修改传入的参数
+          _currentPosition_y);
       setState(() {
         orders = responseOrders;
       });

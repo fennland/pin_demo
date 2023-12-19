@@ -233,7 +233,7 @@ class _homePageState extends State<homePage> {
               }
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text("Loading..."),
-                duration: Duration(seconds: 2),
+                duration: Duration(milliseconds: 1500),
               ));
               if (badNetwork) {
                 final connectivityResult =
@@ -333,7 +333,8 @@ class _homePageState extends State<homePage> {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(const SnackBar(
                                                 content: Text("Loading..."),
-                                                duration: Duration(seconds: 2),
+                                                duration: Duration(
+                                                    milliseconds: 1500),
                                               ));
                                               await _getOrders();
                                               await _getCurrentLocation();

@@ -1,12 +1,6 @@
 class Constant {
   static const bool isDebug = true;
-  // TODO: make all constants
 
-  ///手机端和桌面端
-  /// base:网页端（待改）
-  /// app:app端的接口
-  /// search:搜索用到的接口
-  /// login:登录时需要用到的接口
   static const Map<String, String> urlMap = {
     "app": "https://pin.fennland.me/",
     "search": "https://pin.fennland.me/search",
@@ -42,6 +36,7 @@ class Constant {
     "new_msg": "http://124.223.116.195:5000/orders/msg/new",
     "order": "http://124.223.116.195:5000/orders",
     "order_match_distances": "http://124.223.116.195:5000/orders/distance",
+    "order_distance": "http://124.223.116.195:5000/orders/distance/get",
     "database": "http://124.223.116.195:5000/database",
     "hello": "http://124.223.116.195:5000/hello",
 
