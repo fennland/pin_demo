@@ -230,8 +230,9 @@ class _registerPageState extends State<registerPage> {
                                 duration: const Duration(seconds: 2),
                               );
                               registerScaffoldMessenger.showSnackBar(snackbar);
-                              await navigator.pushNamed("/my/profile");
-                              await navigator.popAndPushNamed("/home");
+                              // await navigator.pushNamed("/my/profile");
+                              // await navigator.popAndPushNamed("/home");
+                              navigator.popAndPushNamed("/home");
                             } else if (loginResult["code"] == 404) {
                               SnackBar snackbar = SnackBar(
                                 content: Text(
