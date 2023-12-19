@@ -266,6 +266,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
                 style: (orderM == null || orderM?.distance == null)
                     ? Theme.of(context).textTheme.titleLarge
                     : Theme.of(context).textTheme.titleMedium),
+            // TODO: 1219 14:00留——地理位置距离和时间信息显示还存在问题
             (orderM == null || orderM?.distance == null)
                 ? Container()
                 : Text("${orderM?.distance} km",

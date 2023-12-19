@@ -217,6 +217,7 @@ class _orderInfoPageState extends State<orderInfoPage> {
                             snapshot.hasData) {
                           // 获取位置信息成功，将其传递给地图组件
                           final position = snapshot.data!;
+                          // TODO: 1219 14:00留——根据order坐标绘制地图存在问题，当前默认显示北京天安门
                           return (generateMap(
                               onTap: () {},
                               flex: 3,

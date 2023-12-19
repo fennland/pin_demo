@@ -72,7 +72,6 @@ class _myPageState extends State<myPage> {
       title: Text(languageProvider.get("privacy")), // 多语言支持 *experimental
       onTap: () {
         Navigator.pushNamed(context, "/privacy");
-        debugPrint("yuh~"); // TODO: 我的页面二级跳转
       },
     );
 
@@ -81,7 +80,6 @@ class _myPageState extends State<myPage> {
       title: Text(languageProvider.get("help")), // 多语言支持 *experimental
       onTap: () {
         Navigator.of(context).pushNamed("/server/test");
-        debugPrint("yuh yuh~"); // TODO: 我的页面二级跳转
       },
     );
 
@@ -112,7 +110,6 @@ class _myPageState extends State<myPage> {
           : const Icon(Icons.chevron_right),
       onTap: () {
         Navigator.pushNamed(context, "/settings");
-        debugPrint("TODO: Setting"); // TODO: 我的页面二级跳转
       },
     );
 
@@ -134,6 +131,20 @@ class _myPageState extends State<myPage> {
       onTap: () {
         SharedPreferenceUtil.clear();
         Navigator.of(context).pushReplacementNamed("/login");
+        // Navigator.of(context).pushNamed("/login");
+        // debugPrint("TODO: quit");
+      },
+    );
+
+    ListTile item_business = ListTile(
+      // TODO: business
+      leading: const Icon(Icons.business_center),
+      title: Text(languageProvider.get("business")),
+      onTap: () {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("功能尚未开放"),
+          duration: Duration(milliseconds: 1500),
+        ));
         // Navigator.of(context).pushNamed("/login");
         // debugPrint("TODO: quit");
       },
@@ -248,6 +259,7 @@ class _myPageState extends State<myPage> {
                       item_privacy,
                       item_help,
                       item_settings,
+                      item_business,
                       item_lang,
                       item_quit,
                       // item_temporaryTest,

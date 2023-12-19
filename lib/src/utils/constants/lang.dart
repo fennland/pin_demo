@@ -143,6 +143,7 @@ class LanguageProvider with ChangeNotifier {
       "setting": "设置",
       "lang": "语言",
       "quit": "退出登录",
+      "business": "商家入驻",
 
       // msg - conversation
       "msgboxhint": "发送新消息...",
