@@ -18,7 +18,7 @@ Future<void> requestPermission(FileSystemEntity file) async {
 
 Future<void> delDir(FileSystemEntity file) async {
   if (file is Directory && file.existsSync()) {
-    print(file.path);
+    debugPrint(file.path);
     final List<FileSystemEntity> children =
         file.listSync(recursive: true, followLinks: true);
     for (final FileSystemEntity child in children) {
@@ -30,7 +30,7 @@ Future<void> delDir(FileSystemEntity file) async {
       await file.delete(recursive: true);
     }
   } catch (err) {
-    print(err);
+    debugPrint(err.toString());
   }
 }
 
@@ -45,7 +45,7 @@ Future getTotalSizeOfFilesInDir(final FileSystemEntity file) async {
   if (file is Directory && file.existsSync()) {
     List children = file.listSync();
     double total = 0;
-    if (children.length > 0) {
+    if (children.isNotEmpty) {
       for (final FileSystemEntity child in children) {
         total += await getTotalSizeOfFilesInDir(child);
       }
@@ -60,9 +60,7 @@ String renderSize(value) {
   if (value == null) {
     return '0.0';
   }
-  List<String> unitArr = ['B', 'K']
-    ..add('M')
-    ..add('G');
+  List<String> unitArr = ['B', 'K', 'M', 'G'];
   int index = 0;
   while (value > 1024) {
     index++;
@@ -91,7 +89,7 @@ class WindowUtil {
   ///初始化参数配置，这里根据自己的模块业务而定，我窗口默认是140,210
   static void setWindowFunctions({bool? isMacOS}) async {
     WindowOptions windowOptions = const WindowOptions(
-      minimumSize: Size(360.0, 480.0),
+      minimumSize: Size(360.0, 640.0),
       center: true,
       // backgroundColor: Colors.transparent,
       //设置窗口是否显示在 任务栏或 Dock 上

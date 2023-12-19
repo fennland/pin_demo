@@ -12,7 +12,7 @@ import 'dart:async';
 
 bool unSupportedPlatform = kIsWeb ||
     Platform.isMacOS ||
-    Platform.isIOS ||
+    // Platform.isIOS ||
     isAndroidSimulator ||
     Platform.isLinux ||
     Platform.isWindows;

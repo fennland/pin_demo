@@ -62,6 +62,10 @@ dependencies:
   connectivity: ^3.0.6
   auto_size_text: ^3.0.0
   intl: ^0.19.0
+  flutter_datetime_picker: ^1.5.1
+  flutter_bmflocation: ^3.5.0
+  http: ^1.1.0
+  url_launcher: ^6.2.2
 
 dev_dependencies:
   flutter_test:
@@ -87,8 +91,14 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - lib/src/static/images/avatar.jpeg
-  #  - images/a_dot_ham.jpeg
+    - static/
+    - static/images/
+    - static/support/
+    - static/images/appicon.png
+    - static/images/avatar.jpeg
+    - static/images/icon_mark.png
+    - static/images/icon_marker_selected.png
+    - static/images/icon_marker_unselected.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -1,5 +1,7 @@
 // ignore_for_file: unused_import, curly_braces_in_flow_control_structures
 
+import 'dart:async';
+
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_demo/main.dart';
@@ -22,11 +24,23 @@ class _msgPageState extends State<msgPage> {
   List<chatMessagesModel> msgs = [];
   bool badNetwork = false;
   bool noMsgs = false;
+  int refreshSpeed = 1000;
+  int refreshCount = 0;
+  bool firstRefresh = true;
   int? userID = -1;
+  Timer? timer_slower;
+  Timer? timer_faster;
+
+  @override
+  void dispose() {
+    timer_slower?.cancel(); // 取消定时器
+    timer_faster?.cancel(); // 取消定时器
+    super.dispose();
+  }
 
   Future<void> _getUserID() async {
     try {
-      UserModel? user = await getUserInfo();
+      UserModel? user = await getCurUserInfo();
       userID = user!.userID;
     } catch (error) {
       debugPrint(error.toString());
@@ -40,10 +54,20 @@ class _msgPageState extends State<msgPage> {
       // print(responseOrders);
       if (mounted) {
         setState(() {
-          if (responseMsgs != []) {
+          // debugPrint(responseMsgs.toString());
+          if (responseMsgs.isNotEmpty) {
+            // debugPrint("hasMsgs");
+            noMsgs = false;
             msgs = responseMsgs;
           } else {
+            // debugPrint("noMsgs");
             noMsgs = true;
+          }
+
+          if (firstRefresh) {
+            debugPrint("firstRefreshed");
+            refreshSpeed = 5000;
+            firstRefresh = false;
           }
         });
         return responseMsgs;
@@ -62,8 +86,18 @@ class _msgPageState extends State<msgPage> {
   @override
   void initState() {
     super.initState();
-
     _getUserID();
+  }
+
+  void startTimer() {
+    timer_slower?.cancel(); // 先取消之前的定时器
+    timer_slower = Timer(Duration(seconds: 20), () {
+      setState(() {
+        debugPrint("refresh slower");
+        refreshCount = 0;
+        refreshSpeed = 5000;
+      });
+    });
   }
 
   @override
@@ -97,13 +131,42 @@ class _msgPageState extends State<msgPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        leading:
+            // unSupportedPlatform
+            IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: () async {
+                  setState(() {
+                    refreshCount++;
+                    if (refreshCount >= 3) {
+                      if (refreshSpeed > 1000)
+                        refreshSpeed =
+                            (refreshSpeed * 3 / 4).ceil(); // 刷新速度减少1/4
+                    }
+                    debugPrint(
+                        "refresh faster: count=$refreshCount, speed=$refreshSpeed");
+                  });
+                  startTimer();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: const Text("Loading..."),
+                    duration: Duration(seconds: refreshSpeed ~/ 5000),
+                  ));
+                  await _getMsgs();
+                  // setState(() {});
+                }),
+        // : Container(),
         title: Text(languageProvider.get("msg"),
             style:
                 const TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
         actions: [
           IconButton(
             icon: const Icon(Icons.people_outlined),
-            onPressed: () => Navigator.pushNamed(context, "/msg/following"),
+            // onPressed: () => Navigator.pushNamed(context, "/msg/following"),
+            onPressed: () =>
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("功能尚未开放"),
+              duration: Duration(milliseconds: 1500),
+            )),
           )
         ],
       ),
@@ -174,92 +237,161 @@ class _msgPageState extends State<msgPage> {
                   throw Exception("no network");
                 } else {
                   setState(() {
-                    badNetwork = false;
+                    refreshCount++;
+                    if (refreshCount >= 3) {
+                      if (refreshSpeed > 1000)
+                        refreshSpeed =
+                            (refreshSpeed * 3 / 4).ceil(); // 刷新速度减少1/4
+                    }
+                    debugPrint(
+                        "refresh faster: count=$refreshCount, speed=$refreshSpeed");
                   });
+                  startTimer();
+                  badNetwork = false;
                 }
               } else {
+                setState(() {
+                  refreshCount++;
+                  if (refreshCount >= 3) {
+                    if (refreshSpeed > 1000)
+                      refreshSpeed = (refreshSpeed * 3 / 4).ceil(); // 刷新速度减少1/4
+                  }
+                  debugPrint(
+                      "refresh faster: count=$refreshCount, speed=$refreshSpeed");
+                });
+                startTimer();
                 await _getMsgs();
               }
             },
             child: !badNetwork
-                ? !noMsgs
-                    ? FutureBuilder(
-                        future: Future.delayed(
-                            const Duration(milliseconds: 200), _getMsgs),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (snapshot.hasError)
-                            return Center(
-                                child: Text('Error: ${snapshot.error}'));
-                          else
-                            return Center(
-                              child: Column(
-                                children: [
-                                  serviceCard1,
-                                  Expanded(
-                                    child: ListView.separated(
-                                      itemCount: msgs.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return ListTile(
-                                          onTap: () {
-                                            debugPrint(msgs[index].toString());
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ConversationsPage(
-                                                            userID: userID,
-                                                            groupName:
-                                                                msgs[index]
+                ? Center(
+                    child: !noMsgs
+                        ? FutureBuilder(
+                            future: Future.delayed(
+                                Duration(milliseconds: refreshSpeed), _getMsgs),
+                            builder: (context, snapshot) {
+                              // if (snapshot.hasData) {
+                              //   debugPrint("hasData");
+                              // }
+                              if (!snapshot.hasData &&
+                                  snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                // debugPrint("waiting");
+                                return const Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CircularProgressIndicator(),
+                                      Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Text("Loading"))
+                                    ]);
+                              } else if (snapshot.hasError) {
+                                return Column(
+                                  children: [
+                                    Text('Error: ${snapshot.error}'),
+                                  ],
+                                );
+                              } else {
+                                return Column(
+                                  children: [
+                                    serviceCard1,
+                                    Expanded(
+                                      child: ListView.separated(
+                                        itemCount: msgs.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          // debugPrint(msgs.length.toString());
+                                          if (msgs.isNotEmpty) {
+                                            return ListTile(
+                                              onTap: () {
+                                                debugPrint(
+                                                    msgs[index].toString());
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ConversationsPage(
+                                                                groupName: msgs[
+                                                                        index]
                                                                     .groupName,
-                                                            groupID: msgs[index]
-                                                                .groupID)));
-                                          },
-                                          leading: generateAvatar(
-                                              msgs[index].groupName ?? "N/A",
-                                              context),
-                                          title: Text(msgs[index].groupName ??
-                                              "未命名的聊天"),
-                                          subtitle: Text(
-                                            msgs[index].messageText,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall,
-                                          ),
-                                          trailing: Text(formatTimestamp(
-                                              msgs[index].timestamp)),
-                                        );
-                                      },
-                                      separatorBuilder: (context, index) {
-                                        return Divider(
-                                          height: 0.0,
-                                          color: Theme.of(context).dividerColor,
-                                          thickness: 0.5,
-                                          indent: 20.0,
-                                          endIndent: 20.0,
-                                        );
-                                      },
+                                                                groupID: msgs[
+                                                                        index]
+                                                                    .groupID)));
+                                              },
+                                              leading: generateAvatar(
+                                                  msgs[index].groupName ??
+                                                      "N/A",
+                                                  context),
+                                              title: Text(
+                                                msgs[index].groupName ??
+                                                    "未命名的聊天",
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              subtitle: Text(
+                                                msgs[index].messageText,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall,
+                                              ),
+                                              trailing: Text(formatTimestamp(
+                                                  msgs[index].timestamp)),
+                                            );
+                                          } else {
+                                            return Align(
+                                              alignment: Alignment.center,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  const Icon(Icons.more_horiz,
+                                                      size: 36.0),
+                                                  const SizedBox(height: 30),
+                                                  Text(
+                                                      languageProvider
+                                                          .get("noMsgs"),
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleMedium),
+                                                ],
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        separatorBuilder: (context, index) {
+                                          return Divider(
+                                            height: 0.0,
+                                            color:
+                                                Theme.of(context).dividerColor,
+                                            thickness: 0.5,
+                                            indent: 20.0,
+                                            endIndent: 20.0,
+                                          );
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                        })
-                    : Align(
-                        alignment: Alignment.center,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.more_horiz, size: 36.0),
-                            const SizedBox(height: 30),
-                            Text(languageProvider.get("noMsgs"),
-                                style: Theme.of(context).textTheme.titleMedium),
-                          ],
-                        ),
-                      )
+                                  ],
+                                );
+                              }
+                            })
+                        : Align(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.more_horiz, size: 36.0),
+                                const SizedBox(height: 30),
+                                Text(languageProvider.get("noMsgs"),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium),
+                              ],
+                            ),
+                          ))
                 : SizedBox.shrink(),
           ),
         ],

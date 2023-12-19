@@ -69,7 +69,7 @@ class _platformAlertState extends State<platformAlert> {
                       TextButton(
                         child: Text(languageProvider.get("ok")),
                         onPressed: () {
-                          Navigator.of(context).pushNamed("/login");
+                          Navigator.of(context).popAndPushNamed("/login");
                         },
                       ),
                     ],

@@ -34,6 +34,11 @@
 	<string></string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>请求定位权限，获取当前位置</string>
+	<key>LSApplicationQueriesSchemes</key>
+<array>
+  <string>sms</string>
+  <string>tel</string>
+</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

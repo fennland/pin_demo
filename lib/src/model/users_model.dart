@@ -2,6 +2,8 @@
 //
 //     final wechatUsersModel = wechatUsersModelFromJson(jsonString);
 
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:convert';
 import 'dart:ffi';
 import 'package:flutter/foundation.dart';
@@ -76,7 +78,7 @@ class UserModel {
 }
 
 // 在登录/注册成功后保存用户信息
-void saveUserInfo(UserModel user) async {
+void saveCurUserInfo(UserModel user) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   try {
     prefs.setInt('userID', user.userID!);
@@ -94,7 +96,7 @@ void saveUserInfo(UserModel user) async {
 }
 
 // 在需要获取用户信息时从本地读取
-Future<UserModel?> getUserInfo() async {
+Future<UserModel?> getCurUserInfo() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   int? userId = prefs.getInt('userID');
   String? userName = prefs.getString('userName');
@@ -129,15 +131,13 @@ Future<Map<String, dynamic>> requestUserInfo(int userid) async {
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       debugPrint(response.body);
-      return ({
-        "code": response.statusCode,
-        "result": json.decode(response.body)
-      });
+      return (json.decode(response.body));
     } else {
-      return ({"code": response.statusCode, "result": {}});
+      return {};
     }
   } catch (e) {
-    return ({"code": 500, "error": e.toString()});
+    debugPrint(e.toString());
+    return {};
   }
 }
 
@@ -168,14 +168,38 @@ Future<Map<String, dynamic>> postLoginForm(
   }
 }
 
-Future<Map<String, dynamic>> postRegisterForm(
-    username, phone, pwd, gender) async {
+Future<Map<String, dynamic>> postLoginForm_logined(
+    phone, currentPosition_x, currentPosition_y) async {
+  try {
+    var response = await http.post(
+      Uri.parse(Constant.urlWebMap["logined"]!),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'phone': phone,
+        'position_x': currentPosition_x ?? 0.0,
+        'position_y': currentPosition_y ?? 0.0
+      }),
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // debugPrint(response.body);
+      return ({
+        "code": response.statusCode,
+        "result": json.decode(response.body)
+      });
+    } else {
+      return ({"code": response.statusCode, "result": {}});
+    }
+  } catch (e) {
+    return ({"code": 500, "error": e.toString()});
+  }
+}
+
+Future<Map<String, dynamic>> postRegisterForm(username, phone, pwd) async {
   try {
     var response = await http.post(
       Uri.parse(Constant.urlWebMap["register"]!),
       headers: {'Content-Type': 'application/json'},
-      body: json.encode(
-          {'userName': username, 'phone': phone, 'pwd': pwd, 'gender': gender}),
+      body: json.encode({'userName': username, 'phone': phone, 'pwd': pwd}),
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       // debugPrint(response.body);
@@ -199,7 +223,7 @@ Future<Map<String, dynamic>> getCurrentLocation(
       return {"x": position.longitude, "y": position.latitude};
     }
   } catch (e) {
-    print(e.toString());
+    debugPrint(e.toString());
   }
   return {"x": 0.0, "y": 0.0};
 }

@@ -1,6 +1,7 @@
 // 订单模型
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:pin_demo/src/model/users_model.dart';
 import 'package:pin_demo/src/utils/constants/constant.dart';
 import 'package:http/http.dart' as http;
@@ -89,17 +90,62 @@ class orderApi {
     }
   }
 
+  static Future<Map<String, dynamic>> joinOrder(userID, orderID) async {
+    try {
+      final response = await http.post(
+        Uri.parse(Constant.urlWebMap["join_order"]!),
+        body: json.encode({
+          'participantID': userID,
+          'orderID': orderID,
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        // print(responseData);
+        return {
+          "code": response.statusCode,
+          "data": orderModel.fromJson(responseData)
+        };
+      } else {
+        return {"code": response.statusCode, "data": {}};
+      }
+    } catch (error) {
+      throw Exception('Failed to connect to server');
+    }
+  }
+
+  static Future<double?> getUserGroupDistance(lat, lon, groupID) async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            "${Constant.urlWebMap["order_distance"]!}?groupID=$groupID&lat=$lat&lon=$lon"),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        if (responseData["groupID"] == groupID) {
+          // debugPrint("distance: ${responseData["distance"]}");
+          return responseData["distance"];
+        } else {
+          debugPrint("wrong GroupID");
+        }
+      } else {
+        throw Exception('Failed with status: ${response.statusCode}.');
+      }
+    } catch (error) {
+      throw Exception(error.toString());
+    }
+  }
+
   static Future<List<orderModel>> getSurroundingOrder(
       distance, currentPosition_x, currentPosition_y) async {
     try {
       final response = await http.get(
-        Uri.parse(Constant.urlWebMap["surrounding_order"]! +
-            "?type=distance&distance=" +
-            distance.toString() +
-            "&lat=" +
-            currentPosition_x.toString() +
-            "&lon=" +
-            currentPosition_y.toString()),
+        Uri.parse(
+            "${Constant.urlWebMap["surrounding_order"]!}?type=distance&distance=$distance&lat=$currentPosition_x&lon=$currentPosition_y"),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -116,17 +162,85 @@ class orderApi {
             'Failed to create order with status: ${response.statusCode}.');
       }
     } catch (error) {
-      throw Exception('Failed to connect to server ');
+      throw Exception(error.toString());
+    }
+  }
+
+  static Future<List<dynamic>> requestOrderParticipants(int orderID) async {
+    try {
+      var response = await http.get(
+        Uri.parse(
+            "${Constant.urlWebMap["get_order"]!}?type=participants&orderID=$orderID"),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // debugPrint(response.body);
+        return (json.decode(response.body));
+      } else {
+        return [];
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      return [];
+    }
+  }
+
+  static Future<orderModel> getOrderInfoByGroupID(groupID) async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            "${Constant.urlWebMap["get_order"]!}?type=groupID&groupID=$groupID"),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        // print(responseData);
+        List<orderModel> orders = [];
+        for (var orderData in responseData) {
+          orders.add(orderModel.fromJson(orderData));
+        }
+        return orders[0];
+      } else {
+        throw Exception(
+            'Failed to get order with status: ${response.statusCode}.');
+      }
+    } catch (error) {
+      throw Exception(error.toString());
+    }
+  }
+
+  static Future<orderModel> getOrderInfo(orderID) async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            "${Constant.urlWebMap["get_order"]!}?type=id&orderID=$orderID"),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        // print(responseData);
+        List<orderModel> orders = [];
+        for (var orderData in responseData) {
+          orders.add(orderModel.fromJson(orderData));
+        }
+        return orders[0];
+      } else {
+        throw Exception(
+            'Failed to get order with status: ${response.statusCode}.');
+      }
+    } catch (error) {
+      throw Exception(error.toString());
     }
   }
 
   static Future<List<chatMessagesModel>> getUserMessages() async {
     try {
-      UserModel? user = await getUserInfo();
+      UserModel? user = await getCurUserInfo();
       final response = await http.get(
-        Uri.parse(Constant.urlWebMap["surrounding_order"]! +
-            "?type=participant&participantID=" +
-            (user?.userID?.toString() ?? "-1")),
+        Uri.parse(
+            "${Constant.urlWebMap["surrounding_order"]!}?type=participant&participantID=${user?.userID?.toString() ?? "-1"}"),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -143,17 +257,16 @@ class orderApi {
             'Failed to get user msgs with status: ${response.statusCode}.');
       }
     } catch (error) {
-      throw Exception('Failed to connect to server ');
+      throw Exception(error.toString());
     }
   }
 
   static Future<List<chatMessagesModel>> getUserLatestMessages() async {
     try {
-      UserModel? user = await getUserInfo();
+      UserModel? user = await getCurUserInfo();
       final response = await http.get(
-        Uri.parse(Constant.urlWebMap["msg_get"]! +
-            "?type=participant&participantID=" +
-            (user?.userID?.toString() ?? "-1")),
+        Uri.parse(
+            "${Constant.urlWebMap["msg_get"]!}?type=participant&participantID=${user?.userID?.toString() ?? "-1"}"),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -186,16 +299,15 @@ class orderApi {
             'Failed to get user msgs with status: ${response.statusCode}.');
       }
     } catch (error) {
-      throw Exception('Failed to connect to server ');
+      throw Exception(error.toString());
     }
   }
 
   static Future<List<chatMessagesModel>> getGroupMessages(groupID) async {
     try {
       final response = await http.get(
-        Uri.parse(Constant.urlWebMap["msg_get"]! +
-            "?type=group&groupID=" +
-            groupID.toString()),
+        Uri.parse(
+            "${Constant.urlWebMap["msg_get"]!}?type=group&groupID=$groupID"),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -204,6 +316,7 @@ class orderApi {
         // print(responseData);
         List<chatMessagesModel> msgs = [];
         for (var msgData in responseData) {
+          // debugPrint(msgData.toString());
           msgs.add(chatMessagesModel.fromJson(msgData));
         }
         return msgs;
@@ -212,7 +325,32 @@ class orderApi {
             'Failed to get user msgs with status: ${response.statusCode}.');
       }
     } catch (error) {
-      throw Exception('Failed to connect to server ');
+      throw Exception(error.toString());
+    }
+  }
+
+  static Future<List<orderModel>> getUserOrders(userID) async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            "${Constant.urlWebMap["get_order"]!}?type=participant&participantID=$userID"),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = jsonDecode(response.body);
+        // print(responseData);
+        List<orderModel> orders = [];
+        for (var orderData in responseData) {
+          orders.add(orderModel.fromJson(orderData));
+        }
+        return orders;
+      } else {
+        throw Exception(
+            'Failed to get order with status: ${response.statusCode}.');
+      }
+    } catch (error) {
+      throw Exception(error.toString());
     }
   }
 
@@ -245,9 +383,8 @@ class orderApi {
   static Future<List<chatMessagesModel>> getOrderMessages(orderID) async {
     try {
       final response = await http.get(
-        Uri.parse(Constant.urlWebMap["msg_get"]! +
-            "?type=order&orderID=" +
-            orderID.toString()),
+        Uri.parse(
+            "${Constant.urlWebMap["msg_get"]!}?type=order&orderID=$orderID"),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -264,7 +401,7 @@ class orderApi {
             'Failed to get user msgs with status: ${response.statusCode}.');
       }
     } catch (error) {
-      throw Exception('Failed to connect to server ');
+      throw Exception(error.toString());
     }
   }
 
@@ -338,6 +475,9 @@ class chatMessagesModel {
   final int messageID;
   final int groupID;
   final int senderID;
+  final String? avatar;
+  final int? orderID;
+  final String? senderName;
   final String messageText;
   final String timestamp;
   final String? groupName;
@@ -348,13 +488,19 @@ class chatMessagesModel {
       required this.senderID,
       required this.messageText,
       required this.timestamp,
+      this.orderID,
+      this.avatar,
+      this.senderName,
       this.groupName});
 
   factory chatMessagesModel.fromJson(Map<String, dynamic> json) {
     return chatMessagesModel(
         messageID: json["messageID"],
         groupID: json["groupID"],
+        orderID: json["orderID"],
         senderID: json["senderID"],
+        senderName: json["senderName"] ?? "未知用户",
+        avatar: json["avatar"],
         messageText: json["messageText"],
         timestamp: json["timestamp"],
         groupName: json["groupName"] ?? "未命名的聊天");
