@@ -42,8 +42,6 @@ class person_data extends StatefulWidget {
     });
   }
 
-
-
 class _person_dataState extends State<person_data> {
   bool _isSelected = false;
   Color _backgroundColor = Colors.grey;
@@ -59,7 +57,119 @@ class _person_dataState extends State<person_data> {
     }
   }
 
+  @override
+  void initState(){
+    super.initState();
+    setState(() {
+        _update("firstInitialized");
+    });
+  }
+
+  Future<void> _update(String type) async {
+    try {
+      UserModel? user = await getUserInfo();
+      // onChanged: (value) {
+      //     if (user != null) {
+      //       user.userID = value;  
+      //     }
+      // };
+      if(type == "name"){
+        if (user != null) {
+          var updateResult = await saveModifiedNameToCloud(
+            user.userID,
+            _nameEditingController.text,
+            user.gender,
+            user.sign
+          );
+          debugPrint("name: ${user?.userName}");
+      setState(() {
+        if (user != null) {
+          name = updateResult["result"]["data"][0]["userName"];
+          saveUserInfo(UserModel.fromJson(updateResult["result"]["data"][0]));
+        }
+      });
+        }
+      }
+      else if(type == "sign"){
+        if (user != null) {
+          var updateResult = await saveModifiedNameToCloud(
+            user.userID,
+            user.userName,
+            user.gender,
+            _signEditingController.text
+          );
+          debugPrint(_signEditingController.text);
+          debugPrint("sign: ${user?.sign}");
+      setState(() {
+        if (user != null) {
+          sign = updateResult["result"]["data"][0]["sign"];
+          saveUserInfo(UserModel.fromJson(updateResult["result"]["data"][0]));
+        }
+      });
+        }
+      }
+      else if(type == "firstInitialized"){
+        setState(() {
+          name = user?.userName;
+          sign = user?.sign;
+        });
+      }
+      
+    } catch (error) {
+      debugPrint(error.toString());
+    }
+  }
+
+  // Future<void> _update() async {
+  //   try {
+  //     UserModel? user = await getUserInfo();
+  //     onChanged: (value) {
+  //         if (user != null) {
+  //           user.userID = value;  
+  //         }
+  //     };
+  //     var updateResult = await saveModifiedNameToCloud(
+  //       (user?.userID ??""),
+  //       _nameEditingController.text,
+  //       0,
+  //       _signEditingController.text
+  //     );
+  //     setState(() {
+  //       if (user != null) {
+  //         name = user.userName;
+  //         sign = user.sign;
+  //       }
+  //     });
+  //   } catch (error) {
+  //     debugPrint(error.toString());
+  //   }
+  // }
+
+  // 定义异步函数
+  Future<void> updateUserProfile() async {
+    String username = _nameEditingController.text;
+
+    // 调用修改个人资料的方法
+    Map<String, dynamic> response = await changePersonData(username);
+
+    // 处理响应结果
+    if (response["code"] == 200) {
+      // 修改成功，可以进行相应的处理
+    } else {
+      // 修改失败，可以进行相应的处理
+    }
+  }
+  
+  String? name = 'name';
+  int gender = 0;
+  String? sign = 'sign';
+
   bool _generateChip = false;
+  
+  String editedText = '';
+  bool _isEditing = false;
+  TextEditingController _nameEditingController = TextEditingController();
+  TextEditingController _signEditingController = TextEditingController();
 
   void showTimeoutSnackbar(BuildContext context) {
     bool timedOut = false; // 设置超时标记
@@ -92,32 +202,8 @@ class _person_dataState extends State<person_data> {
 
   // List<Widget> _generatedChips = [];
 
-  // void _handleButtonClick() {
-  //   setState(() {
-  //     _generatedChips.add(_buildNewChip());
-  //   });
-  // }
-
-  // Widget _buildNewChip() {
-  //   return FutureBuilder<String>(
-  //     future: generateNewChipAsync(),
-  //     builder: (context, snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return CircularProgressIndicator();
-  //       } else if (snapshot.hasError) {
-  //         return Text('生成新的Chip时出错');
-  //       } else {
-  //         return Chip(
-  //           label: Text(snapshot.data!),
-  //         );
-  //       }
-  //     },
-  //   );
-  // }
-
   List<Widget> _generatedChips = [];
 
-  
   void _handleButtonClick() {
     setState(() {
       _generatedChips.add(_buildNewChip());
@@ -202,12 +288,14 @@ class _person_dataState extends State<person_data> {
     var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
       appBar: AppBar(title: Text(languageProvider.get("person_data"))),
-      body: FutureBuilder(
-        future: getUserInfo(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final user = snapshot.data;
-            return Column(
+      body: 
+      // FutureBuilder(
+      //   future: _update(bool),
+      //   builder: (context, snapshot) {
+          // if (snapshot.hasData) {
+            // final user = snapshot.data;
+            // return 
+            Column(
         children: [
           ClipOval(
             child: InkWell(
@@ -251,28 +339,70 @@ class _person_dataState extends State<person_data> {
                       height: 100,
                     )
                   : FadeInImage(
-                      placeholder: AssetImage('assets/placeholder.jpg'),
-                      image: NetworkImage('https://picsum.photos/250?image=9'),
+                      placeholder: FileImage(File('lib/src/static/images/avatar.jpeg')), // AssetImage('assets/placeholder.jpg'),
+                      image: FileImage(File('lib/src/static/images/avatar.jpeg')),
                       width: 100,
                       height: 100,
                       fit: BoxFit.cover,
                     ),
             ),
           ),
+
           TextField(
+            controller: _nameEditingController,
+            // onChanged: (value) {
+            //   setState(() {
+            //     if (user != null) {
+            //       user.userName = value;
+            //       name = (user?.userName ??"");
+            //       print(name);
+            //     }
+            //   });
+            // },
+            // onSubmitted: (value) => _update(),
+            
+            onSubmitted: (value) async { await _update("name");},
             autofocus: true,
             decoration: InputDecoration(
-                hintText: (user?.userName ??languageProvider.get("curUser")),
+                hintText: name, // (user?.userName ??languageProvider.get("curUser")),
                 // hintText: "陈鹏", // TODO: 改成保存当前名字，点选后可以删掉再改，而不是hint作为placeholder getUserInfo(userName)
                 prefixIcon: Icon(Icons.person)),
+                
           ),
+          // ElevatedButton(
+          //   onPressed: () async {    
+          //     onChanged: (value) {
+          //       setState(() {
+          //         if (user != null) {
+          //           user.userID = value;  
+          //         }
+          //       });
+          //     };
+          //     var loginResult = await saveModifiedNameToCloud(
+          //                           (user?.userID ??languageProvider.get("curUser")),
+          //                           _nameEditingController.text,
+          //                           0,
+          //                           _signEditingController.text);
+          //     print(loginResult["code"]);
+          //     print(loginResult["result"]);
+          //     setState(() {
+          //       if (user != null) {
+          //         name = _nameEditingController.text;
+          //         print(name);
+          //       }
+          //     });
+          //   },
+            
+          //   child: Text('Change Person Data'),
+            
+          // ),
           _radioRow(),
           TextField(
+            controller: _signEditingController,
+            onSubmitted: (value) async { await _update("sign");},
             autofocus: true,
             decoration: InputDecoration(
-                // hintText:
-                //     "一句话描述自己", // TODO: 改成保存当前名字，点选后可以删掉再改，而不是hint作为placeholder
-                hintText: (user?.sign ??languageProvider.get("curUserSigning")),
+                hintText: sign, // (user?.sign ??languageProvider.get("curUserSigning")),
                 prefixIcon: Icon(Icons.person)),
           ),
           Row(
@@ -292,12 +422,12 @@ class _person_dataState extends State<person_data> {
                     runSpacing: 2.0,
                     alignment: WrapAlignment.start,
                     children: [
-                      TextField(
-                        controller: textEditingController,
-                        decoration: InputDecoration(
-                          hintText: "输入按钮文本",
-                        ),
-                      ),
+                      // TextField(
+                      //   controller: textEditingController,
+                      //   decoration: InputDecoration(
+                      //     hintText: "输入按钮文本",
+                      //   ),
+                      // ),
                       GestureDetector(
                         onTap: () {
                           setState(() {
@@ -342,6 +472,50 @@ class _person_dataState extends State<person_data> {
                         ),
                       ),
                       
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isSelected = !_isSelected;
+                            if(_isSelected){
+                              _backgroundColor = Colors.blue;
+                            }
+                            else{
+                              _backgroundColor = Colors.grey;
+                            }
+                          });
+                          SnackBar sb = const SnackBar(content: Text("单击"));
+                          ScaffoldMessenger.of(context).showSnackBar(sb);
+                        },
+                        onDoubleTap: () {
+                          setState(() {
+                            if (textEditingController.text == '') {
+                              buttonText = '运动';
+                            } else {
+                              buttonText = textEditingController.text;
+                            }
+                          });
+                          SnackBar sb = const SnackBar(content: Text("双击"));
+                          ScaffoldMessenger.of(context).showSnackBar(sb);
+                        },
+                        child: ActionChip(
+                          backgroundColor: _backgroundColor,
+                          pressElevation: 10,
+                          tooltip: "点击",
+                          labelPadding: EdgeInsets.all(2),
+                          label: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.sports,
+                                color: _backgroundColor,
+                              ),
+                              SizedBox(width: 2),
+                              Text(buttonText),
+                            ],
+                          ),
+                        ),
+                      ),
+
                       ..._generatedChips,
                     ],
                   ),
@@ -353,16 +527,15 @@ class _person_dataState extends State<person_data> {
           ElevatedButton(
             onPressed: _handleButtonClick,
             child: Text('生成新的标签'),
-            // TODO: 添加标签功能仅生效一次
           ),
         ],
-      );
-          }
-          else{
-            return  const Center(child: CircularProgressIndicator(),);
-          }
-        },
-    ),
+      ),
+          // }
+          // else{
+          //   return  const Center(child: CircularProgressIndicator(),);
+          // }
+    //     },
+    // ),
     );        
   }
 
@@ -395,6 +568,7 @@ class _person_dataState extends State<person_data> {
   Radio _colorfulCheckBox(index) {
     return Radio(
         value: index,
+        
         groupValue: groupValue,
         onChanged: (value) {
           //checkboxSelected = !checkboxSelected;

@@ -5,6 +5,7 @@
 import 'dart:convert';
 import 'dart:ffi';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pin_demo/src/utils/constants/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -201,4 +202,57 @@ Future<Map<String, dynamic>> getCurrentLocation(
     print(e.toString());
   }
   return {"x": 0.0, "y": 0.0};
+}
+  
+Future<Map<String, dynamic>> changePersonData(user) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  int? userID = prefs.getInt('userID');
+  // String? token = prefs.getString('token');
+
+  // Map<String, String> headers = {'authorization': token!};
+
+  // Map<String, String> body = {'username': username};
+
+  try {
+    http.Response response = await http.post(
+      Uri.parse(Constant.urlWebMap["changePersonData"]!),
+      // headers: headers,
+      // body: body,
+    );
+
+    prefs.setString('userName', user.userName!);
+    
+    Map<String, dynamic> result = jsonDecode(response.body);
+    if (result['code'] == 200) {
+      // 修改成功，更新本地存储的用户信息
+      UserModel user = UserModel.fromJson(result['data']);
+      saveUserInfo(user);
+    }
+
+    return result;
+  } catch (e) {
+    debugPrint(e.toString());
+    return {"code": 500, "msg": "服务器错误"};
+  }
+}
+
+Future<Map<String, dynamic>> saveModifiedNameToCloud(userID, userName, gender, sign) async {
+  try {
+    var response = await http.put(
+      Uri.parse(Constant.urlWebMap["saveModifiedNameToCloud"]!),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'userID': userID, 'userName': userName, 'gender': gender, 'sign': sign}),
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // debugPrint(response.body);
+      return ({
+        "code": response.statusCode,
+        "result": json.decode(response.body)
+      });
+    } else {
+      return ({"code": response.statusCode, "result": {}});
+    }
+  } catch (e) {
+    return ({"code": 500, "error": e.toString()});
+  }
 }

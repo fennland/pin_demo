@@ -11,7 +11,7 @@ class Constant {
     "app": "https://pin.fennland.me/",
     "search": "https://pin.fennland.me/search",
     "login": "https://pin.fennland.me/user/login",
-    "chat-debug": "http://192.168.5.6:3000"
+    "chat-debug": "http://192.168.5.6:3000",
   };
 
   ///网页端设置代理,处理跨域问题
@@ -26,7 +26,10 @@ class Constant {
     "order": "http://s.pin.fennland.me:5000/orders",
     "order_match_distances": "http://s.pin.fennland.me:5000/orders/distance",
     "database": "http://s.pin.fennland.me:5000/database",
-    "hello": "http://s.pin.fennland.me:5000/hello"
+    "hello": "http://s.pin.fennland.me:5000/hello",
+    "changePersonData": "http://s.pin.fennland.me:5000/user/change",
+    "postPersondataForm": "http://s.pin.fennland.me:5000/user/update",
+    "saveModifiedNameToCloud": "http://s.pin.fennland.me:5000/user/update"
     // "search": "http://127.0.0.1:8002",
     // "app": "http://127.0.0.1:8003",
   };
