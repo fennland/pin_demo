@@ -10,6 +10,9 @@ class Constant {
 
   ///网页端设置代理,处理跨域问题
   static const Map<String, String> urlWebMap = {
+    "changePersonData": "http://s.pin.fennland.me:5000/user/change",
+    "postPersondataForm": "http://s.pin.fennland.me:5000/user/update",
+    "saveModifiedNameToCloud": "http://s.pin.fennland.me:5000/user/update"
     // "login": "http://s.pin.fennland.me:5000/user/login",
     // "logined": "http://s.pin.fennland.me:5000/user/logined",
     // "register": "http://s.pin.fennland.me:5000/user/register",
