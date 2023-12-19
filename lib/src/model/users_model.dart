@@ -227,7 +227,7 @@ Future<Map<String, dynamic>> getCurrentLocation(
   }
   return {"x": 0.0, "y": 0.0};
 }
-  
+
 Future<Map<String, dynamic>> changePersonData(user) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   int? userID = prefs.getInt('userID');
@@ -245,12 +245,12 @@ Future<Map<String, dynamic>> changePersonData(user) async {
     );
 
     prefs.setString('userName', user.userName!);
-    
+
     Map<String, dynamic> result = jsonDecode(response.body);
     if (result['code'] == 200) {
       // 修改成功，更新本地存储的用户信息
       UserModel user = UserModel.fromJson(result['data']);
-      saveUserInfo(user);
+      saveCurUserInfo(user);
     }
 
     return result;
@@ -260,12 +260,18 @@ Future<Map<String, dynamic>> changePersonData(user) async {
   }
 }
 
-Future<Map<String, dynamic>> saveModifiedNameToCloud(userID, userName, gender, sign) async {
+Future<Map<String, dynamic>> saveModifiedNameToCloud(
+    userID, userName, gender, sign) async {
   try {
     var response = await http.put(
       Uri.parse(Constant.urlWebMap["saveModifiedNameToCloud"]!),
       headers: {'Content-Type': 'application/json'},
-      body: json.encode({'userID': userID, 'userName': userName, 'gender': gender, 'sign': sign}),
+      body: json.encode({
+        'userID': userID,
+        'userName': userName,
+        'gender': gender,
+        'sign': sign
+      }),
     );
     if (response.statusCode == 200 || response.statusCode == 201) {
       // debugPrint(response.body);

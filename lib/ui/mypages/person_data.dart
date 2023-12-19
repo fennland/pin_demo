@@ -30,17 +30,17 @@ class person_data extends StatefulWidget {
 //     ActionChipData({required this.label});
 //   }
 
-  class ActionChipData {
-    final Widget label;
-    bool isSelected;
-    Color backgroundColor;
+class ActionChipData {
+  final Widget label;
+  bool isSelected;
+  Color backgroundColor;
 
-    ActionChipData({
-      required this.label,
-      this.isSelected = false,
-      this.backgroundColor = Colors.grey,
-    });
-  }
+  ActionChipData({
+    required this.label,
+    this.isSelected = false,
+    this.backgroundColor = Colors.grey,
+  });
+}
 
 class _person_dataState extends State<person_data> {
   bool _isSelected = false;
@@ -58,63 +58,54 @@ class _person_dataState extends State<person_data> {
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     setState(() {
-        _update("firstInitialized");
+      _update("firstInitialized");
     });
   }
 
   Future<void> _update(String type) async {
     try {
-      UserModel? user = await getUserInfo();
+      UserModel? user = await getCurUserInfo();
       // onChanged: (value) {
       //     if (user != null) {
-      //       user.userID = value;  
+      //       user.userID = value;
       //     }
       // };
-      if(type == "name"){
+      if (type == "name") {
         if (user != null) {
           var updateResult = await saveModifiedNameToCloud(
-            user.userID,
-            _nameEditingController.text,
-            user.gender,
-            user.sign
-          );
+              user.userID, _nameEditingController.text, user.gender, user.sign);
           debugPrint("name: ${user?.userName}");
-      setState(() {
-        if (user != null) {
-          name = updateResult["result"]["data"][0]["userName"];
-          saveUserInfo(UserModel.fromJson(updateResult["result"]["data"][0]));
+          setState(() {
+            if (user != null) {
+              name = updateResult["result"]["data"][0]["userName"];
+              saveCurUserInfo(
+                  UserModel.fromJson(updateResult["result"]["data"][0]));
+            }
+          });
         }
-      });
-        }
-      }
-      else if(type == "sign"){
+      } else if (type == "sign") {
         if (user != null) {
-          var updateResult = await saveModifiedNameToCloud(
-            user.userID,
-            user.userName,
-            user.gender,
-            _signEditingController.text
-          );
+          var updateResult = await saveModifiedNameToCloud(user.userID,
+              user.userName, user.gender, _signEditingController.text);
           debugPrint(_signEditingController.text);
           debugPrint("sign: ${user?.sign}");
-      setState(() {
-        if (user != null) {
-          sign = updateResult["result"]["data"][0]["sign"];
-          saveUserInfo(UserModel.fromJson(updateResult["result"]["data"][0]));
+          setState(() {
+            if (user != null) {
+              sign = updateResult["result"]["data"][0]["sign"];
+              saveCurUserInfo(
+                  UserModel.fromJson(updateResult["result"]["data"][0]));
+            }
+          });
         }
-      });
-        }
-      }
-      else if(type == "firstInitialized"){
+      } else if (type == "firstInitialized") {
         setState(() {
           name = user?.userName;
           sign = user?.sign;
         });
       }
-      
     } catch (error) {
       debugPrint(error.toString());
     }
@@ -125,7 +116,7 @@ class _person_dataState extends State<person_data> {
   //     UserModel? user = await getUserInfo();
   //     onChanged: (value) {
   //         if (user != null) {
-  //           user.userID = value;  
+  //           user.userID = value;
   //         }
   //     };
   //     var updateResult = await saveModifiedNameToCloud(
@@ -159,13 +150,13 @@ class _person_dataState extends State<person_data> {
       // 修改失败，可以进行相应的处理
     }
   }
-  
+
   String? name = 'name';
   int gender = 0;
   String? sign = 'sign';
 
   bool _generateChip = false;
-  
+
   String editedText = '';
   bool _isEditing = false;
   TextEditingController _nameEditingController = TextEditingController();
@@ -287,14 +278,14 @@ class _person_dataState extends State<person_data> {
     var languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
       appBar: AppBar(title: Text(languageProvider.get("person_data"))),
-      body: 
-      // FutureBuilder(
-      //   future: _update(bool),
-      //   builder: (context, snapshot) {
+      body:
+          // FutureBuilder(
+          //   future: _update(bool),
+          //   builder: (context, snapshot) {
           // if (snapshot.hasData) {
-            // final user = snapshot.data;
-            // return 
-            Column(
+          // final user = snapshot.data;
+          // return
+          Column(
         children: [
           ClipOval(
             child: InkWell(
@@ -338,8 +329,10 @@ class _person_dataState extends State<person_data> {
                       height: 100,
                     )
                   : FadeInImage(
-                      placeholder: FileImage(File('lib/src/static/images/avatar.jpeg')), // AssetImage('assets/placeholder.jpg'),
-                      image: FileImage(File('lib/src/static/images/avatar.jpeg')),
+                      placeholder: FileImage(File(
+                          'lib/src/static/images/avatar.jpeg')), // AssetImage('assets/placeholder.jpg'),
+                      image:
+                          FileImage(File('lib/src/static/images/avatar.jpeg')),
                       width: 100,
                       height: 100,
                       fit: BoxFit.cover,
@@ -359,21 +352,23 @@ class _person_dataState extends State<person_data> {
             //   });
             // },
             // onSubmitted: (value) => _update(),
-            
-            onSubmitted: (value) async { await _update("name");},
+
+            onSubmitted: (value) async {
+              await _update("name");
+            },
             autofocus: true,
             decoration: InputDecoration(
-                hintText: name, // (user?.userName ??languageProvider.get("curUser")),
+                hintText:
+                    name, // (user?.userName ??languageProvider.get("curUser")),
                 // hintText: "陈鹏", // TODO: 改成保存当前名字，点选后可以删掉再改，而不是hint作为placeholder getUserInfo(userName)
                 prefixIcon: Icon(Icons.person)),
-                
           ),
           // ElevatedButton(
-          //   onPressed: () async {    
+          //   onPressed: () async {
           //     onChanged: (value) {
           //       setState(() {
           //         if (user != null) {
-          //           user.userID = value;  
+          //           user.userID = value;
           //         }
           //       });
           //     };
@@ -391,17 +386,20 @@ class _person_dataState extends State<person_data> {
           //       }
           //     });
           //   },
-            
+
           //   child: Text('Change Person Data'),
-            
+
           // ),
           _radioRow(),
           TextField(
             controller: _signEditingController,
-            onSubmitted: (value) async { await _update("sign");},
+            onSubmitted: (value) async {
+              await _update("sign");
+            },
             autofocus: true,
             decoration: InputDecoration(
-                hintText: sign, // (user?.sign ??languageProvider.get("curUserSigning")),
+                hintText:
+                    sign, // (user?.sign ??languageProvider.get("curUserSigning")),
                 prefixIcon: Icon(Icons.person)),
           ),
           Row(
@@ -431,10 +429,9 @@ class _person_dataState extends State<person_data> {
                         onTap: () {
                           setState(() {
                             _isSelected = !_isSelected;
-                            if(_isSelected){
+                            if (_isSelected) {
                               _backgroundColor = Colors.blue;
-                            }
-                            else{
+                            } else {
                               _backgroundColor = Colors.grey;
                             }
                           });
@@ -470,15 +467,14 @@ class _person_dataState extends State<person_data> {
                           ),
                         ),
                       ),
-                      
+
                       GestureDetector(
                         onTap: () {
                           setState(() {
                             _isSelected = !_isSelected;
-                            if(_isSelected){
+                            if (_isSelected) {
                               _backgroundColor = Colors.blue;
-                            }
-                            else{
+                            } else {
                               _backgroundColor = Colors.grey;
                             }
                           });
@@ -533,7 +529,6 @@ class _person_dataState extends State<person_data> {
                   ),
                 ),
               ),
-
             ],
           ),
           ElevatedButton(
@@ -542,13 +537,13 @@ class _person_dataState extends State<person_data> {
           ),
         ],
       ),
-          // }
-          // else{
-          //   return  const Center(child: CircularProgressIndicator(),);
-          // }
-    //     },
-    // ),
-    );        
+      // }
+      // else{
+      //   return  const Center(child: CircularProgressIndicator(),);
+      // }
+      //     },
+      // ),
+    );
   }
 
   Row _radioRow() {
@@ -580,7 +575,6 @@ class _person_dataState extends State<person_data> {
   Radio _colorfulCheckBox(index) {
     return Radio(
         value: index,
-        
         groupValue: groupValue,
         onChanged: (value) {
           //checkboxSelected = !checkboxSelected;
